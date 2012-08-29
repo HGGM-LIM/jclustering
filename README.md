@@ -97,16 +97,20 @@ Developing a new ClusteringTechnique is extremely easy. For starters, we need
 to create a new class inside the jclustering.techniques package that extends
 the ClusteringTechnique class:
 
-	package jclustering.techniques;
+```java
+package jclustering.techniques;
 
-	public class ExampleTechnique extends ClusteringTechnique {
-	}
+public class ExampleTechnique extends ClusteringTechnique {
+}
+```
 
 Now, the appropriate methods from the superclass have to be implemented.
 Currently, there is only one method that must be implemented:
 
-	public ImagePlus process() {
-	}
+```java
+public ImagePlus process() {
+}
+```
 
 This method should do two things. 
 
@@ -136,10 +140,13 @@ public ImagePlus process() {
 	for (int slice = 1; slice <= dim[3]; slice++) {
 		for (int x = 0; x < dim[0]; x++) {
 			for (int y = 0; y < dim[1]; y++) {
+
 				// Get TAC
 				double [] tac = ip.getTAC(x, y, slice);
-														// If is noise, skip
+
+				// If is noise, skip
 				if (skip_noisy && isNoise(tac)) continue;
+
 				// Else, set the corresponding result
 				int n = _getMaxIndex(tac) + 1; // +1, min_cluster = 1.					
 				// Set temporal result
