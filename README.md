@@ -1,14 +1,13 @@
-jclustering
-===========
+# jClustering
 
-# Introduction
+## Introduction
 
 This documentation explains how to use jClustering and how to develop a new
 clustering technique or metric for the jClustering framework using simple
 examples and code snippets. Several working examples will be attached to this
 document annex for full reference.
 
-# What is jClustering?
+## What is jClustering?
 
 jClustering is an [ImageJ](http://rsbweb.nih.gov/ij/) plugin developed with the
 purpose of becoming a general framework for dynamic imaging clustering, such as
