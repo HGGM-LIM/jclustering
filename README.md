@@ -89,3 +89,111 @@ kinetic data to file. If no time vector is provided, time data will be omitted
 or automatically generated (n frames of 1.0 seconds length each), depending on
 the format selected.
 
+# Developing for jClustering
+
+## How to develop a new clustering technique
+
+Developing a new ClusteringTechnique is extremely easy. For starters, we need
+to create a new class inside the jclustering.techniques package that extends
+the ClusteringTechnique class:
+
+	package jclustering.techniques;
+
+	public class ExampleTechnique extends ClusteringTechnique {
+	}
+
+Now, the appropriate methods from the superclass have to be implemented.
+Currently, there is only one method that must be implemented:
+
+	public ImagePlus process() {
+	}
+
+This method should do two things. 
+
+* First, it must return a ImagePlus object with the structure recommended on a
+  previous chapter.
+* Set an internal clusters object of the type ArrayList<Cluster> that contains
+  the formed cluster TACs.
+
+As said before, the structure for the ImagePlus object that is returned by the
+process() method is just a recommendation. Also, there are several helper
+functions that will help the developer set the appropriate voxels in a
+ImageStack object or in the clusters object. Please refer to the javadoc
+documents for more information on the Cluster object, if needed.
+
+The ImagePlus that needs to be returned might be in a relatively simple way.
+Consider this process() method (and the private function below it):
+
+	public ImagePlus process() {
+		
+		// Return a stack with the value of the frame of maximum intensity
+		// for each voxel
+		int [] dim = ip.getDimensions();
+		ImagePlus res = IJ.createImage("Clusters", "16-bit",	
+						dim[0], dim[1], dim[3]);		
+		ImageStack is = res.getStack();
+		for (int slice = 1; slice <= dim[3]; slice++) {
+			for (int x = 0; x < dim[0]; x++) {
+				for (int y = 0; y < dim[1]; y++) {
+					// Get TAC
+					double [] tac = ip.getTAC(x, y, slice);
+															// If is noise, skip
+					if (skip_noisy && isNoise(tac)) continue;
+					// Else, set the corresponding result
+					int n = _getMaxIndex(tac) + 1; // +1, min_cluster = 1.					
+					// Set temporal result
+					addTACtoCluster(tac, n);			
+					// Set visual result
+					setVoxel(is, x, y, slice, n);
+				}
+			}
+		}
+		return expand(res, clusters.size());
+	}
+
+
+	private int _getMaxIndex(double [] d) {
+		
+		int res = 0;
+		double aux = d[0];
+		for (int i = 0; i < d.length; i++) {			
+			if (d[i] > aux) {
+				res = i;
+				aux = d[i];
+			}
+		}
+												return res;
+	}
+
+The method \_getMaxIndex(double [] d) simply returns the index for the maximum
+value of the array. The presented implementation for process() simply clusters
+the TACs by looking at their peak times.
+
+The first lines of the method just prepare an empty ImagePlus image to set the
+result and get a reference to the inner ImageStack. The object ip is internal
+to the ClusteringTechnique superclass and contains all the information
+regarding the image that is being analyzed. See the documentation for
+ImagePlusHyp in the Javadoc documentation for more details.
+
+The three nested for loops iterate through all the TACs of the image. The slice
+variable is 1-based in ImageJ, so it has to go from 1 to dim[3].
+
+The TAC is easily accessed using the public method getTAC(int x, int y, int
+slice) from the ImagePlusHyp object. If the obtained TAC is noise according to
+the isNoise(double [] tac) method, it is skipped and the next one is obtained.
+This step improves algorithm performance by not analyzing noisy voxels. This
+option can be disabled on the first tab of the GUI.
+
+The methods addTACToCluster(double [] tac, Cluster c) (from the
+ClusteringTechnique superclass) and setVoxel(ImageStack is, int x, int y, int
+slice, int value) (from the jclustering.Utils package) provide an easy way to
+set the final cluster values to the resulting cluster and image, respectively.
+The user that wishes to implement its own technique can use these methods if
+desired, but they are in no way mandatory, as long as the results are set in
+some way.
+
+Finally, a call to expand(ImagePlus ip, int size) is made. This function
+expands the ImagePlus that has been built along the way and separates it in the
+appropriate frames to return a result that conforms to the structure defined at
+the end of How to use jClustering.
+
