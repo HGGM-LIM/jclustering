@@ -124,6 +124,7 @@ documents for more information on the Cluster object, if needed.
 The ImagePlus that needs to be returned might be in a relatively simple way.
 Consider this process() method (and the private function below it):
 
+	```java
 	public ImagePlus process() {
 		
 		// Return a stack with the value of the frame of maximum intensity
@@ -162,8 +163,9 @@ Consider this process() method (and the private function below it):
 				aux = d[i];
 			}
 		}
-												return res;
+		return res;
 	}
+	```
 
 The method \_getMaxIndex(double [] d) simply returns the index for the maximum
 value of the array. The presented implementation for process() simply clusters
