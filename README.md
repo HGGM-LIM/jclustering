@@ -57,3 +57,35 @@ After the clustering modality has been configured, the user can press the â€œOKâ
 button and, after the necessary processing time, the resulting image will
 appear on screen.
 
+The resulting image is another HyperStack that ideally contains the results
+structured the following way, though specific implementations may vary and this
+is only a convention:
+
+* The last _frame_ (not a real frame, shown on the image above these lines) is
+  a 3D image in which every voxel contains the value of the cluster that voxel
+  belongs to. For instance, a voxel with a grey value of 1 belongs to the
+  first cluster, and so on.
+
+* All the other frames, starting from the first one, represent the contents of
+  each cluster.
+
+If you wish to select a file for saving the TACs for each cluster, just select
+a path by clicking on the provided button and the results will be saved using
+the selected format. If you have vector time data, please specify it using the
+appropriate button. This data contains the length of each image frame, in
+seconds, in a two-column text file separated by spaces, as in the following
+sample:
+
+<pre>
+1.0 2.0
+2.0 3.0
+3.0 4.0	
+...
+</pre>
+
+The first column contains the starting time and the second column the ending
+time; each row is a frame. This time vector will be used when saving the
+kinetic data to file. If no time vector is provided, time data will be omitted
+or automatically generated (n frames of 1.0 seconds length each), depending on
+the format selected.
+
