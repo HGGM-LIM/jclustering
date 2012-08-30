@@ -236,7 +236,7 @@ public class Utils {
                     int val = (int) source.getVoxel(x, y, slice - 1);
 
                     // If the value is beyond the clusters to be represented.
-                    if (val > cluster_number)
+                    if (val > cluster_number || val == 0)
                         continue;
 
                     // Get slice number for target stack
