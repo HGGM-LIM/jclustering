@@ -44,7 +44,7 @@ Once the HyperStack has been correctly opened, jClustering will show the
 following screen (or one very similar, depending on the exact version) upon
 execution:
 
-![Main window](https://github.com/HGGM-LIM/jclustering/blob/gh-pages/images/doc_main_window.jpg)
+![Main window](https://raw.github.com/HGGM-LIM/jclustering/blob/gh-pages/images/doc_main_window.jpg)
 
 In this screen you can select which clustering technique you wish to use, and
 then configure it (second tab) and the metric the technique uses, if any (third
@@ -56,6 +56,8 @@ needed.
 After the clustering modality has been configured, the user can press the “OK”
 button and, after the necessary processing time, the resulting image will
 appear on screen.
+
+![Results window](https://raw.github.com/HGGM-LIM/jclustering/blob/gh-pages/images/doc_results.jpg)
 
 The resulting image is another HyperStack that ideally contains the results
 structured the following way, though specific implementations may vary and this
