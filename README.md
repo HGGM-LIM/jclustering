@@ -30,8 +30,8 @@ file commons-math3-3.0/commons-math3-3.0.jar to the plugins/jars folder of your
 ImageJ installation.
 
 ## How to use jClustering
-Once jClustering has been installed, you can access it via the Plugins ->
-jclustering -> JClustering menu on ImageJ. If no images are open and it is
+Once jClustering has been installed, you can access it via the `Plugins ->
+jclustering -> JClustering` menu on ImageJ. If no images are open and it is
 executed, the following window appears:
 
 ![Error window] (https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_error.jpg)
@@ -93,9 +93,9 @@ the format selected.
 
 ## How to develop a new clustering technique
 
-Developing a new ClusteringTechnique is extremely easy. For starters, we need
-to create a new class inside the jclustering.techniques package that extends
-the ClusteringTechnique class:
+Developing a new `ClusteringTechnique` is extremely easy. For starters, we need
+to create a new class inside the `jclustering.techniques` package that extends
+the `ClusteringTechnique` class:
 
 ```java
 package jclustering.techniques;
@@ -114,19 +114,19 @@ public ImagePlus process() {
 
 This method should do two things. 
 
-* First, it must return a ImagePlus object with the structure recommended on a
+* First, it must return a `ImagePlus` object with the structure recommended on a
   previous chapter.
-* Set an internal clusters object of the type ArrayList<Cluster> that contains
-  the formed cluster TACs.
+* Set an internal `clusters` object of the type `ArrayList<Cluster>` that
+  contains the formed cluster TACs.
 
 As said before, the structure for the ImagePlus object that is returned by the
-process() method is just a recommendation. Also, there are several helper
+`process()` method is just a recommendation. Also, there are several helper
 functions that will help the developer set the appropriate voxels in a
-ImageStack object or in the clusters object. Please refer to the javadoc
-documents for more information on the Cluster object, if needed.
+`ImageStack` object or in the `clusters` object. Please refer to the javadoc
+documents for more information on the `Cluster` object, if needed.
 
-The ImagePlus that needs to be returned might be in a relatively simple way.
-Consider this process() method (and the private function below it):
+The `ImagePlus` that needs to be returned might be built in a relatively simple
+way. Consider this `process()` method (and the private function below it):
 
 ```java
 public ImagePlus process() {
@@ -174,35 +174,36 @@ private int _getMaxIndex(double [] d) {
 }
 ```
 
-The method \_getMaxIndex(double [] d) simply returns the index for the maximum
-value of the array. The presented implementation for process() simply clusters
-the TACs by looking at their peak times.
+The method `\_getMaxIndex(double [] d)` simply returns the index for the
+maximum value of the array. The presented implementation for `process()` simply
+clusters the TACs by looking at their peak times.
 
-The first lines of the method just prepare an empty ImagePlus image to set the
-result and get a reference to the inner ImageStack. The object ip is internal
-to the ClusteringTechnique superclass and contains all the information
-regarding the image that is being analyzed. See the documentation for
-ImagePlusHyp in the Javadoc documentation for more details.
+The first lines of the method just prepare an empty `ImagePlus` image to set
+the result and get a reference its inner `ImageStack`. The object `ip` is
+internal to the `ClusteringTechnique` superclass and contains a reference to
+the image that is being analyzed. See the documentation for `ImagePlusHyp` in
+the Javadoc documentation for more details. This objects inherits all the
+methods from ImageJ's `ImagePlus`, plus several others.
 
-The three nested for loops iterate through all the TACs of the image. The slice
-variable is 1-based in ImageJ, so it has to go from 1 to dim[3].
+The three nested for loops iterate through all the TACs of the image. The
+`slice` variable is 1-based in ImageJ, so it has to go from `1` to `dim[3]`.
 
-The TAC is easily accessed using the public method getTAC(int x, int y, int
-slice) from the ImagePlusHyp object. If the obtained TAC is noise according to
-the isNoise(double [] tac) method, it is skipped and the next one is obtained.
-This step improves algorithm performance by not analyzing noisy voxels. This
-option can be disabled on the first tab of the GUI.
+The TAC is easily accessed using the public method `getTAC(int x, int y, int
+slice)` from the `ImagePlusHyp` object. If the obtained TAC is noise according
+to the `isNoise(double [] tac)` method, it is skipped and the next one is
+obtained.  This step improves algorithm performance by not analyzing noisy
+voxels. This option can be disabled on the first tab of the GUI.
 
-The methods addTACToCluster(double [] tac, Cluster c) (from the
-ClusteringTechnique superclass) and setVoxel(ImageStack is, int x, int y, int
-slice, int value) (from the jclustering.Utils package) provide an easy way to
-set the final cluster values to the resulting cluster and image, respectively.
-The user that wishes to implement its own technique can use these methods if
-desired, but they are in no way mandatory, as long as the results are set in
-some way.
+The methods `addTACToCluster(double [] tac, Cluster c)` (from the
+`ClusteringTechnique` superclass) and `setVoxel(ImageStack is, int x, int y,
+int slice, int value)` (from the `jclustering.Utils` package) provide an easy
+way to set the final cluster values to the resulting cluster and image,
+respectively.  The user that wishes to implement its own technique can use
+these methods if desired, but they are in no way mandatory, as long as the
+results are set in some way.
 
-Finally, a call to expand(ImagePlus ip, int size) is made. This function
+Finally, a call to `expand(ImagePlus ip, int size)` is made. This function
 expands the ImagePlus that has been built along the way and separates it in the
 appropriate frames to return a result that conforms to the structure defined at
-the end of How to use jClustering.
+the end of _How to use jClustering_.
 
