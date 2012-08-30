@@ -34,9 +34,7 @@ Once jClustering has been installed, you can access it via the Plugins ->
 jclustering -> JClustering menu on ImageJ. If no images are open and it is
 executed, the following window appears:
 
-<img src="https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_error.jpg" style="text-align: center" />
-
-![Test] (https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_error.jpg)
+![Error window] (https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_error.jpg)
 
 jClustering needs a HyperStack (a 4D image in ImageJ terminology) to work with.
 It will not open the file for the user, as every format is different and
@@ -46,7 +44,7 @@ Once the HyperStack has been correctly opened, jClustering will show the
 following screen (or one very similar, depending on the exact version) upon
 execution:
 
-[IMAGE STILL MISSING]
+![Main window](https://github.com/HGGM-LIM/jclustering/blob/gh-pages/images/doc_main_window.jpg)
 
 In this screen you can select which clustering technique you wish to use, and
 then configure it (second tab) and the metric the technique uses, if any (third
