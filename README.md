@@ -160,7 +160,7 @@ public ImagePlus process() {
 }
 
 
-private int _getMaxIndex(double [] d) {
+private int getMaxIndex(double [] d) {
 	
 	int res = 0;
 	double aux = d[0];
@@ -174,7 +174,7 @@ private int _getMaxIndex(double [] d) {
 }
 ```
 
-The method `\_getMaxIndex(double [] d)` simply returns the index for the
+The method `getMaxIndex(double [] d)` simply returns the index for the
 maximum value of the array. The presented implementation for `process()` simply
 clusters the TACs by looking at their peak times.
 
