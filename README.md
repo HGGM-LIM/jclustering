@@ -150,7 +150,7 @@ public ImagePlus process() {
 				if (skip_noisy && isNoise(tac)) continue;
 
 				// Else, set the corresponding result
-				int n = _getMaxIndex(tac) + 1; // +1, min_cluster = 1.					
+				int n = getMaxIndex(tac) + 1; // +1, min_cluster = 1.					
 				// Set temporal result
 				addTACtoCluster(tac, n);			
 				// Set visual result
