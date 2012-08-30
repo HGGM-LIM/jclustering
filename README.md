@@ -122,50 +122,47 @@ As an example, please consider this `process()` method (and the private
 function below it):
 
 ```java
-public void process() {
+    public void process() {
 
-	// Return a stack with the value of the frame of maximum intensity
-	// for each voxel
-	int[] dim = ip.getDimensions();
+        // Return a stack with the value of the frame of maximum intensity
+        // for each voxel
+        int[] dim = ip.getDimensions();
 
-	// This three loops iterate trough all the voxels in the image.
-	// Please not that the third dimension is 1-based. That is, the
-	// "slice" variable goes from 1 to dim[3].
-	for (int slice = 1; slice <= dim[3]; slice++) {
-	    for (int x = 0; x < dim[0]; x++) {
-		for (int y = 0; y < dim[1]; y++) {
+        for (int slice = 1; slice <= dim[3]; slice++) {
+            for (int x = 0; x < dim[0]; x++) {
+                for (int y = 0; y < dim[1]; y++) {
 
-		    // Get TAC
-		    double[] tac = ip.getTAC(x, y, slice);
+                    // Get TAC
+                    double[] tac = ip.getTAC(x, y, slice);
 
-		    // If is noise, skip
-		    if (skip_noisy && isNoise(tac))
-			continue;
+                    // If is noise, skip
+                    if (skip_noisy && isNoise(tac))
+                        continue;
 
-		    // Else, set the corresponding result
-		    int n = _getMaxIndex(tac) + 1; // +1, min_cluster = 1.
+                    // Else, set the corresponding result
+                    int n = _getMaxIndex(tac) + 1; // +1, min_cluster = 1.
 
-		    // Set temporal result
-		    addTACtoCluster(tac, x, y, slice, n);
-		}
-	    }
-	}
-}
+                    // Set temporal result
+                    addTACtoCluster(tac, x, y, slice, n);
+                }
+            }
+        }
+    }
 
-private int _getMaxIndex(double[] d) {
+    private int _getMaxIndex(double[] d) {
 
-	int res = 0;
-	double aux = d[0];
+        int res = 0;
+        double aux = d[0];
 
-	for (int i = 0; i < d.length; i++) {
-	    if (d[i] > aux) {
-		res = i;
-		aux = d[i];
-	    }
-	}
+        for (int i = 0; i < d.length; i++) {
+            if (d[i] > aux) {
+                res = i;
+                aux = d[i];
+            }
+        }
 
-	return res;
-}
+        return res;
+    }
 ```
 
 The method `getMaxIndex(double [] d)` simply returns the index for the
