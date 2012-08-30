@@ -34,6 +34,7 @@ Once jClustering has been installed, you can access it via the Plugins ->
 jclustering -> JClustering menu on ImageJ. If no images are open and it is
 executed, the following window appears:
 
+<img src="https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_error.jpg" style="text-align: center" />
 
 ![Test] (https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_error.jpg)
 
