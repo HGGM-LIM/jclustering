@@ -16,12 +16,9 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import jclustering.Cluster;
 import jclustering.MathUtils;
-import static jclustering.Utils.*;
 import static jclustering.GUIUtils.*;
 
 import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
 
 /**
  * Implements a leader-follower clustering method using only correlation
@@ -72,16 +69,13 @@ public class LeaderFollower extends ClusteringTechnique
     private Hashtable<Cluster, ArrayList<Integer[]>> record;            
     
     @Override
-    public ImagePlus process() {
+    public void process() {
         
         /*
          * Initial object creation.
-         */
+         */                
         
         dim = ip.getDimensions();
-        ImagePlus res = IJ.createImage("Clusters", "16-bit", dim[0], dim[1],
-                dim[3]);
-        ImageStack is = res.getStack();
         
         pc = new PearsonsCorrelation();
         
@@ -116,7 +110,7 @@ public class LeaderFollower extends ClusteringTechnique
                     // Is it the first voxel? If so, just put it in a 
                     // new cluster
                     if (clusters.isEmpty()) {
-                        Cluster c = new Cluster(tac, true);
+                        Cluster c = new Cluster(tac, x, y, slice);
                         clusters.add(c);
                         _addToRecord(c, x, y, slice);
                     }
@@ -130,11 +124,11 @@ public class LeaderFollower extends ClusteringTechnique
                             // There is a cluster that can include this voxel
                             Cluster c = clusters.get(cindex);
                             // Add TAC modifying centroid
-                            c.add(tac);
+                            c.add(tac, x, y, slice);
                             _addToRecord(c, x, y, slice);
                         } else {                            
                             // There is no cluster to include this voxel yet
-                            Cluster c = new Cluster(tac, true);
+                            Cluster c = new Cluster(tac, x, y, slice);
                             clusters.add(c);
                             _addToRecord(c, x, y, slice);
                         }                        
@@ -161,21 +155,10 @@ public class LeaderFollower extends ClusteringTechnique
         if (keep_clusters > size)
             keep_clusters = size;
         
-        int cluster_index = 2;
         // Go backwards: biggest cluster is #1
         for (int i = size - 1; i >= size - keep_clusters; i--) {            
             Cluster c = clusters.get(i);
             good_clusters.add(c);
-            
-            // Get all coordinates
-            ArrayList<Integer []> coords = record.get(c);
-            // Set all coordinates to the cluster value
-            for (Integer [] coord : coords) {
-                setVoxel(is, coord[0], coord[1], coord[2], cluster_index);
-            }
-            
-            // Increment cluster_index
-            cluster_index++;            
         }
         
         // Change reference
@@ -188,9 +171,6 @@ public class LeaderFollower extends ClusteringTechnique
         int nsize = clusters.size();
         IJ.log(String.format("Leader-follower finished. %d clusters " +
         		"created, %d kept.", size, nsize));
-        
-        // Expand image and return
-        return expand(res, nsize);
     }
     
     public JPanel makeConfig() {

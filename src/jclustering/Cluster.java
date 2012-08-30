@@ -1,5 +1,7 @@
 package jclustering;
 
+import java.util.ArrayList;
+
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
@@ -24,14 +26,20 @@ public class Cluster implements Comparable<Cluster> {
     
     // Modify centroid
     private boolean modify_centroid;
+    
+    // Keep track of added coordinates
+    private ArrayList<Integer []> coordinates;
 
     /**
      * Public constructor. Does nothing by default, just initializes the
      * internal containers.
      */
     public Cluster() {
+        
         size = 0;
         peak_stats = new SummaryStatistics();
+        coordinates = new ArrayList<Integer []>();
+        
     }
 
     /**
@@ -48,29 +56,39 @@ public class Cluster implements Comparable<Cluster> {
     }
     
     /**
-     * Public constructor with a pre-defined centroid an a boolean option
-     * for centroid modification. If {@code modify_centroid} is set to true,
-     * then the centroid for this cluster will be modified with each new
-     * TAC that is added to this object.
+     * Public constructor with a pre-defined centroid and coordinates for it. 
+     * If this method is used as a constructor, it is assumed that the the 
+     * centroid for this cluster will be modified with each new TAC that is 
+     * added to this object.
+     * 
      * @param centroid Centroid vector.
-     * @param modify_centroid Should the centroid be modified with each new 
-     * TAC.
+     * @param x X-coordinate for the centroid TAC.
+     * @param y Y-coordinate for the centroid TAC.
+     * @param slice Slice (1-based) for the centroid TAC. TAC.
      */    
-    public Cluster(double [] centroid, boolean modify_centroid) {
+    public Cluster(double [] centroid, int x, int y, int slice) {
         
         this();
         this.centroid = centroid;
-        this.modify_centroid = modify_centroid;
+        this.modify_centroid = true;
         
         // If the centroid is to be modified, this method must also
         // start including data into the peak_stats object and increment
         // the size.
-        if (modify_centroid) {
-            double max = MathUtils.getMax(centroid);
-            peak_stats.addValue(max);
-            size++;
-        }
+        double max = MathUtils.getMax(centroid);
+        peak_stats.addValue(max);
+        size++;
         
+        // And add the coordinates
+        coordinates.add(new Integer[] {x, y, slice});
+        
+    }
+    
+    /**
+     * @return The coordinates of pixels added to this cluster
+     */
+    public ArrayList<Integer []> getCoordinates() {
+        return coordinates;
     }
 
     /**
@@ -83,8 +101,7 @@ public class Cluster implements Comparable<Cluster> {
     /**
      * Sets this cluster's centroid.
      * 
-     * @param centroid
-     *            The new centroid.
+     * @param centroid The new centroid.
      */
     public void setCentroid(double[] centroid) {
         this.centroid = centroid;
@@ -119,8 +136,11 @@ public class Cluster implements Comparable<Cluster> {
      * time.
      * 
      * @param data Dynamic data to be added
+     * @param x X-coordinate for added TAC.
+     * @param y Y-coordinate for added TAC.
+     * @param slice Slice (1-based) for added TAC. 
      */
-    public void add(double[] data) {
+    public void add(double[] data, int x, int y, int slice) {
 
         if (!isEmpty()) {
 
@@ -142,18 +162,12 @@ public class Cluster implements Comparable<Cluster> {
                 cluster_tac = temp;
 
         } else {
-
-            // This is the first voxel, so let's initialize everything
-            // that will be needed later.
-//            if (modify_centroid)
-//                centroid = data;
-//            else
-                cluster_tac = data;
-
+            cluster_tac = data;
         }
 
         peak_stats.addValue(MathUtils.getMax(data));
         size++;
+        coordinates.add(new Integer[] {x, y, slice});
 
     }
 

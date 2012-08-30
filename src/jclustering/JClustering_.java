@@ -29,6 +29,7 @@ import jclustering.techniques.ClusteringTechnique;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 
@@ -240,18 +241,37 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     
         long start = System.currentTimeMillis();
     
-        // Actual clustering operations and image showing.
-        ImagePlus ip = technique.compute();
+        // Actual clustering operations
+        technique.compute();
         ArrayList<Cluster> clusters = technique.getClusters();
-        ip.show();
-        // Show last frame of the image, which is the one containing all
-        // clusters at once
         
-        int last_frame = clusters.size() + 1;
+        // Build result image and show it
+        int [] dim = iph.getDimensions();
+        int size = clusters.size();
+        ImagePlus ip = IJ.createImage("Clusters", "16-bit", dim[0], dim[1],
+                            dim[3]);
+        ImageStack is = ip.getImageStack();  
+        
+        int cluster_index = 1; // First cluster is always number 1, not 0
+        
+        for (Cluster c : clusters) {
+            ArrayList<Integer []> points = c.getCoordinates();            
+            for (Integer [] coords : points) {
+                is.setVoxel(coords[0], coords[1], coords[2] - 1, cluster_index);                
+            }
+            cluster_index++;
+        }
+        
+        ip = expand(ip, size);
+        ip.show();
+        
+        // Show last frame of the image, which is the one containing all
+        // clusters at once        
+        int last_frame = size + 1;
         ip.setT(last_frame);
     
         // Set contrast (from 0 to last cluster number)        
-        String contrast = String.format("setMinAndMax(0, %d)", last_frame - 1);
+        String contrast = String.format("setMinAndMax(0, %d)", size - 1);
         IJ.runMacro(contrast);
     
         // Display elapsed time.

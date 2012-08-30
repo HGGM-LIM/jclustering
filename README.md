@@ -59,9 +59,8 @@ appear on screen.
 
 ![Results window](https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_results.jpg)
 
-The resulting image is another HyperStack that ideally contains the results
-structured the following way, though specific implementations may vary and this
-is only a convention:
+The resulting image is another HyperStack that contains the results structured
+the following way:
 
 * The last _frame_ (not a real frame, shown on the image above these lines) is
   a 3D image in which every voxel contains the value of the cluster that voxel
@@ -110,68 +109,61 @@ Now, the appropriate methods from the superclass have to be implemented.
 Currently, there is only one method that must be implemented:
 
 ```java
-public ImagePlus process() {
+public void process() {
 }
 ```
 
-This method should do two things. 
+This method should do two things. Set an internal `clusters` object of the type
+`ArrayList<Cluster>` that contains the formed cluster TACs. Developers should
+read the documentation for the `Cluster` object to know how to correctly
+add new voxels to it or refer to the examples provided below these lines.
 
-* First, it must return a `ImagePlus` object with the structure recommended on a
-  previous chapter.
-* Set an internal `clusters` object of the type `ArrayList<Cluster>` that
-  contains the formed cluster TACs.
-
-As said before, the structure for the ImagePlus object that is returned by the
-`process()` method is just a recommendation. Also, there are several helper
-functions that will help the developer set the appropriate voxels in a
-`ImageStack` object or in the `clusters` object. Please refer to the javadoc
-documents for more information on the `Cluster` object, if needed.
-
-The `ImagePlus` that needs to be returned might be built in a relatively simple
-way. Consider this `process()` method (and the private function below it):
+As an example, please consider this `process()` method (and the private
+function below it):
 
 ```java
-public ImagePlus process() {
-	
+public void process() {
+
 	// Return a stack with the value of the frame of maximum intensity
 	// for each voxel
-	int [] dim = ip.getDimensions();
-	ImagePlus res = IJ.createImage("Clusters", "16-bit",	
-					dim[0], dim[1], dim[3]);		
-	ImageStack is = res.getStack();
+	int[] dim = ip.getDimensions();
+
+	// This three loops iterate trough all the voxels in the image.
+	// Please not that the third dimension is 1-based. That is, the
+	// "slice" variable goes from 1 to dim[3].
 	for (int slice = 1; slice <= dim[3]; slice++) {
-		for (int x = 0; x < dim[0]; x++) {
-			for (int y = 0; y < dim[1]; y++) {
+	    for (int x = 0; x < dim[0]; x++) {
+		for (int y = 0; y < dim[1]; y++) {
 
-				// Get TAC
-				double [] tac = ip.getTAC(x, y, slice);
+		    // Get TAC
+		    double[] tac = ip.getTAC(x, y, slice);
 
-				// If is noise, skip
-				if (skip_noisy && isNoise(tac)) continue;
+		    // If is noise, skip
+		    if (skip_noisy && isNoise(tac))
+			continue;
 
-				// Else, set the corresponding result
-				int n = getMaxIndex(tac) + 1; // +1, min_cluster = 1.					
-				// Set temporal result
-				addTACtoCluster(tac, n);			
-				// Set visual result
-				setVoxel(is, x, y, slice, n);
-			}
+		    // Else, set the corresponding result
+		    int n = _getMaxIndex(tac) + 1; // +1, min_cluster = 1.
+
+		    // Set temporal result
+		    addTACtoCluster(tac, x, y, slice, n);
 		}
+	    }
 	}
-	return expand(res, clusters.size());
 }
 
+private int _getMaxIndex(double[] d) {
 
-private int getMaxIndex(double [] d) {
-	
 	int res = 0;
 	double aux = d[0];
-	for (int i = 0; i < d.length; i++) {			
-		if (d[i] > aux) {
-			res = i;
-			aux = d[i];
-		}
+
+	for (int i = 0; i < d.length; i++) {
+	    if (d[i] > aux) {
+		res = i;
+		aux = d[i];
+	    }
 	}
+
 	return res;
 }
 ```
@@ -180,12 +172,8 @@ The method `getMaxIndex(double [] d)` simply returns the index for the
 maximum value of the array. The presented implementation for `process()` simply
 clusters the TACs by looking at their peak times.
 
-The first lines of the method just prepare an empty `ImagePlus` image to set
-the result and get a reference its inner `ImageStack`. The object `ip` is
-internal to the `ClusteringTechnique` superclass and contains a reference to
-the image that is being analyzed. See the documentation for `ImagePlusHyp` in
-the Javadoc documentation for more details. This objects inherits all the
-methods from ImageJ's `ImagePlus`, plus several others.
+The first lines of the method just gest the image dimensions so the for loops
+can be built.
 
 The three nested for loops iterate through all the TACs of the image. The
 `slice` variable is 1-based in ImageJ, so it has to go from `1` to `dim[3]`.
@@ -202,12 +190,8 @@ int slice, int value)` (from the `jclustering.Utils` package) provide an easy
 way to set the final cluster values to the resulting cluster and image,
 respectively.  The user that wishes to implement its own technique can use
 these methods if desired, but they are in no way mandatory, as long as the
-results are set in some way.
-
-Finally, a call to `expand(ImagePlus ip, int size)` is made. This function
-expands the ImagePlus that has been built along the way and separates it in the
-appropriate frames to return a result that conforms to the structure defined at
-the end of _How to use jClustering_.
+results are set in some way. Sometimes it can be easier to access directly
+the `Cluster` methods of the `ArrayList<Cluster> clusters` object.
 
 ## How to develop a new metric
 
@@ -277,15 +261,13 @@ public void itemStateChanged(ItemEvent arg0) {
 ```
 
 # Annex: full sample classes
+
 ```java
 package jclustering.techniques;
 
 import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
 import java.awt.event.ItemEvent;
 import javax.swing.JPanel;
-import static jclustering.Utils.*;
 
 /**
  * Sample class. Uses the peak time to build the cluster, as in the 
@@ -299,10 +281,6 @@ public class SampleTechnique extends ClusteringTechnique {
         // Return a stack with the value of the frame of maximum intensity
         // for each voxel
         int[] dim = ip.getDimensions();
-        ImagePlus res = IJ.createImage("Clusters", "8-bit", dim[0], dim[1],
-                dim[3]);
-
-        ImageStack is = res.getStack();
 
         for (int slice = 1; slice <= dim[3]; slice++) {
             for (int x = 0; x < dim[0]; x++) {
@@ -321,14 +299,9 @@ public class SampleTechnique extends ClusteringTechnique {
                     // Set temporal result
                     addTACtoCluster(tac, n);
 
-                    // Set visual result
-                    setVoxel(is, x, y, slice, n);
                 }
             }
         }
-
-        return expand(res, clusters.size());
-
     }
 
     @Override

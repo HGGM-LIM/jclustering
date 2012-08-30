@@ -1,7 +1,6 @@
 package jclustering.techniques;
 
 import static jclustering.GUIUtils.*;
-import static jclustering.Utils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +19,6 @@ import javax.swing.JTextField;
 import jclustering.Cluster;
 
 import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
 
 /**
  * This technique implements a <a href="http://en.wikipedia.org/wiki/K-means">
@@ -52,20 +49,17 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     private int[] dim;
 
     @Override
-    public ImagePlus process() {
+    public void process() {
 
         IJ.log("K-means clustering started");
 
         // Initialize points
         int[][] initial_points = new int[n_clusters][3];
         _fillInitialPoints(initial_points);
-
-        // Create container image
+        
+        // Get dimensions
         dim = ip.getDimensions();
-        ImagePlus res = IJ.createImage("Clusters", "16-bit", dim[0], dim[1],
-                dim[3]);
-        ImageStack is = res.getStack();
-
+        
         // Keep track of number of iterations
         int it = 0;
 
@@ -93,6 +87,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         // Init this temporary variable
         ArrayList<Cluster> it_result = clusters;
+        ArrayList<Cluster> new_it_result = null;
 
         // Keep iterations below 100 as a sanity measure
         while (!threshold_reached && it < max_iterations) {
@@ -100,7 +95,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             IJ.showStatus("K-Means: Iteration " + it + "/" + max_iterations
                     + " , clusters: " + it_result.size());
 
-            ArrayList<Cluster> new_it_result = _iterate(it_result, is);
+            new_it_result = _iterate(it_result);
 
             // Set it_result for the next iteration. Also, don't create a new
             // cluster if it is empty. Variables size1 and size2 keep track
@@ -133,10 +128,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 + " formed.");
 
         // Set final clusters
-        clusters = it_result;
-
-        // Return the expanded result
-        return expand(res, clusters.size());
+        clusters = new_it_result;
     }
 
     @Override
@@ -367,8 +359,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
      * Cluster objects that is returned. Also sets the corresponding voxels in
      * the {@link ImageStack}.
      */
-    private ArrayList<Cluster> _iterate(ArrayList<Cluster> models, 
-            ImageStack is) {
+    private ArrayList<Cluster> _iterate(ArrayList<Cluster> models) {
 
         // Create a result ArrayList and initialize the original centroids
         // to the previous TACs
@@ -392,9 +383,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                     int cluster_index = _getClosestCluster(tac, res);
 
                     // Set results.
-                    res.get(cluster_index).add(tac);
-                    // Visual value is 1-based.
-                    setVoxel(is, x, y, slice, cluster_index + 1);
+                    res.get(cluster_index).add(tac, x, y, slice);                  
 
                 }
             }

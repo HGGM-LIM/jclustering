@@ -1,11 +1,7 @@
 package jclustering.techniques;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
 import java.awt.event.ItemEvent;
 import javax.swing.JPanel;
-import static jclustering.Utils.*;
 
 /**
  * @author jmmateos
@@ -14,15 +10,11 @@ import static jclustering.Utils.*;
 public class SampleTechnique extends ClusteringTechnique {
 
     @Override
-    public ImagePlus process() {
+    public void process() {
 
         // Return a stack with the value of the frame of maximum intensity
         // for each voxel
         int[] dim = ip.getDimensions();
-        ImagePlus res = IJ.createImage("Clusters", "8-bit", dim[0], dim[1],
-                dim[3]);
-
-        ImageStack is = res.getStack();
 
         for (int slice = 1; slice <= dim[3]; slice++) {
             for (int x = 0; x < dim[0]; x++) {
@@ -39,16 +31,10 @@ public class SampleTechnique extends ClusteringTechnique {
                     int n = _getMaxIndex(tac) + 1; // +1, min_cluster = 1.
 
                     // Set temporal result
-                    addTACtoCluster(tac, n);
-
-                    // Set visual result
-                    setVoxel(is, x, y, slice, n);
+                    addTACtoCluster(tac, x, y, slice, n);
                 }
             }
         }
-
-        return expand(res, clusters.size());
-
     }
 
     @Override

@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import jclustering.Cluster;
 import jclustering.GUIUtils;
 import jclustering.ImagePlusHyp;
-import jclustering.Utils;
 import jclustering.metrics.ClusteringMetric;
 
 /**
@@ -95,49 +94,25 @@ public abstract class ClusteringTechnique implements ItemListener {
     }
 
     /**
-     * Performs the actual processing for this clustering technique. This class
-     * returns a dynamic image with n + 1 frames, with n being the total number
-     * of clusters formed, following the convention as follows:
-     * <p>
-     * <ul>
-     * <li>From the first frame to the n-th frame, individual clusters are
-     * represented</li>
-     * <li>The last frame (n + 1) shows all the clusters in the image
-     * simultaneously. The first cluster gets a value of 1, the second one a
-     * value of 2... non-analyzed voxels get a value of 0.</li>
-     * </ul>
-     * 
-     * In order to return this structure, the developer may just fill a regular
-     * {@link ImagePlus} structure with each voxel containing the value of the
-     * cluster that voxel belongs to (1-based) and then use the
-     * {@link Utils#expand(ImagePlus, int)} method. The {@code int} value that
-     * this method needs will always be (except weird cases) the one obtained
-     * via {@code clusters.size()}.
-     * <p>
-     * <strong>Please note that the minimum cluster number must be 1, not 0.
-     * </strong>
-     * <p>
-     * This class must also build an {@link ArrayList}, with each element being
-     * a {@link Cluster} object.
-     * 
-     * @return A dynamic image representing each cluster following the previous
-     *         convention.
+     * Performs the actual processing for this clustering technique. This 
+     * method fills an {@link ArrayList} object containing objects of the
+     * {@link Cluster} class. Each cluster contains the TACs belonging to it.
+     * As the {@code Cluster} object remembers the coordinates of every 
+     * voxel that has been added to it, there is enough information to build
+     * a {@link ImagePlus} for representation then the processing is finished.
      */
-    public abstract ImagePlus process();
+    public abstract void process();
 
     /**
      * This helper method is the method called from the main class. It
      * initializes the local {@link Cluster} object every time a clustering
-     * operation is called and returns the result of calling the
-     * {@link #process()} method.
-     * 
-     * @return The resulting {@link ImagePlus} with the clustering data.
+     * operation is called and calls the main {@code process()} method.
      */
-    public ImagePlus compute() {
+    public void compute() {
 
         init();
 
-        return process();
+        process();
 
     }
 
@@ -277,13 +252,17 @@ public abstract class ClusteringTechnique implements ItemListener {
      * Provides a fast way to add a {@code double []} tac to a given cluster.
      * 
      * @param tac The TAC data.
+     * @param x X-coordinate for added TAC.
+     * @param y Y-coordinate for added TAC.
+     * @param slice Slice (1-based) for added TAC.
      * @param cluster The index for the cluster into which to insert the data
      *            (1-based).
      */
-    public void addTACtoCluster(double[] tac, int cluster) {
+    public void addTACtoCluster(double[] tac, int x, int y, int slice, 
+            int cluster) {
 
         Cluster c = getClusterAt(cluster);
-        c.add(tac);
+        c.add(tac, x, y, slice);
 
     }
 
