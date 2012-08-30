@@ -1,33 +1,34 @@
-# jClustering
+# Introduction
 
-## Introduction
+This documentation explains what jClustering is, how to use it and how to
+develop a new clustering technique or metric for the jClustering framework
+using simple examples and code snippets. Several working examples will be
+attached to this document annex for full reference.
 
-This documentation explains how to use jClustering and how to develop a new
-clustering technique or metric for the jClustering framework using simple
-examples and code snippets. Several working examples will be attached to this
-document annex for full reference.
-
-## What is jClustering?
+# What is jClustering?
 
 jClustering is an [ImageJ](http://rsbweb.nih.gov/ij/) plugin developed with the
 purpose of becoming a general framework for dynamic imaging clustering, such as
-dynamic PET segmentation. jClustering is written in Java and provides a very
+dynamic PET segmentation. It consists of grouping together voxels with similar
+time-activity curves (TACs). jClustering is written in Java and provides a very
 simple API interface that will allow the implementation of new clustering
 algorithms in a short time. The fact that it is implemented on top of ImageJ
 gives it all the advantages of using an open-source imaging analysis platform.
 
-## Installation
+# Installation
 
-The installation of  jClustering within ImageJ is straightforward: simply copy
-the folder jclustering/ to the plugins/ folder of your ImageJ installation.
+The installation of  jClustering within ImageJ is straightforward: download the
+latest version available at the [download
+page](https://github.com/HGGM-LIM/jclustering/downloads) and copy the
+`jclustering/` folder to the `plugins/` folder of your ImageJ installation.
 
 jClustering uses Apache Commons Math version 3.0 for some mathematical
-operations, so this library also needs to be installed into the system. The
-process is simple: go to [Apache Commons Math
-wegpage](http://commons.apache.org/math/download_math.cgi) and download the
-file commons-math3-3.0-bin.zip, open it with any unzip program and copy the
-file commons-math3-3.0/commons-math3-3.0.jar to the plugins/jars folder of your
-ImageJ installation.
+operations, so this library also needs to be installed. The process is simple:
+go to [Apache Commons Math
+webpage](http://commons.apache.org/math/download_math.cgi) and download the
+file `commons-math3-3.0-bin.zip`, open it with any unzip program and copy the
+file `commons-math3-3.0/commons-math3-3.0.jar` to the `plugins/jars` folder of
+your ImageJ installation.
 
 ## How to use jClustering
 Once jClustering has been installed, you can access it via the `Plugins ->
@@ -62,10 +63,10 @@ appear on screen.
 The resulting image is another HyperStack that contains the results structured
 the following way:
 
-* The last _frame_ (not a real frame, shown on the image above these lines) is
+* The last _frame_ (not a real frame as it does not represent temporal data) is
   a 3D image in which every voxel contains the value of the cluster that voxel
-  belongs to. For instance, a voxel with a grey value of 1 belongs to the
-  first cluster, and so on.
+  belongs to. For instance, a voxel with a grey value of 1 belongs to the first
+  cluster, and so on.
 
 * All the other frames, starting from the first one, represent the contents of
   each cluster.
