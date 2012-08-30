@@ -181,14 +181,13 @@ to the `isNoise(double [] tac)` method, it is skipped and the next one is
 obtained.  This step improves algorithm performance by not analyzing noisy
 voxels. This option can be disabled on the first tab of the GUI.
 
-The methods `addTACToCluster(double [] tac, Cluster c)` (from the
-`ClusteringTechnique` superclass) and `setVoxel(ImageStack is, int x, int y,
-int slice, int value)` (from the `jclustering.Utils` package) provide an easy
-way to set the final cluster values to the resulting cluster and image,
-respectively.  The user that wishes to implement its own technique can use
-these methods if desired, but they are in no way mandatory, as long as the
-results are set in some way. Sometimes it can be easier to access directly
-the `Cluster` methods of the `ArrayList<Cluster> clusters` object.
+The method `addTACtoCluster(double [] tac, int x, int y, int slice Cluster c)`
+(from the `ClusteringTechnique` superclass) provides an easy way to set the
+final cluster values to the resulting cluster.  The user that wishes to
+implement its own technique can use this method if desired, but this is in
+no way mandatory, as long as the results are set in some way. Sometimes it can
+be easier to access directly the `Cluster` methods of the `ArrayList<Cluster>
+clusters` object.
 
 ## How to develop a new metric
 
