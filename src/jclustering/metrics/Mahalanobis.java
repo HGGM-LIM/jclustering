@@ -48,7 +48,7 @@ public class Mahalanobis extends ClusteringMetric {
             res += left[i] * diff[i];
         }
         
-        return res;
+        return Math.sqrt(res);
         
     }
     
