@@ -53,7 +53,7 @@ public class Mahalanobis extends ClusteringMetric {
     }
     
     /*
-     * Initialices the covariance matrix
+     * Initializes the covariance matrix
      */
     private void _init() {
         
