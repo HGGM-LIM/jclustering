@@ -193,7 +193,7 @@ public abstract class ClusteringTechnique implements ItemListener {
     public void addMetricsToJPanel(JPanel jp) {
 
         Choice c = getMetricList(this, this.ip);
-        jp.add(new JLabel("Select a technique: "));
+        jp.add(new JLabel("Select a metric: "));
         jp.add(c);
 
     }
