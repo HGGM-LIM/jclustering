@@ -1,5 +1,14 @@
+v1.0.1 - 08/31/2012
+-------------------
+
+- Leader-follower can now discard the smallest cluster (according to
+  Cluster.score() method) if cluster limit has been reached.
+
+- New javadoc.
+
+
 v1.0.0 - 08/31/2012
 -------------------
 
-First released version. Implements K-Means and Leader-follower clustering
-techniques and two metrics: correlation and p-norm.
+- First released version. Implements K-Means and Leader-follower clustering
+  techniques and two metrics: correlation and p-norm.
