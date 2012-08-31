@@ -4,10 +4,12 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -42,12 +44,16 @@ public class LeaderFollower extends ClusteringTechnique
 
     // Default values
     private final int DEF_MAX_CLUSTERS = 1000;
+    private final boolean DEF_DISCARD_SMALLEST = false;
     private final int DEF_KEEP_CLUSTERS = 50;
     private final double DEF_THRESHOLD = 0.3;
     private final double DEF_T_INC = 1.00005;
     
     // Maximum number of clusters to compute
     private int max_clusters = DEF_MAX_CLUSTERS;
+    
+    // Discard smallest cluster when max_clusters is reached
+    private boolean discard_smallest = DEF_DISCARD_SMALLEST;
     
     // Maximum number of clusters to keep
     private int keep_clusters = DEF_KEEP_CLUSTERS;
@@ -106,7 +112,9 @@ public class LeaderFollower extends ClusteringTechnique
                     // If is noise, skip
                     if (skip_noisy && isNoise(tac))
                         continue;
-                                      
+
+                    int size = clusters.size();
+                    
                     // Is it the first voxel? If so, just put it in a 
                     // new cluster
                     if (clusters.isEmpty()) {
@@ -114,8 +122,15 @@ public class LeaderFollower extends ClusteringTechnique
                         clusters.add(c);
                         _addToRecord(c, x, y, slice);
                     }
-                    // Are we within the max_clusters limit?
-                    else if (clusters.size() < max_clusters) {
+                    // Are we within the max_clusters limit or can we get rid
+                    // of any of them?
+                    else if (size < max_clusters || discard_smallest) {
+                        
+                        // If too many clusters, throw away the smallest of 
+                        // them, if allowed by the settings.
+                        if (size == max_clusters && discard_smallest) {
+                            _discardSmallest();
+                        }
                         
                         // Get closest cluster
                         int cindex = _getClosestCluster(tac);
@@ -132,7 +147,7 @@ public class LeaderFollower extends ClusteringTechnique
                             clusters.add(c);
                             _addToRecord(c, x, y, slice);
                         }                        
-                    }
+                    }                    
                 }
             }
         }
@@ -175,7 +190,7 @@ public class LeaderFollower extends ClusteringTechnique
     
     public JPanel makeConfig() {
         
-        JPanel jp = new JPanel(new GridLayout(4, 2, 5, 5));
+        JPanel jp = new JPanel(new GridLayout(5, 2, 5, 5));
         
         // Maximum number of clusters
         jp.add(new JLabel("Maximum clusters to form:"));
@@ -183,10 +198,22 @@ public class LeaderFollower extends ClusteringTechnique
                                  this);
         jp.add(jt_maxclust);
         
+        // Discard smallest cluster
+        String discard_help = "<html>If a new cluster needs to be created<br>" +
+        		"but the maximum permitted number has been reached,<br>" +
+        		"discard the smallest one (the one containing less voxels<br>" +
+        		"with lowest amplitudes).</html>";
+        jp.add(createJLabel("Discard smallest cluster:*", discard_help));
+        JCheckBox jcb_discard = new JCheckBox();
+        jcb_discard.setSelected(discard_smallest);
+        jcb_discard.setName("jcb_discard");
+        jcb_discard.addItemListener(this);
+        jp.add(jcb_discard);
+        
         // Number of clusters to keep
-        String keep_clusters_help = "<html>If more than these clusters " +
-        		"are formed, the cluster list will be ordered (biggest " +
-        		"clusters first) and the ones exceeding this variable " +
+        String keep_clusters_help = "<html>If more than these clusters<br>" +
+        		"are formed, the cluster list will be ordered (biggest<br>" +
+        		"clusters first) and the ones exceeding this variable<br>" +
         		"will be discarded.</html>";
         jp.add(createJLabel("Clusters to keep:*", keep_clusters_help));
         JTextField jt_keepclust = createJTextField("jt_keepclust", 
@@ -272,6 +299,26 @@ public class LeaderFollower extends ClusteringTechnique
         ints.add(coordinates);
         
     }
+    
+    /*
+     * Discard smallest cluster
+     */    
+    private void _discardSmallest() {
+        
+        double score = Double.MAX_VALUE;
+        Cluster min = null;
+        
+        for (Cluster c : clusters) {
+            double s = c.score();
+            if (s < score) {
+                score = s;
+                min = c;
+            }
+        }
+        
+        clusters.remove(min);
+        
+    }
 
     @Override
     public void focusGained(FocusEvent arg0) {
@@ -327,5 +374,15 @@ public class LeaderFollower extends ClusteringTechnique
             ((JTextField)c).setText(Double.toString(t_inc));
         }        
     }
+    
+    
+    public void itemStateChanged(ItemEvent arg0) {
+                        
+        // Check the checkbox for discard_smallest
+        JCheckBox jcb = (JCheckBox)arg0.getSource();
+        discard_smallest = jcb.isSelected();
+        
+    }
+    
 
 }
