@@ -19,6 +19,6 @@ public class Constants {
             + " selected";
     
     // Version
-    final public static String VERSION = "v1.0.0";
+    final public static String VERSION = "v1.0.1";
 
 }
