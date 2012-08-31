@@ -131,8 +131,9 @@ public class Cluster implements Comparable<Cluster> {
      * The second way is the standard way of creating a new cluster, where the
      * centroid serves as the reference for the distances. In any case, as there
      * are some approaches in which the centroid is built along the way, the
-     * parameter {@code modify_centroid} is offered in the {@code Cluster} 
-     * constructor. This method uses the default behavior used at creation
+     * {@code Cluster} constructor will cause this cluster to modify its 
+     * centroid if the coordinates for the first voxel are provided. 
+     * This method always uses the default behavior used at creation
      * time.
      * 
      * @param data Dynamic data to be added
