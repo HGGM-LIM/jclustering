@@ -35,6 +35,7 @@ import ij.process.ImageProcessor;
 
 import static jclustering.GUIUtils.*;
 import static jclustering.Utils.*;
+import static jclustering.Constants.VERSION;
 import static jclustering.Constants.NO_METRIC;
 import static jclustering.Constants.NO_TECHNIQUE;
 
@@ -99,7 +100,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         // for the interface elements.
 
         // Main window
-        f = new JFrame("JClustering");
+        f = new JFrame("JClustering " + VERSION);
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Main panel, with tabs

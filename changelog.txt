@@ -1,0 +1,5 @@
+v1.0.0 - 08/31/2012
+-----------------
+
+First released version. Implements K-Means and Leader-follower clustering
+techniques and two metrics: correlation and p-norm.

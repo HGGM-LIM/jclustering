@@ -17,5 +17,8 @@ public class Constants {
             + " configuration needed";
     final public static String NO_TECHNIQUE = "No clustering technique"
             + " selected";
+    
+    // Version
+    final public static String VERSION = "v1.0.0";
 
 }
