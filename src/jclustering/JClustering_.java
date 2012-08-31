@@ -46,34 +46,11 @@ import static jclustering.Constants.NO_TECHNIQUE;
  * 
  * <p>
  * This plugin is intended to be used as a development framework for developing
- * clustering algorithms to be used in nuclear medicine dynamic studies.
+ * clustering algorithms to be used in nuclear medicine dynamic studies or 
+ * any other modality of dynamic imaging.
  * Examples of said clustering algorithms are k-means, leader-follower,
  * Principal Component Analysis, Independent Component Analysis, Factorial
  * Analysis...
- * </p>
- * 
- * <p>
- * So far, the following algorithms are implemented: TODO Fill implemented
- * algorithms.
- * </p>
- * 
- * <p>
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation (http://www.gnu.org/licenses/gpl.txt).
- * </p>
- * 
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * </p>
- * 
- * <p>
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
  * </p>
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
