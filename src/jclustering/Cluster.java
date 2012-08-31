@@ -219,8 +219,8 @@ public class Cluster implements Comparable<Cluster> {
     @Override
     public int compareTo(Cluster that) {
         
-        double this_score = this.size() * this.getPeakMean();
-        double that_score = that.size() * that.getPeakMean();        
+        double this_score = score();
+        double that_score = that.score();        
         
         if (this_score < that_score) {
             return -1;
@@ -230,6 +230,14 @@ public class Cluster implements Comparable<Cluster> {
             return 0;
         }
         
+    }
+    
+    /**
+     * @return A score for comparing clusters. Currently, size() * getPeakMean()
+     * is used.
+     */
+    public double score() {
+        return size() * getPeakMean();
     }
 
 }
