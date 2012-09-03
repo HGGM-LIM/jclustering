@@ -17,7 +17,7 @@ import org.apache.commons.math3.stat.correlation.StorelessCovariance;
 public class Mahalanobis extends ClusteringMetric {
 
     private boolean init = false;
-    private RealMatrix cov = null;
+    private RealMatrix invcov = null;
     
     @Override
     public double distance(double[] centroid, double[] data) {
@@ -39,8 +39,8 @@ public class Mahalanobis extends ClusteringMetric {
             diff[i] = centroid[i] - data[i];
         }       
         
-        // Left-hand side of the equation: vector * cov^-1
-        double [] left = cov.preMultiply(diff);
+        // Left-hand side of the equation: vector * invcov^-1
+        double [] left = invcov.preMultiply(diff);
         
         // Compute the dot product of both vectors
         double res = 0.0;
@@ -74,7 +74,7 @@ public class Mahalanobis extends ClusteringMetric {
         RealMatrix temp = sc.getCovarianceMatrix();
         
         // But this matrix is always used inverted. Do it now.
-        cov = new LUDecomposition(temp).getSolver().getInverse();
+        invcov = new LUDecomposition(temp).getSolver().getInverse();
         
         // Don't init again
         init = true;
