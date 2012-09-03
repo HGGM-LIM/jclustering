@@ -22,6 +22,8 @@ import java.util.ArrayList;
  * 
  * This file needs to have as many rows as frames, or the time data will
  * not be used when saving data to file.
+ * <p>
+ * This class can also read PMOD's .acqtimes files.
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  *
@@ -58,12 +60,23 @@ public class TimeVectorReader {
             FileReader fr = new FileReader(file_path);
             BufferedReader br = new BufferedReader(fr);
             
+            // Default separator is space
+            String sep = " ";
+                        
             // First, put all lines into an ArrayList<String>
             ArrayList<String []> lines = new ArrayList<String []>();
             String line = null;
             while ((line = br.readLine()) != null) {
+                // If it contains comments it is a PMOD file (for now),
+                // so let's change the separator file and continue to next
+                // line.
+                if (line.indexOf('#') != -1) {
+                    sep = "\t";
+                    continue;
+                }
+                
                 line = line.trim(); // remove white characters from both ends
-                String [] s = line.split(" ");
+                String [] s = line.split(sep);
                 if (s.length == 2)
                     lines.add(s);
             }
