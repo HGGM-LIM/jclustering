@@ -1,5 +1,7 @@
 package jclustering;
 
+import java.util.Iterator;
+
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -13,7 +15,7 @@ import ij.ImageStack;
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  * 
  */
-public class ImagePlusHyp extends ImagePlus {
+public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
 
     /*
      * dim[0] -> width (x) dim[1] -> height (y) dim[2] -> nChannels (1-based)
@@ -125,6 +127,11 @@ public class ImagePlusHyp extends ImagePlus {
         }
         return false;
 
+    }
+
+    @Override
+    public Iterator<Voxel> iterator() {
+        return new ImagePlusHypIterator(this);
     }
 
 }

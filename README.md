@@ -197,6 +197,33 @@ no way mandatory, as long as the results are set in some way. Sometimes it can
 be easier to access directly the `Cluster` methods of the `ArrayList<Cluster>
 clusters` object.
 
+As `ImagePlusHyp` implements the `Iterable` interface, the three nested `for`
+loops can be avoided. The previous code would have the following aspect:
+
+```java
+public void process() {
+
+    for (Voxel v : ip) {                    
+
+        // If is noise, skip
+        if (skip_noisy && isNoise(v))
+                continue;
+
+        // Else, set the corresponding result
+        int n = _getMaxIndex(v.tac) + 1; // +1, min_cluster = 1.
+
+        // Set temporal result
+        addTACtoCluster(v, n);
+    }
+         
+}
+```
+
+The `Voxel` object is simply a data transfer object with `public final` 
+references to the `x`, `y` and `slice` coordinates and the `tac` array. Most
+(or possibly all) the necessary for voxel addition work with `Voxel` objects.
+Please refer to the full API for more information.
+
 ## How to develop a new metric
 
 New metric development is very similar to the previous step. All that is needed

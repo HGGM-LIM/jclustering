@@ -18,6 +18,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import jclustering.Cluster;
 import jclustering.MathUtils;
+import jclustering.Voxel;
 import static jclustering.GUIUtils.*;
 
 import ij.IJ;
@@ -64,10 +65,7 @@ public class LeaderFollower extends ClusteringTechnique
     // Threshold increment
     private double t_inc = DEF_T_INC;
     private Hashtable<Cluster, Double> corr_limits;
-    
-    // Dimensions
-    private int [] dim;
-    
+
     // Pearson Correlation object
     private PearsonsCorrelation pc;
     
@@ -81,8 +79,6 @@ public class LeaderFollower extends ClusteringTechnique
          * Initial object creation.
          */                
         
-        dim = ip.getDimensions();
-        
         pc = new PearsonsCorrelation();
         
         record = new Hashtable<Cluster, ArrayList<Integer[]>>();
@@ -95,22 +91,21 @@ public class LeaderFollower extends ClusteringTechnique
         /*
          * Process all TACs               
          */
+        int slice = 0;
         
-        for (int slice = 1; slice <= dim[3]; slice++) {
-            
-            // Show status message for every slice
-            String status = String.format("Leader-follower. Slice %d, " +
+        for (Voxel v : ip) {
+
+            if (slice != v.slice) {
+                // Show status message for every slice
+                String status = String.format("Leader-follower. Slice %d, " +
             		"%d/%d clusters", slice, clusters.size(), max_clusters);
-            IJ.showStatus(status);            
-            
-            for (int x = 0; x < dim[0]; x++) {
-                for (int y = 0; y < dim[1]; y++) {
-                    
-                    // Get TAC
-                    double [] tac = ip.getTAC(x, y, slice);
-                    
+                IJ.showStatus(status);
+                // Update slice pointer
+                slice = v.slice;
+            }
+                
                     // If is noise, skip
-                    if (skip_noisy && isNoise(tac))
+                    if (skip_noisy && isNoise(v))
                         continue;
 
                     int size = clusters.size();
@@ -118,9 +113,9 @@ public class LeaderFollower extends ClusteringTechnique
                     // Is it the first voxel? If so, just put it in a 
                     // new cluster
                     if (clusters.isEmpty()) {
-                        Cluster c = new Cluster(tac, x, y, slice);
+                        Cluster c = new Cluster(v);
                         clusters.add(c);
-                        _addToRecord(c, x, y, slice);
+                        _addToRecord(c, v.x, v.y, v.slice);
                     }
                     // Are we within the max_clusters limit or can we get rid
                     // of any of them?
@@ -133,24 +128,23 @@ public class LeaderFollower extends ClusteringTechnique
                         }
                         
                         // Get closest cluster
-                        int cindex = _getClosestCluster(tac);
+                        int cindex = _getClosestCluster(v.tac);
                         
                         if (cindex >= 0) {
                             // There is a cluster that can include this voxel
                             Cluster c = clusters.get(cindex);
                             // Add TAC modifying centroid
-                            c.add(tac, x, y, slice);
-                            _addToRecord(c, x, y, slice);
+                            c.add(v);
+                            _addToRecord(c, v.x, v.y, v.slice);
                         } else {                            
                             // There is no cluster to include this voxel yet
-                            Cluster c = new Cluster(tac, x, y, slice);
+                            Cluster c = new Cluster(v);
                             clusters.add(c);
-                            _addToRecord(c, x, y, slice);
+                            _addToRecord(c, v.x, v.y, v.slice);
                         }                        
-                    }                    
-                }
-            }
+                    }   
         }
+                
         
         /*
          * Get rid of the smallest clusters

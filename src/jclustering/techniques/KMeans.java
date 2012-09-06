@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import jclustering.Cluster;
+import jclustering.Voxel;
 
 import ij.IJ;
 
@@ -45,8 +46,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     private int max_iterations = DEF_MAX_ITERATIONS;
     // Non-random initialization
     private String init = "";
-    // Image dimensions
-    private int[] dim;
+
 
     @Override
     public void process() {
@@ -56,9 +56,6 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         // Initialize points
         int[][] initial_points = new int[n_clusters][3];
         _fillInitialPoints(initial_points);
-        
-        // Get dimensions
-        dim = ip.getDimensions();
         
         // Keep track of number of iterations
         int it = 0;
@@ -365,29 +362,24 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         // to the previous TACs
         int size = models.size();
         ArrayList<Cluster> res = new ArrayList<Cluster>(size);
+        
         for (int i = 0; i < size; i++) {
             res.add(new Cluster(models.get(i).getCentroid()));
         }
 
         // Get each TAC, compare and add it to the closest cluster
-        for (int slice = 1; slice <= dim[3]; slice++) {
-            for (int x = 0; x < dim[0]; x++) {
-                for (int y = 0; y < dim[1]; y++) {
-
-                    double[] tac = ip.getTAC(x, y, slice);
+        for (Voxel v : ip) {
 
                     // If is noise, skip
-                    if (skip_noisy && isNoise(tac))
+                    if (skip_noisy && isNoise(v))
                         continue;
 
-                    int cluster_index = _getClosestCluster(tac, res);
+                    int cluster_index = _getClosestCluster(v, res);
 
                     // Set results.
-                    res.get(cluster_index).add(tac, x, y, slice);                  
-
-                }
-            }
+                    res.get(cluster_index).add(v);
         }
+  
 
         return res;
     }
@@ -395,7 +387,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     /*
      * Returns the cluster index which is closest to the given tac.
      */
-    private int _getClosestCluster(double[] tac, ArrayList<Cluster> l) {
+    private int _getClosestCluster(Voxel v, ArrayList<Cluster> l) {
 
         int index = -1;
         int size = l.size();
@@ -403,7 +395,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         for (int i = 0; i < size; i++) {
             double[] centroid = l.get(i).getCentroid();
-            double temp = metric.distance(tac, centroid);
+            double temp = metric.distance(v, centroid);
             if (temp < d) {
                 d = temp;
                 index = i;

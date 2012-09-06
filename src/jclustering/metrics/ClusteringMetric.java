@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import jclustering.GUIUtils;
 import jclustering.ImagePlusHyp;
+import jclustering.Voxel;
 
 /**
  * This abstract class provides a template with the basic functions that a
@@ -33,12 +34,26 @@ public abstract class ClusteringMetric implements ActionListener, ItemListener {
     /**
      * Computes the distance between to TACs according to this particular
      * metric. Extending classes must implement this method.
-     * 
-     * @param centroid The cluster centroid.
+     *
      * @param data The TAC to compare.
+     * @param centroid The cluster centroid.
+     *
      * @return The distance between both arrays.
      */
-    public abstract double distance(double[] centroid, double[] data);
+    public abstract double distance(double[] data, double[] centroid);
+    
+    /**
+     * Provides a shortcut for computing the distance between a {@link Voxel}
+     * and any TAC.
+     * @param v The Voxel which distance is to be computed.
+     * @param centroid The cluster centroid.
+     * @return The distance between both TACs.
+     */
+    public double distance(Voxel v, double[] centroid) {
+        
+        return distance(v.tac, centroid);
+        
+    }
 
     /**
      * @return The name of this metric.

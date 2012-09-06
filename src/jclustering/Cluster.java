@@ -85,6 +85,17 @@ public class Cluster implements Comparable<Cluster> {
     }
     
     /**
+     * Provides a shortcut for the public constructor with parameters using a
+     * {@link Voxel} to initialize the parameters.
+     * @param v The voxel to be used as initial centroid.
+     */
+    public Cluster(Voxel v) {
+        
+        this(v.tac, v.x, v.y, v.slice);
+        
+    }
+    
+    /**
      * @return The coordinates of pixels added to this cluster
      */
     public ArrayList<Integer []> getCoordinates() {
@@ -170,6 +181,15 @@ public class Cluster implements Comparable<Cluster> {
         size++;
         coordinates.add(new Integer[] {x, y, slice});
 
+    }
+    
+    /**
+     * Provides a shortcut to the {@link Cluster#add(double[], int, int, int)}
+     * method using a {@link Voxel}.
+     * @param v The Voxel to be added.
+     */
+    public void add(Voxel v) {
+        add(v.tac, v.x, v.y, v.slice);
     }
 
     /**

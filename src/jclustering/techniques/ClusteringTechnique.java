@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import jclustering.Cluster;
 import jclustering.GUIUtils;
 import jclustering.ImagePlusHyp;
+import jclustering.Voxel;
 import jclustering.metrics.ClusteringMetric;
 
 /**
@@ -221,6 +222,18 @@ public abstract class ClusteringTechnique implements ItemListener {
         return ip.isNoise(data);
 
     }
+    
+    /**
+     * Helper method. Just calls {@link ImagePlusHyp#isNoise(double[])} method.
+     * 
+     * @param v The voxel to be tested
+     * @return true if the given TAC is noise with respect to this image.
+     */
+    public boolean isNoise(Voxel v) {
+        
+        return ip.isNoise(v.tac);
+        
+    }
 
     /**
      * Provides a safe way to get the {@link Cluster} at the {@code index}
@@ -264,6 +277,19 @@ public abstract class ClusteringTechnique implements ItemListener {
         Cluster c = getClusterAt(cluster);
         c.add(tac, x, y, slice);
 
+    }
+    
+    /**
+     * Provides a fast way to add a {@link Voxel} to a given cluster.
+     * 
+     * @param v The voxel to be added.
+     * @param cluster The index for the cluster into which to insert data
+     * (1-based).
+     */
+    public void addTACtoCluster(Voxel v, int cluster) {
+        
+        addTACtoCluster(v.tac, v.x, v.y, v.slice, cluster);
+        
     }
 
 

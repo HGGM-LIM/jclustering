@@ -1,4 +1,11 @@
-v1.0.1 - 08/31/2012
+v1.1.2 - 09/06/2012
+-------------------
+
+- ImagePlusHyp now implements Iterable<Vector> and is much easier to go
+  through all the voxels in an image.
+
+
+v1.0.2 - 08/31/2012
 -------------------
 
 - Mahalanobis distance implemented.
