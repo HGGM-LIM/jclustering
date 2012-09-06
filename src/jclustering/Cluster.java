@@ -9,6 +9,8 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * {@code double []} array) and by the mean TAC of the voxels assigned to this
  * cluster. Every other elements from this class serve as helpers for latter
  * calculations.
+ * 
+ * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  */
 public class Cluster implements Comparable<Cluster> {
 
