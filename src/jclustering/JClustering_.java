@@ -224,6 +224,11 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         technique.compute();
         ArrayList<Cluster> clusters = technique.getClusters();
         
+        if (clusters.isEmpty()) {
+            IJ.log("No clusters were formed by your method. Exiting...");
+            return;
+        }
+        
         // Build result image and show it
         int [] dim = iph.getDimensions();
         int size = clusters.size();
