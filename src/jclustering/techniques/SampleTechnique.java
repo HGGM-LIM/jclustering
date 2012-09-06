@@ -4,6 +4,7 @@ import java.awt.event.ItemEvent;
 import javax.swing.JPanel;
 
 import jclustering.Voxel;
+import static jclustering.MathUtils.getMaxIndex;
 
 /**
  * @author jmmateos
@@ -21,7 +22,7 @@ public class SampleTechnique extends ClusteringTechnique {
                         continue;
 
                     // Else, set the corresponding result
-                    int n = _getMaxIndex(v.tac) + 1; // +1, min_cluster = 1.
+                    int n = getMaxIndex(v.tac) + 1; // +1, min_cluster = 1.
 
                     // Set temporal result
                     addTACtoCluster(v, n);
@@ -44,20 +45,5 @@ public class SampleTechnique extends ClusteringTechnique {
 
         super.itemStateChanged(arg0);
 
-    }
-
-    private int _getMaxIndex(double[] d) {
-
-        int res = 0;
-        double aux = d[0];
-
-        for (int i = 0; i < d.length; i++) {
-            if (d[i] > aux) {
-                res = i;
-                aux = d[i];
-            }
-        }
-
-        return res;
     }
 }

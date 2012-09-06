@@ -30,6 +30,26 @@ public class MathUtils {
     }
     
     /**
+     * Returns the index for the maximum value of the array.
+     * @param d A double array.
+     * @return The index for the maximum value.
+     */
+    public static int getMaxIndex(double[] d) {
+
+        int res = 0;
+        double aux = d[0];
+
+        for (int i = 0; i < d.length; i++) {
+            if (d[i] > aux) {
+                res = i;
+                aux = d[i];
+            }
+        }
+
+        return res;
+    }
+    
+    /**
      * Smooths the given TAC using a 5-point filtering.
      * @param data The raw TAC.
      * @return The smoothed TAC.
