@@ -221,8 +221,8 @@ public void process() {
 
 The `Voxel` object is simply a data transfer object with `public final` 
 references to the `x`, `y` and `slice` coordinates and the `tac` array. Most
-(or possibly all) the necessary for voxel addition work with `Voxel` objects.
-Please refer to the full API for more information.
+(or possibly all) the necessary methods for voxel addition work with `Voxel`
+objects.  Please refer to the full API for more information.
 
 ## How to develop a new metric
 
