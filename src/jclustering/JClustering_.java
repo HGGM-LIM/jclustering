@@ -224,6 +224,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         technique.compute();
         ArrayList<Cluster> clusters = technique.getClusters();
         
+        // Exit if no clusters were formed
         if (clusters.isEmpty()) {
             IJ.log("No clusters were formed by your method. Exiting...");
             return;
