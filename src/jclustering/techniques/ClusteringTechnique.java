@@ -112,6 +112,8 @@ public abstract class ClusteringTechnique implements ItemListener {
     public void compute() {
 
         init();
+        
+        metric.init(skip_noisy);
 
         process();
 
@@ -207,7 +209,7 @@ public abstract class ClusteringTechnique implements ItemListener {
      */
     public void skipNoisy(boolean skip_noisy) {
 
-        this.skip_noisy = skip_noisy;
+        this.skip_noisy = skip_noisy;        
 
     }
 

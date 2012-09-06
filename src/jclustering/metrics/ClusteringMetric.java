@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import jclustering.GUIUtils;
 import jclustering.ImagePlusHyp;
 import jclustering.Voxel;
+import jclustering.techniques.ClusteringTechnique;
 
 /**
  * This abstract class provides a template with the basic functions that a
@@ -30,6 +31,11 @@ public abstract class ClusteringMetric implements ActionListener, ItemListener {
      * Reference to the full image, if needed.
      */
     protected ImagePlusHyp ip;
+    
+    /**
+     * Should we skip noisy voxels? Some metrics might need to know this.
+     */
+    protected boolean skip_noisy;
 
     /**
      * Computes the distance between to TACs according to this particular
@@ -102,9 +108,36 @@ public abstract class ClusteringMetric implements ActionListener, ItemListener {
      */
     public void setup(ImagePlusHyp ip) {
 
-        this.ip = ip;
+        this.ip = ip;        
 
     }
+    
+    /**
+     * Ease of access for the {@link ImagePlusHyp#isNoise(double[])} method.
+     * @param tac The TAC to be tested.
+     * @return true if it noise.
+     */
+    public boolean isNoise(double [] tac) {
+        return ip.isNoise(tac);
+    }
+
+    /**
+     * Ease of access for the {@link ImagePlusHyp#isNoise(double[])} method.
+     * @param v The voxel to be tested.
+     * @return true if it noise.
+     */
+    public boolean isNoise(Voxel v) {
+        return ip.isNoise(v.tac);
+    }
+
+    /**
+     * If the metric needs some previous computations, it should override
+     * this method. This is called just once prior to 
+     * {@link ClusteringTechnique#process()}. By default it does nothing.
+     * 
+     * @param skip_noisy Tells the init process whether to skip noisy voxels.
+     */
+    public void init(boolean skip_noisy) {}
 
     // These two methods are overridden so that the extending classes don't
     // have to deal with them if they don't have to.

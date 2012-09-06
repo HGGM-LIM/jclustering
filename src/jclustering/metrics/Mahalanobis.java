@@ -1,6 +1,10 @@
 package jclustering.metrics;
 
+import ij.IJ;
+
 import java.util.Arrays;
+
+import jclustering.Voxel;
 
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -15,18 +19,12 @@ import org.apache.commons.math3.stat.correlation.StorelessCovariance;
  *
  */
 public class Mahalanobis extends ClusteringMetric {
-
-    private boolean init = false;
+    
     private RealMatrix invcov = null;
     
     @Override
-    public double distance(double[] centroid, double[] data) {
-        
-        // Need some data before starting
-        if (!init) {
-            _init();
-        }
-        
+    public double distance(double[] centroid, double[] data) {  
+     
         // If the arrays are the same, the distance is 0.0
         if (Arrays.equals(centroid, data)) {
             return 0.0;
@@ -55,19 +53,18 @@ public class Mahalanobis extends ClusteringMetric {
     /*
      * Initializes the covariance matrix
      */
-    private void _init() {
+    public void init(boolean skip_noisy) {
+        
+        IJ.showStatus("Mahalanobis metric initializing...");
         
         int dim[] = ip.getDimensions();
         StorelessCovariance sc = new StorelessCovariance(dim[4]);
         
         // Feed the StorelessCovariance
-        for (int slice = 1; slice < dim[3]; slice++) {
-            for (int x = 0; x < dim[0]; x++) {
-                for (int y = 0; y < dim[1]; y++) {                    
-                    double [] tac = ip.getTAC(x, y, slice);
-                    sc.increment(tac);                    
-                }
-            }
+        for (Voxel v : ip) {
+            if (skip_noisy && isNoise(v)) continue;
+            
+            sc.increment(v.tac);
         }
         
         // Set the covariance value
@@ -75,10 +72,7 @@ public class Mahalanobis extends ClusteringMetric {
         
         // But this matrix is always used inverted. Do it now.
         invcov = new LUDecomposition(temp).getSolver().getInverse();
-        
-        // Don't init again
-        init = true;
-        
+
     }
 
 }
