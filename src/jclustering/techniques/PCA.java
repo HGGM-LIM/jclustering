@@ -57,7 +57,9 @@ public class PCA extends ClusteringTechnique {
             
             if (skip_noisy && isNoise(v)) continue;
             
-            double [] projection = result.getColumn(column_index++);            
+            double [] projection = result.getColumn(column_index++);   
+            
+            // Every Voxel belongs to the maximum index of its projected TAC
             int max = getMaxIndex(projection) + 1;
             addTACtoCluster(v, max);            
         }        
