@@ -51,8 +51,6 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     @Override
     public void process() {
 
-        IJ.log("K-means clustering started");
-
         // Initialize points
         int[][] initial_points = new int[n_clusters][3];
         _fillInitialPoints(initial_points);

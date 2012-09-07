@@ -84,8 +84,7 @@ public class LeaderFollower extends ClusteringTechnique
         record = new Hashtable<Cluster, ArrayList<Integer[]>>();
         corr_limits = new Hashtable<Cluster, Double>();
         
-        IJ.log(String.format("Leader-follower clustering started.\n" +
-        		"Correlation limit: %f; increment: %f.",
+        IJ.log(String.format("Correlation limit: %f; increment: %f.",
         		threshold, t_inc));
         
         /*

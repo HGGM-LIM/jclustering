@@ -220,6 +220,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     
         long start = System.currentTimeMillis();
     
+        IJ.log("----- Process started: " + technique.getName() + "-----");
         // Actual clustering operations
         technique.compute();
         ArrayList<Cluster> clusters = technique.getClusters();
@@ -263,6 +264,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         long end = System.currentTimeMillis();
         IJ.log(String.format("Time elapsed: %.3f seconds.", 
                 (double) (end - start) / 1000.0));
+        IJ.log("----- Process finished -----");
+        IJ.log(""); // blank line
         
         // Save data to file if the path has been selected
         if (file_saving_path != null) {
