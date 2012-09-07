@@ -16,7 +16,7 @@ public class Constants {
     final public static String NO_METRIC = "No metric selected or no"
             + " configuration needed";
     final public static String NO_TECHNIQUE = "No clustering technique"
-            + " selected";
+            + " selected or no configuration needed";
     
     // Version
     final public static String VERSION = "v1.1.3";
