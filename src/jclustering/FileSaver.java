@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 /**
@@ -34,9 +35,18 @@ public class FileSaver {
 
         this.format = format;
         this.clusters = clusters;
-        this.t = t;
-        time_length = clusters.get(0).getCentroid().length;
-
+        this.t = t;       
+        
+        // Get first non-empty cluster
+        int size = clusters.size();
+        for (int i = 0; i < size; i++) {
+            double [] temp = clusters.get(0).getCentroid();
+            if (temp != null) {
+                time_length = temp.length;
+                break;
+            }
+        }
+        
     }
 
     /**
@@ -194,6 +204,14 @@ public class FileSaver {
         // Fill the data
         for (int i = offset; i < res.length; i++) {
             double [] tac = cluster.get(i - offset).getCentroid();
+            if (tac == null) {
+                // It may be possible that certain clusters from the 
+                // "cluster" object are empty, if they have been filled
+                // using the addTACtoCluster() methods. In this case,
+                // an empty TAC (all 0) is created.
+                tac = new double[time_length];
+                Arrays.fill(tac, 0);
+            }
             for (int j = 0; j < time_length; j++) {
                 res[i][j] = tac[j];
             }

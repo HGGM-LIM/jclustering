@@ -34,18 +34,20 @@ public class Cluster implements Comparable<Cluster> {
 
     /**
      * Public constructor. Does nothing by default, just initializes the
-     * internal containers.
+     * internal containers. A cluster created this way modifies its centroid.
      */
     public Cluster() {
         
         size = 0;
         peak_stats = new SummaryStatistics();
         coordinates = new ArrayList<Integer []>();
+        modify_centroid = true;
         
     }
 
     /**
-     * Public constructor with a pre-defined centroid.
+     * Public constructor with a pre-defined centroid. A cluster initialized
+     * this way does not modify its centroid.
      * 
      * @param centroid Centroid vector.
      */
@@ -88,7 +90,8 @@ public class Cluster implements Comparable<Cluster> {
     
     /**
      * Provides a shortcut for the public constructor with parameters using a
-     * {@link Voxel} to initialize the parameters.
+     * {@link Voxel} to initialize the parameters. A cluster initialized this
+     * way modifies its centroid.
      * @param v The voxel to be used as initial centroid.
      */
     public Cluster(Voxel v) {
@@ -176,7 +179,10 @@ public class Cluster implements Comparable<Cluster> {
                 cluster_tac = temp;
 
         } else {
-            cluster_tac = data;
+            if (modify_centroid)
+                centroid = data;
+            else
+                cluster_tac = data;
         }
 
         peak_stats.addValue(MathUtils.getMax(data));
@@ -260,6 +266,19 @@ public class Cluster implements Comparable<Cluster> {
      */
     public double score() {
         return size() * getPeakMean();
+    }
+    
+    /**
+     * @return The defining curve for this cluster: the centroid if it is 
+     * being built with each addition, or the cluster TAC if the centroid
+     * is fixed.
+     */
+    public double [] getDefiningCurve() {
+        if (modify_centroid)
+            return centroid;
+        else
+            return cluster_tac;
+        
     }
 
 }
