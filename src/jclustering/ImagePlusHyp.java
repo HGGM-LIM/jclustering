@@ -7,6 +7,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.measure.Calibration;
 
 /**
  * This class extends {@link ImagePlus} in order to add a handy {@link #getTAC}
@@ -25,6 +26,9 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
     private ImageStack is;
     private double mean_amplitude; // mean amplitude for the whole volume
 
+    // Calibration curve
+    private double offset, slope;
+
     /**
      * Creates a new ImagePlusHyp using a general ImagePlus.
      * 
@@ -37,15 +41,28 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
         this.setProcessor(ip.getProcessor());
         this.setImage(ip);
         this.dim = ip.getDimensions();
+        
+        // Get calibration data from the image or set default values if
+        // no calibration has been used
+        Calibration cal = ip.getCalibration();
+        if (cal.calibrated()) {
+            double[] coefs = cal.getCoefficients();
+            offset = coefs[0];
+            slope = coefs[1];
+        } else {
+            offset = 0.0;
+            slope = 1.0;
+        }
 
-        // Compute the global mean (for noise comparison purposes)
+        // Compute the global calibrated mean (for noise comparison purposes)
         SummaryStatistics stats = new SummaryStatistics();
         for (int z = 0; z < dim[3]; z++)
             for (int x = 0; x < dim[0]; x++)
                 for (int y = 0; y < dim[1]; y++)
-                    stats.addValue(is.getVoxel(x, y, z));
+                    stats.addValue(offset + slope * is.getVoxel(x, y, z));
         mean_amplitude = stats.getMean();
-
+        
+        
     }
 
     /**
@@ -71,44 +88,13 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
 
         // Set the desired slice and iterate through the frames
         for (int frame = 1; frame <= dim[4]; frame++) {
-            int stack_number = this.getStackIndex(dim[2], slice, frame);
-            result[frame - 1] = is.getVoxel(x, y, stack_number - 1);
+            int stack_number = this.getStackIndex(dim[2], slice, frame);            
+            // Use calibration to return true value
+            result[frame - 1] = offset + 
+                                slope * is.getVoxel(x, y, stack_number - 1);
         }
 
         return result;
-
-    }
-
-    /**
-     * Sets integer pixel values at the specified location. Avoids having to
-     * manually handle the ImageStack and ImageProcessor.
-     * 
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param slice Slice number (1-based)
-     * @param frame Frame (1-based). Use -1 for 3D stacks.
-     * @param value Integer value to be set
-     */
-    public void set(int x, int y, int slice, int frame, int value) {
-
-        set(x, y, slice, frame, (double) value);
-
-    }
-
-    /**
-     * Sets double / float pixel values at the specified location. Avoids having
-     * to manually handle the ImageStack and ImageProcessor.
-     * 
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param slice Slice number (1-based)
-     * @param frame Frame (1-based). Use -1 for 3D stacks.
-     * @param value Integer value to be set
-     */
-    public void set(int x, int y, int slice, int frame, double value) {
-
-        int slice_number = this.getStackIndex(dim[2], slice, frame);
-        is.setVoxel(x, y, slice_number - 1, value);
 
     }
 
@@ -122,7 +108,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
         double m = StatUtils.mean(data);
 
         if ((sd > 100 * m) || (m < mean_amplitude / 3)
-                || (StrictMath.abs(StatUtils.min(data)) >= StatUtils.max(data))) {
+             || (StrictMath.abs(StatUtils.min(data)) >= StatUtils.max(data))) {
             return true;
         }
         return false;
