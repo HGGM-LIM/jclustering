@@ -66,8 +66,11 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
     }
 
     /**
-     * Gets the time-activity curve (dixel, after "dynamic pixel") for the given
-     * coordinates.
+     * Gets the time-activity curve (dixel, after "dynamic pixel") for the 
+     * given coordinates. Please note that this method returns the calibrated
+     * curve according to calibration data present in the image header, not
+     * the raw values. Please refer to ImageJ's {@link Calibration} object
+     * documentation for more information regarding this. 
      * 
      * @param x The x coordinate of the desired dixel.
      * @param y The y coordinate of the desired dixel.
