@@ -240,17 +240,4 @@ public class Cluster {
 
     }
 
-    /**
-     * @return The defining curve for this cluster: the centroid if it is 
-     * being built with each addition, or the cluster TAC if the centroid
-     * is fixed.
-     */
-    public double [] getDefiningCurve() {
-        if (modify_centroid)
-            return centroid;
-        else
-            return cluster_tac;
-        
-    }
-
 }
