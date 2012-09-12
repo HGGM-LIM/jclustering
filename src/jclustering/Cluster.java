@@ -12,7 +12,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  */
-public class Cluster implements Comparable<Cluster> {
+public class Cluster {
 
     // Centroid
     private double[] centroid;
@@ -240,34 +240,6 @@ public class Cluster implements Comparable<Cluster> {
 
     }
 
-    /**
-     * Implements Comparable interface. Use size and mean peak as elements
-     * to compute each score.
-     */
-    @Override
-    public int compareTo(Cluster that) {
-        
-        double this_score = score();
-        double that_score = that.score();        
-        
-        if (this_score < that_score) {
-            return -1;
-        } else if (this_score > that_score) {
-            return 1;
-        } else {
-            return 0;
-        }
-        
-    }
-    
-    /**
-     * @return A score for comparing clusters. Currently, size() * getPeakMean()
-     * is used.
-     */
-    public double score() {
-        return size() * getPeakMean();
-    }
-    
     /**
      * @return The defining curve for this cluster: the centroid if it is 
      * being built with each addition, or the cluster TAC if the centroid

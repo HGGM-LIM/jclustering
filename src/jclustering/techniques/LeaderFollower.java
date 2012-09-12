@@ -7,6 +7,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 import javax.swing.JCheckBox;
@@ -70,7 +71,10 @@ public class LeaderFollower extends ClusteringTechnique
     private PearsonsCorrelation pc;
     
     // Need to keep track of which coordinates belong to which cluster
-    private Hashtable<Cluster, ArrayList<Integer[]>> record;            
+    private Hashtable<Cluster, ArrayList<Integer[]>> record;     
+    
+    // Cluster comparator
+    private Comparator<Cluster> comp;
     
     @Override
     public void process() {
@@ -83,6 +87,8 @@ public class LeaderFollower extends ClusteringTechnique
         
         record = new Hashtable<Cluster, ArrayList<Integer[]>>();
         corr_limits = new Hashtable<Cluster, Double>();
+        
+        comp = new LeaderFollowerClusterComparator();
         
         IJ.log(String.format("Correlation limit: %f; increment: %f.",
         		threshold, t_inc));
@@ -150,7 +156,7 @@ public class LeaderFollower extends ClusteringTechnique
          */
         
         // Sort clusters
-        Collections.sort(clusters);
+        Collections.sort(clusters, comp);
         
         // Build new list for inserting the selected clusters
         ArrayList<Cluster> good_clusters = new ArrayList<Cluster>();
@@ -302,7 +308,7 @@ public class LeaderFollower extends ClusteringTechnique
         Cluster min = null;
         
         for (Cluster c : clusters) {
-            double s = c.score();
+            double s = c.getPeakMean() * c.size();
             if (s < score) {
                 score = s;
                 min = c;
@@ -377,5 +383,21 @@ public class LeaderFollower extends ClusteringTechnique
         
     }
     
+    /*
+     * Use this comparator class to compare Clusters between them.
+     */
+    private class LeaderFollowerClusterComparator 
+        implements Comparator<Cluster> {
+
+        @Override
+        public int compare(Cluster arg0, Cluster arg1) {
+            double score0 = arg0.getPeakMean() * arg0.size();
+            double score1 = arg1.getPeakMean() * arg1.size();
+            if (score0 < score1) return -1;
+            else if (score0 > score1) return 1;
+            else return 0;
+        }
+        
+    }
 
 }
