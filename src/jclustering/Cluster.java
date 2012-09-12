@@ -214,7 +214,9 @@ public class Cluster {
      */
     public double getPeakMean() {
         
-        return peak_stats.getMean();
+        double m = peak_stats.getMean();
+        if (m == Double.NaN) return 0;
+        else return m;
         
     }
 
