@@ -223,11 +223,9 @@ public class Cluster {
      */
     public double getPeakStdev() {
         
-        if (size == 1) {
-            return 0.0;
-        } else {
-            return peak_stats.getStandardDeviation();            
-        }        
+        double sd = peak_stats.getStandardDeviation();
+        if (sd == Double.NaN) return 0;
+        else return sd;                
         
     }
     
