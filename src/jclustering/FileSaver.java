@@ -37,10 +37,9 @@ public class FileSaver {
         this.clusters = clusters;
         this.t = t;       
         
-        // Get first non-empty cluster
-        int size = clusters.size();
-        for (int i = 0; i < size; i++) {
-            double [] temp = clusters.get(0).getCentroid();
+        // Get first non-empty cluster        
+        for (Cluster c : clusters) {
+            double [] temp = c.getCentroid();
             if (temp != null) {
                 time_length = temp.length;
                 break;
