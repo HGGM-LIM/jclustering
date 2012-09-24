@@ -34,7 +34,8 @@ file `commons-math3-3.0/commons-math3-3.0.jar` to the `plugins/jars` folder of
 your ImageJ installation.
 
 The minimum ImageJ version needed for jClustering to run is 1.47a. Minimum
-Java version is JRE 6.
+Java version is JRE 6. This plugin does not work yet with ImageJ 2, though
+it might be adapted to work with it once it exits beta stage.
 
 # How to use jClustering
 Once jClustering has been installed, you can access it via the `Plugins ->
