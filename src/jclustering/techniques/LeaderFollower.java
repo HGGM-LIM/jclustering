@@ -49,7 +49,7 @@ public class LeaderFollower extends ClusteringTechnique
     private final boolean DEF_DISCARD_SMALLEST = false;
     private final int DEF_KEEP_CLUSTERS = 50;
     private final double DEF_THRESHOLD = 0.3;
-    private final double DEF_T_INC = 1.00005;
+    private final double DEF_T_INC = 1.0;
     
     // Maximum number of clusters to compute
     private int max_clusters = DEF_MAX_CLUSTERS;
