@@ -409,35 +409,6 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         return index;
 
     }
-
-    /*
-     * Returns whether tac1 and tac2 are the same within certain sensitivity
-     * limits given by the "end" variable.
-     */
-    private boolean _compareTACs(double[] tac1, double[] tac2, double end) {
-
-        // Convert percentage to double value.
-        end /= 100;
-
-        // If no sensitivity value set (0.0, compare with 0.001)
-        // use Arrays.equals.
-        if (end < 0.001) {
-            return Arrays.equals(tac1, tac2);
-        } else {
-            for (int i = 0; i < tac1.length; i++) {
-                double t = 1.0 - end; // Sensitivity threshold
-                double ratio = tac1[i] > tac2[i] ? tac2[i] / tac1[i] : 
-                               tac1[i] / tac2[i];
-                // If ratio is negative or below threshold, return false
-                // else, let loop finish and return true at the end.
-                if (ratio < 0 || ratio < t)
-                    return false;
-            }
-        }
-
-        return true;
-
-    }
     
     /*
      * Computes the squared error between two given TACs
