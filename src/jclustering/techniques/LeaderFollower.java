@@ -305,6 +305,7 @@ public class LeaderFollower extends ClusteringTechnique
 
         Cluster min = Collections.min(clusters, comp);       
         clusters.remove(min);
+        corr_limits.remove(min);
         
     }
 
