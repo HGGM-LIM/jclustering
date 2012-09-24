@@ -60,6 +60,9 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         // When to stop iterating
         boolean threshold_reached = false;
+        
+        // Initial squared error
+        double sse = Double.MAX_VALUE;
 
         // Initialize clusters and build string to show which points
         // have been used
@@ -104,17 +107,20 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 }
             }
             int size2 = it_result.size();
-
-            // Check for differences and set threshold_reached if necessary
-            // If there has been some cluster removed, don't check, as it
-            // won't be reliable.
+            
+            // Compute the global SSE and check if the differences are
+            // smaller than the threshold limit. If
             if (size1 == size2) {
-                threshold_reached = true;
+                double new_sse = 0.0;
                 for (int i = 0; i < size2; i++) {
-                    double[] tac1 = it_result.get(i).getCentroid();
-                    double[] tac2 = new_it_result.get(i).getCentroid();
-                    threshold_reached &= _compareTACs(tac1, tac2, end);
+                    new_sse += _sse(it_result.get(i).getCentroid(),
+                                    new_it_result.get(i).getCentroid());
                 }
+                
+                double ratio = new_sse / sse;                
+                sse = new_sse;
+                if (ratio > 1.0 - end/100) threshold_reached = true;
+                
             }
 
         }
@@ -368,14 +374,14 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         // Get each TAC, compare and add it to the closest cluster
         for (Voxel v : ip) {
 
-                    // If is noise, skip
-                    if (skip_noisy && isNoise(v))
-                        continue;
+            // If is noise, skip
+            if (skip_noisy && isNoise(v))
+                continue;
 
-                    int cluster_index = _getClosestCluster(v, res);
+            int cluster_index = _getClosestCluster(v, res);
 
-                    // Set results.
-                    res.get(cluster_index).add(v);
+            // Set results.
+            res.get(cluster_index).add(v);
         }
   
 
@@ -431,6 +437,17 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         return true;
 
+    }
+    
+    /*
+     * Computes the squared error between two given TACs
+     */
+    private double _sse(double [] a, double [] b) {
+        double sse = 0.0;
+        int size = a.length;
+        for (int i = 0; i < size; i++)
+            sse += Math.pow(a[i] - b[i], 2);
+        return sse;
     }
 
 }
