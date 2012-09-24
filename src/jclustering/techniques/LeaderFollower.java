@@ -68,10 +68,7 @@ public class LeaderFollower extends ClusteringTechnique
     private Hashtable<Cluster, Double> corr_limits;
 
     // Pearson Correlation object
-    private PearsonsCorrelation pc;
-    
-    // Need to keep track of which coordinates belong to which cluster
-    private Hashtable<Cluster, ArrayList<Integer[]>> record;     
+    private PearsonsCorrelation pc;     
     
     // Cluster comparator
     private Comparator<Cluster> comp;
@@ -81,13 +78,9 @@ public class LeaderFollower extends ClusteringTechnique
         
         /*
          * Initial object creation.
-         */                
-        
-        pc = new PearsonsCorrelation();
-        
-        record = new Hashtable<Cluster, ArrayList<Integer[]>>();
-        corr_limits = new Hashtable<Cluster, Double>();
-        
+         */                        
+        pc = new PearsonsCorrelation();                
+        corr_limits = new Hashtable<Cluster, Double>();        
         comp = new LeaderFollowerClusterComparator();
         
         IJ.log(String.format("Correlation limit: %f; increment: %f.",
@@ -119,7 +112,7 @@ public class LeaderFollower extends ClusteringTechnique
             if (clusters.isEmpty()) {
                 Cluster c = new Cluster(v);
                 clusters.add(c);
-                _addToRecord(c, v.x, v.y, v.slice);
+                _incrementCorrLimit(c);
             }
             // Are we within the max_clusters limit or can we get rid
             // of any of them?
@@ -139,12 +132,12 @@ public class LeaderFollower extends ClusteringTechnique
                     Cluster c = clusters.get(cindex);
                     // Add TAC modifying centroid
                     c.add(v);
-                    _addToRecord(c, v.x, v.y, v.slice);
+                    _incrementCorrLimit(c);
                 } else {
                     // There is no cluster to include this voxel yet
                     Cluster c = new Cluster(v);
                     clusters.add(c);
-                    _addToRecord(c, v.x, v.y, v.slice);
+                    _incrementCorrLimit(c);
                 }
             }
         }
@@ -260,7 +253,7 @@ public class LeaderFollower extends ClusteringTechnique
             double peak_threshold = c.getPeakMean() - c.getPeakStdev();
             
             if (score > threshold && score > max_score && 
-                    peak >= peak_threshold) {                
+                peak >= peak_threshold) {                
                 max_score = score;
                 i = j;                
             }            
@@ -271,30 +264,16 @@ public class LeaderFollower extends ClusteringTechnique
     }
     
     /*
-     * Keeps track of which voxels have been added to which cluster and
-     * increments the correlation limit.
+     * Increments correlation limit for the given voxel
      */
-    private void _addToRecord(Cluster c, int x, int y, int slice) {
-        
-        Integer [] coordinates = new Integer[] {x, y, slice};
-        ArrayList<Integer []> ints = record.get(c);
-        
-        // Use Double instead of double so the comparison cor != null
-        // can be made.
+    private void _incrementCorrLimit(Cluster c) {
+                
         Double cor = corr_limits.get(c);
         // Compute updated score or use original threshold if no prior
         // score is found.
-        double score = (cor != null) ? cor * t_inc : threshold;        
+        double score = (cor != null) ? cor * t_inc : threshold;   
         
-        // If the cluster has not been yet added, create it and add to record
-        if (ints == null) {
-            ints = new ArrayList<Integer[]>();
-            record.put(c, ints);            
-        }
-        
-        // Update the score and add the coordinates to record.
         corr_limits.put(c, score);
-        ints.add(coordinates);
         
     }
     
