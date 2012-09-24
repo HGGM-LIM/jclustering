@@ -77,7 +77,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         // for the interface elements.
 
         // Main window
-        f = new JFrame("JClustering " + VERSION);
+        f = new JFrame("JClustering " + VERSION + ", image " + 
+                iph.getTitle());
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Main panel, with tabs
