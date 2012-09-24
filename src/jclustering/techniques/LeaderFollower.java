@@ -127,7 +127,7 @@ public class LeaderFollower extends ClusteringTechnique
 
                 // If too many clusters, throw away the smallest of
                 // them, if allowed by the settings.
-                if (size == max_clusters + 1 && discard_smallest) {
+                if (size == max_clusters && discard_smallest) {
                     _discardSmallest();
                 }
 
