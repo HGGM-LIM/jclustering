@@ -109,45 +109,44 @@ public class LeaderFollower extends ClusteringTechnique
                 slice = v.slice;
             }
                 
-                    // If is noise, skip
-                    if (skip_noisy && isNoise(v))
-                        continue;
+            // If is noise, skip
+            if (skip_noisy && isNoise(v)) continue;
 
-                    int size = clusters.size();
-                    
-                    // Is it the first voxel? If so, just put it in a 
-                    // new cluster
-                    if (clusters.isEmpty()) {
-                        Cluster c = new Cluster(v);
-                        clusters.add(c);
-                        _addToRecord(c, v.x, v.y, v.slice);
-                    }
-                    // Are we within the max_clusters limit or can we get rid
-                    // of any of them?
-                    else if (size < max_clusters || discard_smallest) {
-                        
-                        // If too many clusters, throw away the smallest of 
-                        // them, if allowed by the settings.
-                        if (size == max_clusters && discard_smallest) {
-                            _discardSmallest();
-                        }
-                        
-                        // Get closest cluster
-                        int cindex = _getClosestCluster(v.tac);
-                        
-                        if (cindex >= 0) {
-                            // There is a cluster that can include this voxel
-                            Cluster c = clusters.get(cindex);
-                            // Add TAC modifying centroid
-                            c.add(v);
-                            _addToRecord(c, v.x, v.y, v.slice);
-                        } else {                            
-                            // There is no cluster to include this voxel yet
-                            Cluster c = new Cluster(v);
-                            clusters.add(c);
-                            _addToRecord(c, v.x, v.y, v.slice);
-                        }                        
-                    }   
+            int size = clusters.size();
+
+            // Is it the first voxel? If so, just put it in a
+            // new cluster
+            if (clusters.isEmpty()) {
+                Cluster c = new Cluster(v);
+                clusters.add(c);
+                _addToRecord(c, v.x, v.y, v.slice);
+            }
+            // Are we within the max_clusters limit or can we get rid
+            // of any of them?
+            else if (size < max_clusters || discard_smallest) {
+
+                // If too many clusters, throw away the smallest of
+                // them, if allowed by the settings.
+                if (size == max_clusters + 1 && discard_smallest) {
+                    _discardSmallest();
+                }
+
+                // Get closest cluster
+                int cindex = _getClosestCluster(v.tac);
+
+                if (cindex >= 0) {
+                    // There is a cluster that can include this voxel
+                    Cluster c = clusters.get(cindex);
+                    // Add TAC modifying centroid
+                    c.add(v);
+                    _addToRecord(c, v.x, v.y, v.slice);
+                } else {
+                    // There is no cluster to include this voxel yet
+                    Cluster c = new Cluster(v);
+                    clusters.add(c);
+                    _addToRecord(c, v.x, v.y, v.slice);
+                }
+            }
         }
                 
         
@@ -300,21 +299,11 @@ public class LeaderFollower extends ClusteringTechnique
     }
     
     /*
-     * Discard smallest cluster
+     * Discard smallest cluster. Uses the private Comparator.
      */    
     private void _discardSmallest() {
-        
-        double score = Double.MAX_VALUE;
-        Cluster min = null;
-        
-        for (Cluster c : clusters) {
-            double s = c.getPeakMean() * c.size();
-            if (s < score) {
-                score = s;
-                min = c;
-            }
-        }
-        
+
+        Cluster min = Collections.min(clusters, comp);       
         clusters.remove(min);
         
     }
