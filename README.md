@@ -100,6 +100,14 @@ the format selected.
 
 # Developing for jClustering
 
+## How to compile jClustering_.jar
+
+Use your IDE of choice and import it as a Maven project. For example, in Eclipse
+click _File>Import>Existing Maven Project..._ and select the _jclustering/_
+directory. Eclipse will automatically retrieve the correct commons-math and
+ImageJ versions, build the project, and put the resulting jClustering\_.jar
+file into the _target/_ directory.
+
 ## How to develop a new clustering technique
 
 Developing a new `ClusteringTechnique` is extremely easy. For starters, we need
