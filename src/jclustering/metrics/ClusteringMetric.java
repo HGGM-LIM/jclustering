@@ -134,10 +134,16 @@ public abstract class ClusteringMetric implements ActionListener, ItemListener {
      * If the metric needs some previous computations, it should override
      * this method. This is called just once prior to 
      * {@link ClusteringTechnique#process()}. By default it does nothing.
-     * 
+     */
+    public void init() {}
+    
+    /**
+     * Sets the skip_noisy variable for this metric.
      * @param skip_noisy Tells the init process whether to skip noisy voxels.
      */
-    public void init(boolean skip_noisy) {}
+    public void skip_noisy(boolean skip_noisy) {
+        this.skip_noisy = skip_noisy;
+    }
 
     // These two methods are overridden so that the extending classes don't
     // have to deal with them if they don't have to.

@@ -154,7 +154,9 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 + "<pre>10,30,40;230,56,39</pre><p><p>"
                 + "You don't need to set as many points as clusters. If less"
                 + " points are defined, the rest will be randomly chosen as"
-                + " usual.</html>";
+                + " usual.<p>"
+                + "You can also use \"++\" (without the quotes) to use"
+                + " a k-means++ initialization algorithm.</html>";
         jp.add(createJLabel("Non-random initalization*:", non_random_help));
         JTextField jt_init = new JTextField(init);
         jt_init.setName("jt_init");
@@ -248,6 +250,12 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             _fillRandomPoints(initial_points, 0);
             return;
         }
+        
+        // K-means++ uses its own initialization method.
+        if (initial_centroids.equals("++")) { 
+            _fillKMeansPlusPlus(initial_points);
+            return;
+        }
 
         String[] point_triplets = initial_centroids.split(";");
         for (int i = 0; i < point_triplets.length; i++) {
@@ -272,6 +280,78 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             _fillRandomPoints(initial_points, point_triplets.length);
         }
 
+    }
+
+    /*
+     * This method fills the initial centroids for the KMeans++ initialization
+     * method.
+     */
+    private void _fillKMeansPlusPlus(int[][] initial_points) {
+        
+        IJ.showStatus("KMeans++ initialization...");
+
+        Random r = new Random(System.currentTimeMillis());
+        int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
+        
+        // First point is random
+        initial_points[0][0] = r.nextInt(dim[0]);
+        initial_points[0][1] = r.nextInt(dim[1]);
+        initial_points[0][2] = r.nextInt(dim[3]) + 1;
+        
+        // Every other point depends on the distance to each centroid
+        for (int i = 1; i < initial_points.length; i++) {
+            
+            double distance = 0.0;
+            double p = 0.0;
+            Voxel chosen = null;
+            
+            // Get current centroids
+            double [][] current_centroids = new double[i][dim[4]];
+            for (int j = 0; j < i; j++) {
+                current_centroids[j] = Arrays.copyOf(
+                        ip.getTAC(initial_points[j][0], initial_points[j][1], 
+                                initial_points[j][2]), dim[4]);
+            }
+            
+            for (Voxel v : ip) {
+                
+                if (isNoise(v) && skip_noisy) continue;
+                
+                // Each new center is chosen with p proportional to distance^2
+                // Note that the distance is already squared in the auxiliar
+                // function.
+                distance = _KMeansPlusPlusDistance(current_centroids, v);
+                double p1 = r.nextDouble() * distance;
+                if (p1 > p) {
+                    p = p1;
+                    chosen = v;
+                }
+            }
+            
+            initial_points[i][0] = chosen.x;
+            initial_points[i][1] = chosen.y;
+            initial_points[i][2] = chosen.slice;
+            
+        }
+        
+        return;
+    }
+    
+    /*
+     * Computes the distance between the given voxel and all the previous
+     * centroids.
+     */
+    private double _KMeansPlusPlusDistance(double [][] current_centroids, 
+                                           Voxel v) {
+        double distance = 0.0;
+       
+        for (int j = 0; j < current_centroids.length; j++) {
+            double [] centroid = current_centroids[j];
+            double [] tac = v.tac;
+            distance += metric.distance(centroid, tac);            
+        }
+        
+        return distance * distance;
     }
 
     /**
@@ -310,9 +390,12 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     private boolean _notValidInitialPoints() {
 
         boolean correct = false;
+        
+        // If k-means++, return true automatically
+        if (initial_centroids.equals("++")) return correct;
 
         // Trim initial_centroids
-        initial_centroids = initial_centroids.trim();
+        initial_centroids = initial_centroids.trim();        
 
         // If initial_centroids ends in a semicolon, remove it,
         // it is not necessary.
@@ -375,15 +458,16 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         for (Voxel v : ip) {
 
             // If is noise, skip
-            if (skip_noisy && isNoise(v))
-                continue;
+            if (skip_noisy && isNoise(v)) continue;
 
             int cluster_index = _getClosestCluster(v, res);
+            
+            // For some reason, no suitable voxel has been found: continue.
+            if (cluster_index == -1) continue;
 
             // Set results.
             res.get(cluster_index).add(v);
-        }
-  
+        }  
 
         return res;
     }

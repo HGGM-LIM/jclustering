@@ -53,7 +53,7 @@ public class Mahalanobis extends ClusteringMetric {
     /*
      * Initializes the covariance matrix
      */
-    public void init(boolean skip_noisy) {
+    public void init() {
         
         IJ.showStatus("Mahalanobis metric initializing...");
         
