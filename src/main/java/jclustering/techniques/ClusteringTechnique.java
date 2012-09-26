@@ -4,13 +4,13 @@ import static jclustering.GUIUtils.getMetricList;
 import static jclustering.Utils.getClusteringMetric;
 import ij.ImagePlus;
 
-import java.awt.Choice;
 import java.awt.Component;
 import java.awt.Panel;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -184,21 +184,21 @@ public abstract class ClusteringTechnique implements ItemListener {
 
         if (source.equals("metrics")) {
             // Technique selector. Set the technique selected
-            String t = ((Choice) c).getSelectedItem();
+            String t = (String)((JComboBox) c).getSelectedItem();
             metric = getClusteringMetric(t, ip);
         }
 
     }
 
     /**
-     * Adds a {@link Choice} element containing all the available metrics to the
+     * Adds a {@link JComboBox} element containing all the available metrics to the
      * given panel.
      * 
      * @param jp The panel to be modified.
      */
     public void addMetricsToJPanel(JPanel jp) {
 
-        Choice c = getMetricList(this, this.ip);
+        JComboBox c = getMetricList(this, this.ip);
         jp.add(new JLabel("Select a metric: "));
         jp.add(c);
 

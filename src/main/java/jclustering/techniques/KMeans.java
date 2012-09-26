@@ -182,7 +182,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     @Override
     public void itemStateChanged(ItemEvent arg0) {
 
-        // Handle the metric Choice. Call the superclass method.
+        // Handle the metric JComboBox. Call the superclass method.
         super.itemStateChanged(arg0);
 
     }

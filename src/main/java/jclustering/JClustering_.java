@@ -2,7 +2,6 @@ package jclustering;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.Choice;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -17,6 +16,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -100,7 +100,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
 
         // Config main panel.
         // Add metrics
-        Choice c = createChoices("techniques", getAllTechniques(), this);
+        JComboBox c = createChoices("techniques", getAllTechniques(), this);
         main_panel.setLayout(new GridLayout(5, 2, 5, 5));
         
         main_panel.add(createJLabel("Select a technique: ",
@@ -111,8 +111,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         main_panel.add(new JLabel("File saving format:"));
         String [] file_saving_choices = new String[] {"CSV", "PMOD",
                 "tab-separated"};
-        Choice c_file = createChoices("file_saving", file_saving_choices, this);
-        file_saving_format = c_file.getItem(0);
+        JComboBox c_file = createChoices("file_saving", file_saving_choices, this);
+        file_saving_format = (String)c_file.getItemAt(0);
         main_panel.add(c_file);
         
         main_panel.add(new JLabel("File saving path:"));        
@@ -149,7 +149,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         main_panel.add(jcb_discard);
 
         // Set the current technique to the first one shown
-        technique = getClusteringTechnique(c.getItem(0), iph, skip_noisy);
+        technique = getClusteringTechnique((String)c.getItemAt(0), iph, skip_noisy);
 
         // Initialize panels contents
         _initializePanels();
@@ -329,7 +329,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
 
         if (source.equals("techniques")) {
             // Technique selector. Set the technique selected
-            String t = ((Choice) c).getSelectedItem();
+            String t = (String) ((JComboBox) c).getSelectedItem();
             technique = getClusteringTechnique(t, iph, skip_noisy);
 
             // Re-init panels
@@ -340,8 +340,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
             skip_noisy = ((JCheckBox) c).isSelected();
             technique.skipNoisy(skip_noisy);
         } else if (source.equals("file_saving")) {
-            // File saving Choice object
-            file_saving_format = ((Choice)c).getSelectedItem();            
+            // File saving JComboBox object
+            file_saving_format = (String)((JComboBox)c).getSelectedItem();
         }
 
     }

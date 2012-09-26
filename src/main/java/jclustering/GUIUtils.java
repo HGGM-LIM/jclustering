@@ -1,7 +1,6 @@
 package jclustering;
 
 import java.awt.Button;
-import java.awt.Choice;
 import java.awt.Label;
 import java.awt.LayoutManager;
 import java.awt.event.ActionListener;
@@ -11,6 +10,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -140,19 +140,19 @@ public class GUIUtils {
     }
 
     /**
-     * Creates a Choice dropdown list.
+     * Creates a JComboBox dropdown list.
      * 
      * @param name The name for the dropdown list.
      * @param values The values to be shown.
      * @param i An ItemListener to wait for an action.
-     * @return The Choice list.
+     * @return The JComboBox list.
      */
-    public static Choice createChoices(String name, String[] values,
+    public static JComboBox createChoices(String name, String[] values,
             ItemListener i) {
 
-        Choice c = new Choice();
+	JComboBox c = new JComboBox();
         for (String v : values) {
-            c.add(v);
+            c.addItem(v);
         }
         c.setName(name);
         c.addItemListener(i);
@@ -161,14 +161,14 @@ public class GUIUtils {
     }
 
     /**
-     * Creates a Choice dropdown list.
+     * Creates a JComboBox dropdown list.
      * 
      * @param name The name for the dropdown list.
      * @param values The values to be shown.
      * @param i An ItemListener to wait for an action.
-     * @return The Choice list.
+     * @return The JComboBox list.
      */
-    public static Choice createChoices(String name, ArrayList<String> values,
+    public static JComboBox createChoices(String name, ArrayList<String> values,
             ItemListener i) {
 
         String[] val = new String[values.size()];
@@ -300,18 +300,18 @@ public class GUIUtils {
     }
 
     /**
-     * Returns a {@link Choice} of {@link ClusteringMetric} objects to be used
+     * Returns a {@link JComboBox} of {@link ClusteringMetric} objects to be used
      * inside the {@link ClusteringTechnique} {@code t}.
      * 
      * @param t The {@link ClusteringTechnique} to host the given
      *            {@link ClusteringMetric}.
      * @param ip A reference to the working image.
-     * @return A {@link Choice} object.
+     * @return A {@link JComboBox} object.
      */
-    public static Choice getMetricList(ClusteringTechnique t, ImagePlusHyp ip) {
+    public static JComboBox getMetricList(ClusteringTechnique t, ImagePlusHyp ip) {
 
-        Choice c = createChoices("metrics", getAllMetrics(), t);
-        t.setMetric(getClusteringMetric(c.getItem(0), ip));
+        JComboBox c = createChoices("metrics", getAllMetrics(), t);
+        t.setMetric(getClusteringMetric((String)c.getItemAt(0), ip));
 
         return c;
 
