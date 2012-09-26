@@ -113,7 +113,10 @@ public abstract class ClusteringTechnique implements ItemListener {
 
         init();
         
-        if (metric != null) metric.init(skip_noisy);
+        if (metric != null) {
+            metric.skip_noisy(skip_noisy);
+            metric.init();
+        }
 
         process();
 
