@@ -405,4 +405,12 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     public void componentResized(ComponentEvent arg0) {}
     
 
+    public static void main(String[] args) {
+        new ij.ImageJ();
+        ij.ImagePlus imp = ij.IJ.openImage("http://imagej.net/images/Spindly-GFP.zip");
+        imp.show();
+        JClustering_ plugin = new JClustering_();
+        plugin.setup("", imp);
+        plugin.run(imp.getProcessor());
+    }
 }
