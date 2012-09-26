@@ -25,7 +25,7 @@ import ij.IJ;
  * This technique implements a <a href="http://en.wikipedia.org/wiki/K-means">
  * k-means clustering algorithm</a>.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  */
 
 public class KMeans extends ClusteringTechnique implements FocusListener {

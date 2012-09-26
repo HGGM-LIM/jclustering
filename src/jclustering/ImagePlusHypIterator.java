@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Provides an {@link Iterator} for an {@link ImagePlusHyp} object.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  *
  */
 public class ImagePlusHypIterator implements Iterator<Voxel> {

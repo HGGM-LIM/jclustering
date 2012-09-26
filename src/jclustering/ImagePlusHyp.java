@@ -13,7 +13,7 @@ import ij.measure.Calibration;
  * This class extends {@link ImagePlus} in order to add a handy {@link #getTAC}
  * method that allows to easily grab time-activity curves.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  * 
  */
 public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{

@@ -39,7 +39,7 @@ import ij.IJ;
  * Also, peak amplitude is taken into account when adding new TACs to an 
  * existing cluster.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  */
 public class LeaderFollower extends ClusteringTechnique 
     implements FocusListener {

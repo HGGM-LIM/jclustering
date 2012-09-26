@@ -26,7 +26,7 @@ import jclustering.metrics.ClusteringMetric;
  * method must be implemented. Otherwise, the method {@link #makeConfig()} must
  * also be filled.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  */
 public abstract class ClusteringTechnique implements ItemListener {
 

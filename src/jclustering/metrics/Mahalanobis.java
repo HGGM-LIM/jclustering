@@ -15,7 +15,7 @@ import org.apache.commons.math3.stat.correlation.StorelessCovariance;
  * <a href="http://en.wikipedia.org/wiki/Mahalanobis_distance">the
  * Mahalanobis distance</a> page on Wikipedia for more information.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  *
  */
 public class Mahalanobis extends ClusteringMetric {

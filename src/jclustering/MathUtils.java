@@ -3,7 +3,7 @@ package jclustering;
 /**
  * Math helper class.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  * 
  */
 public class MathUtils {

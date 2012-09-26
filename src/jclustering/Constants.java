@@ -4,7 +4,7 @@ package jclustering;
  * Define the necessary constants. That includes physical constants or
  * configuration parameters.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>
  * 
  */
 public class Constants {

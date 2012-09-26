@@ -10,7 +10,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * cluster. Every other elements from this class serve as helpers for latter
  * calculations.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  */
 public class Cluster {
 

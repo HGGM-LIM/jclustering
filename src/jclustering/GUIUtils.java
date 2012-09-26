@@ -27,7 +27,7 @@ import static jclustering.Utils.getClusteringMetric;
 /**
  * Auxiliar class with static utility methods for GUI creation
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  * 
  */
 public class GUIUtils {

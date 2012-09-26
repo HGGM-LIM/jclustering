@@ -18,7 +18,7 @@ import javax.swing.JTextField;
  * href="http://en.wikipedia.org/wiki/Euclidean_distance">Euclidean
  * distance</a>.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  */
 public class PNorm extends ClusteringMetric implements FocusListener {
 

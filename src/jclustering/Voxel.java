@@ -5,7 +5,7 @@ package jclustering;
  * given image. Objects returned by the {@link ImagePlusHypIterator} class
  * are of this type.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  *
  */
 public class Voxel {

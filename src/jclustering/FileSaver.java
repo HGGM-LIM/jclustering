@@ -14,7 +14,7 @@ import java.util.Calendar;
  * Class for file saving. It accepts several formats as output. Logs result
  * of writing operation using the {@code IJ.log} functionality.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  *
  */
 public class FileSaver {

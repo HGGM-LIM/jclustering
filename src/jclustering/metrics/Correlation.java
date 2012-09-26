@@ -7,7 +7,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
  * Classical correlation score between two given TACs (data type
  * {@code double[]}).
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  */
 public class Correlation extends ClusteringMetric {
 

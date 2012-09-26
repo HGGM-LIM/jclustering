@@ -14,7 +14,7 @@ import static jclustering.MathUtils.getMaxIndex;
  * <a href="www.sccg.sk/~haladova/principal_components.pdf">this excellent 
  * guide</a>.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  */
 public class PCA extends ClusteringTechnique {
 

@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * <p>
  * This class can also read PMOD's .acqtimes files.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  *
  */
 public class TimeVectorReader {

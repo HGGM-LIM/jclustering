@@ -17,7 +17,7 @@ import jclustering.techniques.ClusteringTechnique;
  * This abstract class provides a template with the basic functions that a
  * metric should implement, specially the distance(double [], double[]) method.
  * 
- * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
+ * @author <a href="mailto:jmmateos@mce.hggm.es">JosÃ© MarÃ­a Mateos</a>.
  * 
  */
 public abstract class ClusteringMetric implements ActionListener, ItemListener {
