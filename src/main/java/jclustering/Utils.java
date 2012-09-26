@@ -1,14 +1,19 @@
 package jclustering;
 
 import static jclustering.Constants.PACKAGE_NAME;
-import static jclustering.Constants.PLUGIN_PATH;
 
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import jclustering.metrics.ClusteringMetric;
 import jclustering.techniques.ClusteringTechnique;
@@ -54,12 +59,38 @@ public class Utils {
      */
     private static ArrayList<String> _findClasses(String sc, String sp) {
 
-        // FIXME Add logic for extracting classes from a .jar file.
-        ArrayList<String> res = new ArrayList<String>();
-        File classes = new File(PLUGIN_PATH + "/" + sp);
+        final ArrayList<String> res = new ArrayList<String>();
+        final URL url = Utils.class.getResource("/" + Utils.class.getName().replace('.', '/') + ".class");
+        if (url == null) {
+            return res;
+        }
+        String location = url.toString();
+        location = location.substring(0, location.lastIndexOf('/') + 1); // strip Util.class
+        final String prefix = PACKAGE_NAME + "/" + sp + "/";
+
+        // find files in the same class path element as the current class
+        final String[] files;
+        if (location.startsWith("jar:file:")) try {
+            final List<String> fileNames = new ArrayList<String>();
+            final JarFile jar = new JarFile(location.substring("jar:file:".length(), location.indexOf('!')));
+            for (Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ) {
+                final JarEntry entry = e.nextElement();
+                final String fileName = entry.getName();
+                if (fileName.startsWith(prefix) && !fileName.endsWith("/")) {
+                    fileNames.add(fileName.substring(prefix.length()));
+                }
+            }
+            files = fileNames.toArray(new String[fileNames.size()]);
+        } catch (IOException e) {
+            return res;
+        } else if (location.startsWith("file:")) {
+            files = new File(location.substring("file:".length()), sp).list();
+        } else {
+            return res;
+        }
 
         // Get all the classes in the given path
-        for (String c : classes.list()) {
+        for (String c : files) {
             try {
                 String cn = PACKAGE_NAME + "." + sp + "."
                         + c.substring(0, c.indexOf("."));
