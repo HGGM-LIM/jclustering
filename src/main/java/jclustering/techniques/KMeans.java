@@ -358,8 +358,9 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     }
 
     /**
-     * Randomly fills the {@code initial_points} array starting from a certain
-     * offset.
+     * Fills the {@code initial_points} array starting from a certain
+     * offset with random points. Assumes that it is very difficult to select
+     * a point more than once and does not control for that.
      * 
      * @param initial_points Array to be filled
      * @param start Initial offset
@@ -370,15 +371,12 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
 
         for (int i = start; i < n_clusters; i++) {
-            // FIXME Check whether that coordinate
-            // - has not been selected yet.
             do {
                 initial_points[i][0] = r.nextInt(dim[0]);
                 initial_points[i][1] = r.nextInt(dim[1]);
                 initial_points[i][2] = r.nextInt(dim[3]) + 1;
             } while (isNoise(ip.getTAC(initial_points[i][0],
                             initial_points[i][1], initial_points[i][2])));
-
         }
     }
 
