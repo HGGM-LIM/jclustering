@@ -405,6 +405,10 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     public void componentResized(ComponentEvent arg0) {}
     
 
+    /**
+     * Main method for testing purposes.
+     * @param args Input arguments from the command line, if any.
+     */
     public static void main(String[] args) {
         new ij.ImageJ();
         ij.ImagePlus imp = ij.IJ.openImage(
