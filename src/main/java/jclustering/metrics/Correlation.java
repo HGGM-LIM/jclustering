@@ -11,7 +11,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
  */
 public class Correlation extends ClusteringMetric {
 
-    private PearsonsCorrelation pc = new PearsonsCorrelation();
+    private PearsonsCorrelation pc;
 
     @Override
     public double distance(double[] centroid, double[] data) {
@@ -31,6 +31,11 @@ public class Correlation extends ClusteringMetric {
         else
             return Double.MAX_VALUE;
 
+    }
+    
+    @Override
+    public void init() {
+        pc = new PearsonsCorrelation();
     }
 
 }
