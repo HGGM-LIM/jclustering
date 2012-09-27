@@ -145,8 +145,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                                  this);
         jp.add(jt_clusters);
 
-        // Add a field for non-random initialization
-        // TODO Implement k-means++ or k-means||
+        // Add a field for non-random initialization        
         String non_random_help = "<html>If you wish, you can use this field"
                 + " to select those points to be used as initial centroids."
                 + "<p>They should be written in the following format:<p>"
