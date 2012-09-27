@@ -300,7 +300,8 @@ public void itemStateChanged(ItemEvent arg0) {
 # Contact
 
 If you wish to develop your own techniques/metrics for jClustering and need
-help, do not hesitate to contact me at jmmateos@mce.hggm.es.
+help, or you wish to contribute your own code to this project, please do not
+hesitate to contact me at jmmateos@mce.hggm.es.
 
 # Annex: full sample classes
 
