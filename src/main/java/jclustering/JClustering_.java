@@ -184,7 +184,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     public int setup(String arg, ImagePlus imp) {
 
         // Version number check.
-        boolean not_required_version = IJ.versionLessThan("1.47a");
+        boolean not_required_version = IJ.versionLessThan("1.46r");
         if (not_required_version) {
             return DONE;
         }
@@ -407,7 +407,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
 
     public static void main(String[] args) {
         new ij.ImageJ();
-        ij.ImagePlus imp = ij.IJ.openImage("http://imagej.net/images/Spindly-GFP.zip");
+        ij.ImagePlus imp = ij.IJ.openImage(
+                "http://imagej.net/images/Spindly-GFP.zip");
         imp.show();
         JClustering_ plugin = new JClustering_();
         plugin.setup("", imp);
