@@ -293,10 +293,14 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         Random r = new Random(System.currentTimeMillis());
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
         
-        // First point is random
-        initial_points[0][0] = r.nextInt(dim[0]);
-        initial_points[0][1] = r.nextInt(dim[1]);
-        initial_points[0][2] = r.nextInt(dim[3]) + 1;
+        // First point is random, but don't pick up noise regardless
+        // of the skip_noisy variable
+        do {
+            initial_points[0][0] = r.nextInt(dim[0]);
+            initial_points[0][1] = r.nextInt(dim[1]);
+            initial_points[0][2] = r.nextInt(dim[3]) + 1;
+        } while (isNoise(ip.getTAC(initial_points[0][0], 
+                         initial_points[0][1], initial_points[0][2])));
         
         // Every other point depends on the distance to each centroid
         for (int i = 1; i < initial_points.length; i++) {
@@ -373,8 +377,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 initial_points[i][0] = r.nextInt(dim[0]);
                 initial_points[i][1] = r.nextInt(dim[1]);
                 initial_points[i][2] = r.nextInt(dim[3]) + 1;
-            } while (skip_noisy
-                    && isNoise(ip.getTAC(initial_points[i][0],
+            } while (isNoise(ip.getTAC(initial_points[i][0],
                             initial_points[i][1], initial_points[i][2])));
 
         }
