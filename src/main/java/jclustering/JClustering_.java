@@ -220,8 +220,11 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     private void doProcess() {
     
         long start = System.currentTimeMillis();
+        
+        String tname = technique.getName();
+        String iname = iph.getTitle();
     
-        IJ.log("----- Process started: " + technique.getName() + "-----");
+        IJ.log("----- Process started: " + tname + "-----");
         // Actual clustering operations
         technique.compute();
         ArrayList<Cluster> clusters = technique.getClusters();
@@ -235,8 +238,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         // Build result image and show it
         int [] dim = iph.getDimensions();
         int size = clusters.size();
-        ImagePlus ip = IJ.createImage("Clusters", "16-bit", dim[0], dim[1],
-                            dim[3]);
+        ImagePlus ip = IJ.createImage("Cluster (" + tname + ", " + iname + ")",
+                "16-bit", dim[0], dim[1], dim[3]);
         ImageStack is = ip.getImageStack();  
         
         int cluster_index = 1; // First cluster is always number 1, not 0
