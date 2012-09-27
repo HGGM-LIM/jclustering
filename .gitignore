@@ -5,3 +5,11 @@
 /.classpath
 /.project
 /.settings/
+
+# Misc
+Input-Output/
+deploy.sh
+ext-src/
+ext/
+ij.jar
+plugins/
