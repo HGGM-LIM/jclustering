@@ -18,12 +18,10 @@ gives it all the advantages of using an open-source imaging analysis platform.
 # Installation
 
 The installation of  jClustering within ImageJ is straightforward: download the
-latest binary version available at the [download
+latest `.jar` file available at the [download
 page](https://github.com/HGGM-LIM/jclustering/downloads) under the _Download
-Packages_ title and unzip the `jclustering/` folder to the `plugins/` folder of
-your ImageJ installation. Be careful to download the latest binary version (a
-link with the text `vx.x.x-binary.zip` in the name) and not the latest source
-code (the link reads _Download as zip_ or _Download as tar.gz_).
+Packages_ title and copy it to the `plugins/` folder of your ImageJ
+installation. 
 
 jClustering uses Apache Commons Math version 3.0 for some mathematical
 operations, so this library also needs to be installed. The process is simple:
@@ -33,8 +31,8 @@ file `commons-math3-3.0-bin.zip`, open it with any unzip program and copy the
 file `commons-math3-3.0/commons-math3-3.0.jar` to the `plugins/jars` folder of
 your ImageJ installation.
 
-The minimum ImageJ version needed for jClustering to run is 1.47a. Minimum
-Java version is JRE 6. This plugin does not work yet with ImageJ 2, though
+The minimum ImageJ version needed for jClustering to run is 1.46r. Minimum
+Java version is JRE 6. This plugin does not work yet with ImageJ2, though
 it might be adapted to work with it once it exits beta stage.
 
 # How to use jClustering
