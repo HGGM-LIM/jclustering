@@ -1,2 +1,0 @@
-- KMeans++ initialization with Correlation metric does not work if noisy
-  voxels are not skipped. JVM crashes in that case.
