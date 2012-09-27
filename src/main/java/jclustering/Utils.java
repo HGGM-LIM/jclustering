@@ -246,8 +246,8 @@ public class Utils {
         // a daily build, for that matter).
 
         int[] dim = ip.getDimensions();
-        ImagePlus res = IJ.createImage(ip.getTitle(), dim[0], dim[1], dim[3]
-                * (cluster_number + 1), ip.getBitDepth());
+        ImagePlus res = IJ.createImage(ip.getTitle(), "16-bit", dim[0], dim[1], 
+                dim[3] * (cluster_number + 1));
         res.setDimensions(1, dim[3], cluster_number + 1);
         res.setOpenAsHyperStack(true);
 
