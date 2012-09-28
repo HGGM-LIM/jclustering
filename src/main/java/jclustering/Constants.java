@@ -18,6 +18,6 @@ public class Constants {
             + " selected or no configuration needed";
     
     // Version
-    final public static String VERSION = "v1.1.6";
+    final public static String VERSION = "v1.1.7";
 
 }

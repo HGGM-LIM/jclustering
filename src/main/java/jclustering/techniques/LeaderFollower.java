@@ -114,9 +114,9 @@ public class LeaderFollower extends ClusteringTechnique
                 clusters.add(c);
                 _incrementCorrLimit(c);
             }
-            // Are we within the max_clusters limit or can we get rid
-            // of any of them?
-            else if (size < max_clusters || discard_smallest) {
+            // Else, let's include new voxels into their corresponding clusters
+            // or create new ones if there still space
+            else {
 
                 // If too many clusters, throw away the smallest of
                 // them, if allowed by the settings.
