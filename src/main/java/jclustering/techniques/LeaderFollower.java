@@ -354,15 +354,15 @@ public class LeaderFollower extends ClusteringTechnique
     
     /*
      * Use this comparator class to compare Clusters between them. The
-     * indicator used is the peak amplitude.
+     * indicator used is the peak amplitude times the voxel number.
      */
     private class LeaderFollowerClusterComparator 
         implements Comparator<Cluster> {
 
         @Override
         public int compare(Cluster arg0, Cluster arg1) {
-            double score0 = arg0.getPeakMean();
-            double score1 = arg1.getPeakMean();
+            double score0 = arg0.getPeakMean() * arg0.size();
+            double score1 = arg1.getPeakMean() * arg1.size();
             if (score0 < score1) return -1;
             else if (score0 > score1) return 1;
             else return 0;
