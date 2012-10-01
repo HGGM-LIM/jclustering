@@ -117,27 +117,26 @@ public class LeaderFollower extends ClusteringTechnique
             // Else, let's include new voxels into their corresponding clusters
             // or create new ones if there still space
             else {
-
-                // If too many clusters, throw away the smallest of
-                // them, if allowed by the settings.
-                if (size == max_clusters + 1 && discard_smallest) {
-                    _discardSmallest();
-                }
-
                 // Get closest cluster
                 int cindex = _getClosestCluster(v.tac);
 
-                if (cindex >= 0) {
-                    // There is a cluster that can include this voxel
+                if (cindex >= 0) { // There is a cluster that can 
+                                   // include this voxel                    
                     Cluster c = clusters.get(cindex);
                     // Add TAC modifying centroid
                     c.add(v);
                     _incrementCorrLimit(c);
-                } else {
-                    // There is no cluster to include this voxel yet
-                    Cluster c = new Cluster(v);
-                    clusters.add(c);
-                    _incrementCorrLimit(c);
+                } else { // Need to create a new voxel, if there is room for it
+                    // If too many clusters, throw away the smallest of
+                    // them, if allowed by the settings.
+                    if (size == max_clusters && discard_smallest) {
+                        _discardSmallest();
+                    }                    
+                    if (size < max_clusters) {
+                        Cluster c = new Cluster(v);
+                        clusters.add(c);
+                        _incrementCorrLimit(c);
+                    }
                 }
             }
         }
