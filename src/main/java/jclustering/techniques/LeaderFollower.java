@@ -51,6 +51,10 @@ public class LeaderFollower extends ClusteringTechnique
     private final double DEF_THRESHOLD = 0.3;
     private final double DEF_T_INC = 1.0;
     
+    // Constants
+    private final int CLUSTER_NOT_FOUND = -1;
+    private final int CLUSTER_NOT_AMP = -2;
+    
     // Maximum number of clusters to compute
     private int max_clusters = DEF_MAX_CLUSTERS;
     
@@ -96,7 +100,7 @@ public class LeaderFollower extends ClusteringTechnique
             if (slice != v.slice) {
                 // Show status message for every slice
                 String status = String.format("Leader-follower. Slice %d, " +
-            		"%d/%d clusters", slice, clusters.size(), max_clusters);
+            		"%d/%d clusters", v.slice, clusters.size(), max_clusters);
                 IJ.showStatus(status);
                 // Update slice pointer
                 slice = v.slice;
@@ -126,7 +130,8 @@ public class LeaderFollower extends ClusteringTechnique
                     // Add TAC modifying centroid
                     c.add(v);
                     _incrementCorrLimit(c);
-                } else { // Need to create a new voxel, if there is room for it
+                } else if (cindex == CLUSTER_NOT_FOUND) { 
+                    // Need to create a new voxel, if there is room for it
                     // If too many clusters, throw away the smallest of
                     // them, if allowed by the settings.
                     if (size == max_clusters && discard_smallest) {
@@ -157,11 +162,12 @@ public class LeaderFollower extends ClusteringTechnique
         int size = clusters.size();
         
         // Can't keep more clusters that the ones that have been created
-        if (keep_clusters > size)
-            keep_clusters = size;
+        int kc;
+        if (keep_clusters > size) kc = size;
+        else kc = keep_clusters;
         
         // Go backwards: biggest cluster is #1
-        for (int i = size - 1; i >= size - keep_clusters; i--) {            
+        for (int i = size - 1; i >= size - kc; i--) {            
             Cluster c = clusters.get(i);
             good_clusters.add(c);
         }
@@ -172,6 +178,8 @@ public class LeaderFollower extends ClusteringTechnique
         /*
          * Log result and return 
          */
+        
+        System.out.println("Biggest group: " + clusters.get(0).size());
                 
         int nsize = clusters.size();
         IJ.log(String.format("Leader-follower finished. %d clusters " +
@@ -225,41 +233,41 @@ public class LeaderFollower extends ClusteringTechnique
     }
     
     /*
-     * Get closest cluster to provided TAC.
+     * Get closest cluster to provided TAC. Returns:
+     * -1 if no cluster with enough correlation has been found
+     * -2 if a cluster with enough correlation has been found, but it doesn't
+     *    have enough amplitude
+     * A number i >= 0 if good correlation and amplitude are found
      */
     private int _getClosestCluster(double [] tac) {
         
         int i = -1;
-        double max_score = -Double.MAX_VALUE;
+        double max_score = this.threshold;
         int size = clusters.size();
         
-        for (int j = 0; j < size; j++) {
-            
-            Cluster c = clusters.get(j);
-            
+        // Find the cluster with the highest correlation with this TAC        
+        for (int j = 0; j < size; j++) {            
+            Cluster c = clusters.get(j);            
             // Smooth the TAC only for correlation computing purposes, do
             // not use it afterwards.
             double score = pc.correlation(MathUtils.smooth(tac), 
-                    c.getCentroid());
-            
-            // Get correlation value for that cluster
-            Double d = corr_limits.get(c);
-            double threshold = d != null ? d : this.threshold;
-            
-            // Compute peak value for this TAC and obtain peak threshold
-            // for current cluster.
-            double peak = MathUtils.getMax(tac);
-            double peak_threshold = c.getPeakMean() - c.getPeakStdev();
-            
-            if (score > threshold && score > max_score && 
-                peak >= peak_threshold) {                
+                                          c.getCentroid());
+            if (score > max_score && score > corr_limits.get(c)) {
+                i = j;
                 max_score = score;
-                i = j;                
-            }            
-        }        
+            }
+        }
         
-        return i;
-        
+        // No cluster found
+        if (i == -1) return CLUSTER_NOT_FOUND;
+        // Cluster found
+        Cluster c = clusters.get(i);
+        double peak = MathUtils.getMax(tac);
+        double meanpeak = c.getPeakMean();        
+        if (peak > meanpeak) return i;
+        // No good amplitude
+        return CLUSTER_NOT_AMP;
+
     }
     
     /*
@@ -268,10 +276,7 @@ public class LeaderFollower extends ClusteringTechnique
     private void _incrementCorrLimit(Cluster c) {
                 
         Double cor = corr_limits.get(c);
-        // Compute updated score or use original threshold if no prior
-        // score is found.
-        double score = (cor != null) ? cor * t_inc : threshold;   
-        
+        double score = (cor != null) ? cor * t_inc : threshold;
         corr_limits.put(c, score);
         
     }
