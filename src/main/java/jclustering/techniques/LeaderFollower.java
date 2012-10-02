@@ -179,8 +179,6 @@ public class LeaderFollower extends ClusteringTechnique
          * Log result and return 
          */
         
-        System.out.println("Biggest group: " + clusters.get(0).size());
-                
         int nsize = clusters.size();
         IJ.log(String.format("Leader-follower finished. %d clusters " +
         		"created, %d kept.", size, nsize));
