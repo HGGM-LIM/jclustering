@@ -253,6 +253,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         }
         
         ip = expand(ip, size);
+        ip.setCalibration(iph.getCalibration());
         ip.show();
         
         // Show last frame of the image, which is the one containing all
