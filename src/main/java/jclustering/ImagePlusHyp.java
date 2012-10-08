@@ -40,8 +40,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
         this.is = ip.getStack();
         this.setProcessor(ip.getProcessor());
         this.setImage(ip);
-        this.dim = ip.getDimensions();
-        this.setCalibration(ip.getCalibration());
+        this.dim = ip.getDimensions();        
         
         // Get calibration data from the image or set default values if
         // no calibration has been used
