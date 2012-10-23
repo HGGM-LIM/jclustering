@@ -261,9 +261,9 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         double size_x = cal.pixelWidth;
         double size_y = cal.pixelHeight;
         double size_z = cal.pixelDepth;
-        String units = cal.getXUnit();        
+        String units = cal.getUnit();        
         String vscomm = "setVoxelSize(" + size_x + ", " + size_y + ", " 
-                                      + size_z + ", \"" + units + "\")";
+                                      + size_z + ", \"" + units + "\")";        
         IJ.runMacro(vscomm);
         
         // Show last frame of the image, which is the one containing all
