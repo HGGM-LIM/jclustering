@@ -25,9 +25,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
     private int[] dim;
     private ImageStack is;
     private double mean_amplitude; // mean amplitude for the whole volume
-
-    // Calibration curve
-    private double offset, slope;
+    private Calibration cal;
 
     /**
      * Creates a new ImagePlusHyp using a general ImagePlus.
@@ -41,28 +39,18 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
         this.setProcessor(ip.getProcessor());
         this.setImage(ip);
         this.dim = ip.getDimensions();        
-        
-        // Get calibration data from the image or set default values if
-        // no calibration has been used
-        Calibration cal = ip.getCalibration();
-        if (cal.calibrated()) {
-            double[] coefs = cal.getCoefficients();
-            offset = coefs[0];
-            slope = coefs[1];
-        } else {
-            offset = 0.0;
-            slope = 1.0;
-        }
-        
+
         // Set the current calibration
+        Calibration cal = ip.getCalibration();
         this.setCalibration(cal);
+        this.cal = cal;
 
         // Compute the global calibrated mean (for noise comparison purposes)
         SummaryStatistics stats = new SummaryStatistics();
         for (int z = 0; z < dim[3]; z++)
             for (int x = 0; x < dim[0]; x++)
-                for (int y = 0; y < dim[1]; y++)
-                    stats.addValue(offset + slope * is.getVoxel(x, y, z));
+                for (int y = 0; y < dim[1]; y++)                    
+                    stats.addValue(cal.getCValue(is.getVoxel(x, y, z)));
         mean_amplitude = stats.getMean();
         
         
@@ -96,8 +84,8 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
         for (int frame = 1; frame <= dim[4]; frame++) {
             int stack_number = this.getStackIndex(dim[2], slice, frame);            
             // Use calibration to return true value
-            result[frame - 1] = offset + 
-                                slope * is.getVoxel(x, y, stack_number - 1);
+            result[frame - 1] = cal.getCValue(
+                                    is.getVoxel(x, y, stack_number - 1));
         }
 
         return result;
