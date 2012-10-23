@@ -1,4 +1,10 @@
-v1.1.7 - 28/09/2012
+v1.1.8 - 10/22/2012
+-------------------
+
+- Fixed yet another major bug in LeaderFollower implementation.
+- cluster image now has correct voxel size information.
+
+v1.1.7 - 09/28/2012
 -------------------
 
 - Fixed major bug in LeaderFollower implementation.
