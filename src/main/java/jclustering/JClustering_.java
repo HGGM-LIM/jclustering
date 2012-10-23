@@ -30,6 +30,7 @@ import jclustering.techniques.ClusteringTechnique;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.measure.Calibration;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 
@@ -254,6 +255,16 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         
         ip = expand(ip, size);        
         ip.show();
+        
+        // Get original pixel size and set it to the cluster image
+        Calibration cal = iph.getCalibration();
+        double size_x = cal.pixelWidth;
+        double size_y = cal.pixelHeight;
+        double size_z = cal.pixelDepth;
+        String units = cal.getXUnit();        
+        String vscomm = "setVoxelSize(" + size_x + ", " + size_y + ", " 
+                                      + size_z + ", \"" + units + "\")";
+        IJ.runMacro(vscomm);
         
         // Show last frame of the image, which is the one containing all
         // clusters at once        

@@ -53,6 +53,9 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
             offset = 0.0;
             slope = 1.0;
         }
+        
+        // Set the current calibration
+        this.setCalibration(cal);
 
         // Compute the global calibrated mean (for noise comparison purposes)
         SummaryStatistics stats = new SummaryStatistics();
