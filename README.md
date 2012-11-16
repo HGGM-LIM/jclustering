@@ -5,6 +5,11 @@ develop a new clustering technique or metric for the jClustering framework
 using simple examples and code snippets. Several working examples will be
 attached to this document annex for full reference.
 
+## Contact
+
+If you wish to contact the author for questions, corrections or just casual
+comments, you can do so at [this e-mail address](mailto:jmmateos@mce.hggm.es).
+
 # What is jClustering?
 
 jClustering is an [ImageJ](http://rsbweb.nih.gov/ij/) plugin developed with the
