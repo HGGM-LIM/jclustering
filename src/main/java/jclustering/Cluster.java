@@ -2,6 +2,7 @@ package jclustering;
 
 import java.util.ArrayList;
 
+import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
@@ -79,7 +80,7 @@ public class Cluster {
         // If the centroid is to be modified, this method must also
         // start including data into the peak_stats object and increment
         // the size.
-        double max = MathUtils.getMax(centroid);
+        double max = StatUtils.max(centroid);
         peak_stats.addValue(max);
         size++;
         
@@ -185,7 +186,7 @@ public class Cluster {
                 cluster_tac = data;
         }
 
-        peak_stats.addValue(MathUtils.getMax(data));
+        peak_stats.addValue(StatUtils.max(data));
         size++;
         coordinates.add(new Integer[] {x, y, slice});
 

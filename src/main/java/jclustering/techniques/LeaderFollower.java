@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import jclustering.Cluster;
@@ -260,7 +261,7 @@ public class LeaderFollower extends ClusteringTechnique
         if (i == -1) return CLUSTER_NOT_FOUND;
         // Cluster found
         Cluster c = clusters.get(i);
-        double peak = MathUtils.getMax(tac);
+        double peak = StatUtils.max(tac);
         double meanpeak = c.getPeakMean();        
         if (peak > meanpeak) return i;
         // No good amplitude
