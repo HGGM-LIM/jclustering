@@ -7,27 +7,6 @@ package jclustering;
  * 
  */
 public class MathUtils {
-
-    /**
-     * Returns the maximum value for the given array
-     * 
-     * @param data Array of double precision values.
-     * @return The maximum element for the array.
-     */
-    public static double getMax(double[] data) {
-
-        // Initialize to first element
-        double r = data[0];
-
-        // Get the maximum
-        for (double d : data) {
-            if (d > r) {
-                r = d;
-            }
-        }
-
-        return r;
-    }
     
     /**
      * Returns the index for the maximum value of the array.
