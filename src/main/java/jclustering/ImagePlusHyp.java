@@ -3,7 +3,6 @@ package jclustering;
 import java.util.Iterator;
 
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -23,8 +22,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
      * dim[3] -> nSlices (1-based) dim[4] -> nFrames (1-based)
      */
     private int[] dim;
-    private ImageStack is;
-    private double mean_amplitude; // mean amplitude for the whole volume
+    private ImageStack is;    
     private Calibration cal;
 
     /**
@@ -43,16 +41,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
         // Set the current calibration
         Calibration cal = ip.getCalibration();
         this.setCalibration(cal);
-        this.cal = cal;
-
-        // Compute the global calibrated mean (for noise comparison purposes)
-        SummaryStatistics stats = new SummaryStatistics();
-        for (int z = 0; z < dim[3]; z++)
-            for (int x = 0; x < dim[0]; x++)
-                for (int y = 0; y < dim[1]; y++)                    
-                    stats.addValue(cal.getCValue(is.getVoxel(x, y, z)));
-        mean_amplitude = stats.getMean();
-        
+        this.cal = cal;        
         
     }
 
@@ -94,19 +83,15 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
 
     /**
      * @param data The TAC to be tested
-     * @return true if the given TAC is noise with respect to this image.
+     * @return true if the given TAC is noise with respect to this image. A
+     * TAC is considered noise if the absolute value of its minimum value is
+     * greater or equal than its maximum value. This is a very simplistic
+     * approach, but works in most cases.
      */
     public boolean isNoise(double[] data) {
-
-        double sd = StrictMath.sqrt(StatUtils.variance(data));
-        double m = StatUtils.mean(data);
-
-        if ((sd > 100 * m) || (m < mean_amplitude / 3)
-             || (StrictMath.abs(StatUtils.min(data)) >= StatUtils.max(data))) {
+        if (StrictMath.abs(StatUtils.min(data)) >= StatUtils.max(data)) 
             return true;
-        }
         return false;
-
     }
 
     @Override
