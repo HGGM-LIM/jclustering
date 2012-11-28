@@ -52,6 +52,13 @@ public class PCA extends ClusteringTechnique {
         RealMatrix result = eigenvectors.multiply(
                             normalized_data_matrix.transpose());
         
+        // Please note: this is somehow incorrect. As the clustering model
+        // that we are following needs one voxel -> one cluster, this step
+        // below assigns each voxel to the principal component with the
+        // maximum weight for its particular kinetics. In "real life", the
+        // resulting images would contain the contribution of that component
+        // in all voxels, but for segmentation purposes this approach is
+        // chosen.
         int column_index = 0;
         for (Voxel v : ip) {
             
