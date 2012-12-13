@@ -194,7 +194,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         boolean has_frames = imp.getNFrames() > 1;        
         if (imp == null || !has_frames) {
             // No input image or input image not hyperstack
-            IJ.error("jClustering works on hyperstacks.");
+            IJ.error("jClustering works on dynamic images.");
             return DONE;
         } else {
             // Go ahead
