@@ -192,7 +192,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
 
         // Check if we have a HyperStack
         boolean has_frames = imp.getNFrames() > 1;        
-        if (imp == null || !imp.isHyperStack() || !has_frames) {
+        if (imp == null || !has_frames) {
             // No input image or input image not hyperstack
             IJ.error("jClustering works on hyperstacks.");
             return DONE;
