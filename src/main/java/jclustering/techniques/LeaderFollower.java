@@ -6,6 +6,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -249,8 +250,12 @@ public class LeaderFollower extends ClusteringTechnique
             Cluster c = clusters.get(j);            
             // Smooth the TAC only for correlation computing purposes, do
             // not use it afterwards.
-            double score = pc.correlation(MathUtils.smooth(tac), 
-                                          c.getCentroid());
+            double [] smooth_tac = MathUtils.smooth(tac);
+            double [] centroid = c.getCentroid();
+            double score = 0.0;            
+            if (Arrays.equals(smooth_tac, centroid)) score = 1.0;
+            else score = pc.correlation(smooth_tac, centroid);
+
             if (score > max_score && score > corr_limits.get(c)) {
                 i = j;
                 max_score = score;

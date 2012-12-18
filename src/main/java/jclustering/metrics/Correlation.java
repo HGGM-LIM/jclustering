@@ -26,7 +26,7 @@ public class Correlation extends ClusteringMetric {
             corr = 1.0 - pc.correlation(centroid, data);
         }
 
-        if (corr != Double.NaN)
+        if (!Double.isNaN(corr))
             return corr;
         else
             return Double.MAX_VALUE;
