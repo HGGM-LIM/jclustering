@@ -57,10 +57,23 @@ public class PCA extends ClusteringTechnique {
         // conceptually better.
         IJ.showStatus("PCA: computing covariance matrix SVD...");
         SingularValueDecomposition svd = new SingularValueDecomposition(cov);
-        RealMatrix svdu = svd.getU();        
+        
+        // Force memory collection
+        cov = null;
+        System.gc();
+        
+        RealMatrix svdu = svd.getU();
+        
+        // Force memory collection
+        svd = null;
+        System.gc();
         
         IJ.showStatus("PCA: computing projected vectors and segmentation...");
         RealMatrix result = svdu.multiply(normalized_data_matrix.transpose());
+        
+        // Force memory collection
+        svdu = null;
+        System.gc();
 
         // If the PCA image is to be shown, create a new image with
         // result.getRowDimension() frames and the original number of 
