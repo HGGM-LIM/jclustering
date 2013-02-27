@@ -224,21 +224,6 @@ public class PCA extends ClusteringTechnique {
         return norm;
     }
 
-    /*
-     * Returns the eigenvectors from the EigenDecomposition object
-     */
-    private RealMatrix _getEigenVectors(EigenDecomposition ed) {
-        
-        double [][] eigenarray = new double[dimensions][dimensions];
-        for (int i = 0; i < dimensions; i++) {
-            eigenarray[i] = ed.getEigenvector(i).toArray();
-        }
-        
-        RealMatrix eigen = new Array2DRowRealMatrix(eigenarray);
-        
-        return eigen;
-    }
-    
     public void itemStateChanged(ItemEvent arg0) {
         
         // Check the checkbox for the showPCA variable
