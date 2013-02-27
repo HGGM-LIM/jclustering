@@ -59,7 +59,7 @@ public class PCA extends ClusteringTechnique {
         SingularValueDecomposition svd = new SingularValueDecomposition(cov);
         RealMatrix svdu = svd.getU();        
         
-        IJ.showStatus("PCA: computing segmented vectors and segmentation...");
+        IJ.showStatus("PCA: computing projected vectors and segmentation...");
         RealMatrix result = svdu.multiply(normalized_data_matrix.transpose());
 
         // If the PCA image is to be shown, create a new image with
