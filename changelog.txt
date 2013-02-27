@@ -1,3 +1,10 @@
+v1.1.9 - 02/27/2013
+-------------------
+
+- Added an option for displaying the PCA image in the PCA technique.
+- PCA computation now uses SVD on the covariance matrix instead of obtaining
+  the eigenvectors manually.
+
 v1.1.8 - 10/22/2012
 -------------------
 
