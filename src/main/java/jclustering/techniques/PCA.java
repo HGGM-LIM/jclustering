@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.SingularValueDecomposition;
 import org.apache.commons.math3.stat.correlation.StorelessCovariance;
 
 import ij.IJ;
@@ -47,23 +48,20 @@ public class PCA extends ClusteringTechnique {
         
         // Obtain covariance matrix
         IJ.showStatus("PCA: computing covariance matrix...");
-        RealMatrix cov = _generateCovariance(mean);        
-        
-        // Eigenvectors and eigenvalues (the second double parameter is dummy).
-        // The EigenDecomposition offers the eigenvectors in descending
-        // eigenvalue order.
-        IJ.showStatus("PCA: obtaining eigenvectors...");
-        EigenDecomposition ed = new EigenDecomposition(cov, 0.0);        
-        RealMatrix eigenvectors = _getEigenVectors(ed);
-        
+        RealMatrix cov = _generateCovariance(mean);
         RealMatrix normalized_data_matrix = new 
                 Array2DRowRealMatrix(normalized_data);
         
-        // Compute projected vectors and fill clusters object
-        IJ.showStatus("PCA: computing projected vectors and segmentation...");
-        RealMatrix result = eigenvectors.multiply(
-                            normalized_data_matrix.transpose());
+        // Use SVD on the covariance matrix instead of obtaining the 
+        // eigenvectors. Should return the same result, but this way is
+        // conceptually better.
+        IJ.showStatus("PCA: computing covariance matrix SVD...");
+        SingularValueDecomposition svd = new SingularValueDecomposition(cov);
+        RealMatrix svdu = svd.getU();        
         
+        IJ.showStatus("PCA: computing segmented vectors and segmentation...");
+        RealMatrix result = svdu.multiply(normalized_data_matrix.transpose());
+
         // If the PCA image is to be shown, create a new image with
         // result.getRowDimension() frames and the original number of 
         // x, y, z dimensions
