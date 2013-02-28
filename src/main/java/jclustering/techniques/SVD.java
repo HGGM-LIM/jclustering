@@ -46,8 +46,6 @@ public class SVD extends ClusteringTechnique {
             }
         }
         
-        System.out.println(n);
-        
         // Create new array and fill it with the image data
         
         double [][] image_data = new double[n][dimensions];
@@ -62,16 +60,16 @@ public class SVD extends ClusteringTechnique {
         // modified.
         Array2DRowRealMatrix data = new Array2DRowRealMatrix(image_data, false);
         
-        RealMatrix data2 = data.transpose();
-
         // Use SVD on the data matrix.
         IJ.showStatus("SVD: computing covariance matrix SVD...");
-        SingularValueDecomposition svd = new SingularValueDecomposition(data2);        
-        RealMatrix result = svd.getV();
+        SingularValueDecomposition svd = new SingularValueDecomposition(data);        
+        RealMatrix svdv = svd.getV();
+        
+        RealMatrix result = data.multiply(svdv.transpose());
         
         // Dim
-        System.out.println("Dim: " + result.getRowDimension() + " " + 
-                            result.getColumnDimension());
+//        System.out.println("Dim: " + result.getRowDimension() + " " + 
+//                            result.getColumnDimension());
                 
         // Force memory collection
         svd = null;
