@@ -2,6 +2,7 @@ package jclustering.techniques;
 
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
+import java.util.Arrays;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -13,9 +14,9 @@ import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import jclustering.Voxel;
 import static jclustering.MathUtils.getMaxIndex;
+import static jclustering.Utils.RealMatrix2IJ;
 
 /**
  * Implements a SVD on the original image matrix.
@@ -47,12 +48,12 @@ public class SVD extends ClusteringTechnique {
         }
         
         // Create new array and fill it with the image data
-        
         double [][] image_data = new double[n][dimensions];
         
         int i = 0;
         for(Voxel v : ip) {
-            image_data[i] = v.tac;
+            if(isNoise(v)) continue;
+            image_data[i++] = v.tac;
         }
         
         // Use "false" as the second argument prevents the new object from
@@ -61,68 +62,20 @@ public class SVD extends ClusteringTechnique {
         Array2DRowRealMatrix data = new Array2DRowRealMatrix(image_data, false);
         
         // Use SVD on the data matrix.
-        IJ.showStatus("SVD: computing covariance matrix SVD...");
+        IJ.showStatus("SVD: computing singular values...");
         SingularValueDecomposition svd = new SingularValueDecomposition(data);        
         RealMatrix svdv = svd.getV();
         
-        RealMatrix result = data.multiply(svdv.transpose());
-        
-        // Dim
-//        System.out.println("Dim: " + result.getRowDimension() + " " + 
-//                            result.getColumnDimension());
-                
-        // Force memory collection
-        svd = null;
-        System.gc();
+        RealMatrix result = data.multiply(svdv.transpose()).transpose();
         
         // If the SVD image is to be shown, create a new image with
         // result.getRowDimension() frames and the original number of 
         // x, y, z dimensions
         if (showSVD) {            
-            // Get number of components
-            int components = result.getColumnDimension();
-            
-            // Create dynamic image
-            ImagePlus SVD_image = IJ.createImage("SVD image", "16-bit", 
-                                                 dim[0], dim[1],
-                                                 dim[3] * components);
-            SVD_image.setDimensions(1, dim[3], components);
-            SVD_image.setOpenAsHyperStack(true);
-            
-            // Get stack for easy access
-            ImageStack is = SVD_image.getStack();
-            
-            int column_index = 0;
-            
-            // Assign voxels to values. It is important to iterate the image
-            // in the correct order (first x, then y, then slices), because
-            // that is the way the images are normally processed when using
-            // the ImagePlusHypIterator object.
-            for(int z = 0; z < dim[3]; z++) {
-                for(int y = 0; y < dim[1]; y++) {
-                    for(int x = 0; x < dim[0]; x++) {
-                        
-                        // Test it the TAC is noise. If it is noise, 
-                        // jump to the next one
-                        double [] tac = ip.getTAC(x, y, z + 1);
-                        if (skip_noisy && isNoise(tac)) continue;
-                        
-                        // Not noise: get the next column
-                        double [] comp = result.getRow(column_index++);
-                        
-                        // Iterate through the component and set the values.
-                        // Each row of the component is in one frame.
-                        for (int t = 0; t < components; t++) {
-                            // Get internal slice number
-                            int sn = SVD_image.getStackIndex(1, z + 1, t + 1);
-                            is.setVoxel(x, y, sn, comp[t]);                            
-                        }                        
-                    }
-                }
-            }
-            
+            ImagePlus SVD_image = RealMatrix2IJ(result, dim, this.ip, 
+                                                skip_noisy, "SVD image");
             SVD_image.show();
-        } // End SVD image show.
+        }
         
         // Please note: this is somehow incorrect. As the clustering model
         // that we are following needs one voxel -> one cluster, this step
@@ -141,7 +94,23 @@ public class SVD extends ClusteringTechnique {
             // Every Voxel belongs to the maximum index of its projected TAC
             int max = getMaxIndex(projection) + 1;
             addTACtoCluster(v, max);            
-        }        
+        }
+        
+        // Fill in the additionalInfo array.
+        additionalInfo = new String[2];
+        additionalInfo[0] = "svd_v_matrix";        
+        StringBuilder sb = new StringBuilder();
+        int rows = svdv.getRowDimension();
+        for (int j = 0; j < rows; j++) {
+            double [] row = svdv.getRow(j);
+            sb.append(Arrays.toString(row));
+            sb.append("\n");
+        }
+        // Remove brackets
+        String tempstr = sb.toString();
+        tempstr = tempstr.replace("[", "");
+        tempstr = tempstr.replace("]", "");
+        additionalInfo[1] = tempstr;
         
     }
     
