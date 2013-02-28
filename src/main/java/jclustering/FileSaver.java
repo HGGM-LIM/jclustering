@@ -20,22 +20,27 @@ import java.util.Calendar;
 public class FileSaver {
 
     private String format;
-    private ArrayList<Cluster> clusters;
+    private ArrayList<Cluster> clusters;    
     private double [][] t;
+    private String [] additionalInfo;
     private int time_length;
+    private String date;
     
     /**
      * Constructor
      * @param format File saving format.
      * @param clusters The TAC data to be saved.
      * @param t Time vector.
+     * @param additionalInfo Additional information provided.
      */
     public FileSaver(String format, ArrayList<Cluster> clusters, 
-            double [][] t) {
+            double [][] t, String [] additionalInfo) {
 
         this.format = format;
         this.clusters = clusters;
         this.t = t;       
+        this.additionalInfo = additionalInfo;
+        this.date = _getDate();
         
         // Get first non-empty cluster        
         for (Cluster c : clusters) {
@@ -84,8 +89,19 @@ public class FileSaver {
             IJ.log("Data saved in " + path + " in " + format + " format");
         } else {
             IJ.log("Data not saved. Error message: " + m);
-        }       
-
+        }
+        
+        // Save additional data, if there is any
+        if (additionalInfo != null) {
+            if(additionalInfo.length % 2 == 0)
+                m = _saveAdditionalInfo(path);
+            else
+                m = "Additional info length not even";
+            if (m == null)
+                IJ.log("Additional data saved in " + path);
+            else
+                IJ.log("Additional data not saved. Error message: " + m);
+        }
     }
     
     /*
@@ -171,6 +187,30 @@ public class FileSaver {
     }
     
     /*
+     * Save additional data provided by the clustering technique in the
+     * same path and with the suggested name (first item in the String []
+     * additionalInfo).
+     */
+    private String _saveAdditionalInfo(String path) {
+                      
+        for (int i = 0; i < additionalInfo.length; i = i + 2) {
+
+            File f = new File(path + "/" + additionalInfo[i] + "-" + date
+                              + ".txt");
+
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+                bw.write(additionalInfo[i + 1]);
+                bw.close();
+            } catch (Exception e) {
+                return e.getLocalizedMessage();
+            }
+        }
+        
+        return null;        
+    }
+    
+    /*
      * Converts cluster and time data into a 2-dimensional array to be
      * processed directly.
      */
@@ -225,6 +265,21 @@ public class FileSaver {
      */
     private File _getFile(String path) {
         
+        // Build file name
+        String name = "jclustering-" + date + ".txt";
+        
+        // Build and return file
+        File f = new File(path + "/" + name);
+        return f;
+        
+    }
+    
+    /**
+     * Returns a date string 
+     */
+    
+    private String _getDate() {
+        
         // Compute date
         Calendar now = Calendar.getInstance();
         String year = Long.toString(now.get(Calendar.YEAR));
@@ -232,16 +287,11 @@ public class FileSaver {
         String day = _n2s(now.get(Calendar.DAY_OF_MONTH));        
         String hour = _n2s(now.get(Calendar.HOUR_OF_DAY));
         String min = _n2s(now.get(Calendar.MINUTE));
-        String sec = _n2s(now.get(Calendar.SECOND));        
+        String sec = _n2s(now.get(Calendar.SECOND));
         
-        // Build file name
-        String name = "jclustering-" + year + "-" + month + "-" + day
-                + "-" + hour + "-" + min + "-" + sec + ".txt";
-        
-        // Build and return file
-        File f = new File(path + "/" + name);
-        return f;
-        
+        // Build string
+        return year + "-" + month + "-" + day + "-" + hour + "-" + min 
+                + "-" + sec;
     }
     
     /*
