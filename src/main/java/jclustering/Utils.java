@@ -314,15 +314,16 @@ public class Utils {
      * @param dim The desired dimensions for the final image
      * @param ip A reference to the image object that generated this operation
      * @param skip_noisy Should noisy voxels be skipped?
+     * @param name The name for the new image.
      * @return The newly generated {@code ImagePlus} object.
      */
     public static ImagePlus RealMatrix2IJ(RealMatrix rm, int [] dim, 
-            ImagePlusHyp ip, boolean skip_noisy) {
+            ImagePlusHyp ip, boolean skip_noisy, String name) {
      // Get number of components
         int components = rm.getRowDimension();
         
         // Create dynamic image
-        ImagePlus image = IJ.createImage("ICA image", "16-bit", 
+        ImagePlus image = IJ.createImage(name, "16-bit", 
                                              dim[0], dim[1],
                                              dim[3] * components);
         image.setDimensions(1, dim[3], components);
