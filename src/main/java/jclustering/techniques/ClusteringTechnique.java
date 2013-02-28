@@ -54,6 +54,12 @@ public abstract class ClusteringTechnique implements ItemListener {
      * Reference to the full image in case it is needed.
      */
     protected ImagePlusHyp ip;
+    
+    /**
+     * The additional information string. It is null by default, new techniques
+     * should fill it if needed.
+     */
+    protected String[] additionalInfo = null;
 
     /**
      * @return The name of this metric.
@@ -367,7 +373,7 @@ public abstract class ClusteringTechnique implements ItemListener {
      */
     public String [] getAdditionalInfo() {
         
-        return null;
+        return additionalInfo;
         
     }
 
