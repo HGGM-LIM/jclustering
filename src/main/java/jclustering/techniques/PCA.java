@@ -38,8 +38,6 @@ public class PCA extends ClusteringTechnique {
     
     private double[][] normalized_data;
     
-    private String[] additionalInfo;
-    
     @Override
     public void process() {
     
@@ -252,12 +250,5 @@ public class PCA extends ClusteringTechnique {
         JCheckBox jcb = (JCheckBox)arg0.getSource();
         showPCA = jcb.isSelected();
         
-    }
-    
-    public String [] getAdditionalInfo() {
-        
-        return additionalInfo;
-        
-    }
-    
+    }    
 }

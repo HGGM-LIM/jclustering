@@ -42,9 +42,6 @@ public class ICA extends ClusteringTechnique implements FocusListener {
     // Number of independent components
     private int ican = DEF_ICAN;
     
-    // Additional information
-    private String[] additionalInfo;
-    
     @Override
     public void process() {
 
@@ -103,7 +100,7 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         // x, y, z dimensions
         if (showICA) {            
             ImagePlus ICA_image = RealMatrix2IJ(result, dim, this.ip, 
-                    skip_noisy);            
+                    skip_noisy, "ICA image");            
             ICA_image.show();
         }
         
@@ -190,11 +187,5 @@ public class ICA extends ClusteringTechnique implements FocusListener {
                 jtf.setText(Integer.toString(ican));
             }
         }        
-    }
-    
-    public String [] getAdditionalInfo() {
-        
-        return additionalInfo;
-        
     }
 }
