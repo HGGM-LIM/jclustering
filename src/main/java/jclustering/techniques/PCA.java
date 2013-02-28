@@ -2,6 +2,7 @@ package jclustering.techniques;
 
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
+import java.util.Arrays;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -19,9 +20,12 @@ import jclustering.Voxel;
 import static jclustering.MathUtils.getMaxIndex;
 
 /**
- * Implements a PCA clustering according to 
+ * <p>Implements a PCA clustering according to 
  * <a href="www.sccg.sk/~haladova/principal_components.pdf">this excellent 
- * guide</a>.
+ * guide</a>.</p>
+ * 
+ * <p>Stores as additional information the V matrix that provides the new
+ * orthogonal basis.</p>
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  */
@@ -33,6 +37,8 @@ public class PCA extends ClusteringTechnique {
     private boolean showPCA = true;
     
     private double[][] normalized_data;
+    
+    private String[] additionalInfo;
     
     @Override
     public void process() {
@@ -62,6 +68,7 @@ public class PCA extends ClusteringTechnique {
         System.gc();
         
         RealMatrix svdu = svd.getU();
+        RealMatrix svdv = svd.getV(); // The additional info provided.
         
         // Force memory collection
         svd = null;
@@ -140,7 +147,23 @@ public class PCA extends ClusteringTechnique {
             // Every Voxel belongs to the maximum index of its projected TAC
             int max = getMaxIndex(projection) + 1;
             addTACtoCluster(v, max);            
-        }        
+        }   
+        
+        // Fill in the additionalInfo array.
+        additionalInfo = new String[2];
+        additionalInfo[0] = "pca_vectors";        
+        StringBuilder sb = new StringBuilder();
+        int rows = svdv.getRowDimension();
+        for (int i = 0; i < rows; i++) {
+            double [] row = svdv.getRow(i);
+            sb.append(Arrays.toString(row));
+            sb.append("\n");
+        }
+        // Remove brackets
+        String temp = sb.toString();
+        temp = temp.replace("[", "");
+        temp = temp.replace("]", "");
+        additionalInfo[1] = temp;
         
     }
     
@@ -228,6 +251,12 @@ public class PCA extends ClusteringTechnique {
         // Check the checkbox for the showPCA variable
         JCheckBox jcb = (JCheckBox)arg0.getSource();
         showPCA = jcb.isSelected();
+        
+    }
+    
+    public String [] getAdditionalInfo() {
+        
+        return additionalInfo;
         
     }
     
