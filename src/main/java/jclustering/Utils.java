@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.math3.linear.RealMatrix;
+
 import jclustering.metrics.ClusteringMetric;
 import jclustering.techniques.ClusteringTechnique;
 
@@ -304,6 +306,62 @@ public class Utils {
 
         is.setVoxel(x, y, slice - 1, value);
 
+    }
+    
+    /**
+     * Transforms a {@link RealMatrix} object into a ImageJ image.
+     * @param rm The RealMatrix to be converted.
+     * @param dim The desired dimensions for the final image
+     * @param ip A reference to the image object that generated this operation
+     * @param skip_noisy Should noisy voxels be skipped?
+     * @return The newly generated {@code ImagePlus} object.
+     */
+    public static ImagePlus RealMatrix2IJ(RealMatrix rm, int [] dim, 
+            ImagePlusHyp ip, boolean skip_noisy) {
+     // Get number of components
+        int components = rm.getRowDimension();
+        
+        // Create dynamic image
+        ImagePlus image = IJ.createImage("ICA image", "16-bit", 
+                                             dim[0], dim[1],
+                                             dim[3] * components);
+        image.setDimensions(1, dim[3], components);
+        image.setOpenAsHyperStack(true);
+        
+        // Get stack for easy access
+        ImageStack is = image.getStack();
+        
+        int column_index = 0;
+        
+        // Assign voxels to values. It is important to iterate the image
+        // in the correct order (first x, then y, then slices), because
+        // that is the way the images are normally processed when using
+        // the ImagePlusHypIterator object.
+        for(int z = 0; z < dim[3]; z++) {
+            for(int y = 0; y < dim[1]; y++) {
+                for(int x = 0; x < dim[0]; x++) {
+                    
+                    // Test it the TAC is noise. If it is noise, 
+                    // jump to the next one
+                    double [] tac = ip.getTAC(x, y, z + 1);
+                    if (skip_noisy && ip.isNoise(tac)) continue;
+                    
+                    // Not noise: get the next column
+                    double [] comp = rm.getColumn(column_index++);
+                    
+                    // Iterate through the component and set the values.
+                    // Each row of the component is in one frame.
+                    for (int t = 0; t < components; t++) {
+                        // Get internal slice number
+                        int sn = image.getStackIndex(1, z + 1, t + 1);
+                        is.setVoxel(x, y, sn, comp[t]);                            
+                    }                        
+                }
+            }
+        }
+        
+        return image;
+        
     }
 
 }
