@@ -66,13 +66,16 @@ public class SVD extends ClusteringTechnique {
         SingularValueDecomposition svd = new SingularValueDecomposition(data);        
         RealMatrix svdv = svd.getV();
         
-        RealMatrix result = data.multiply(svdv.transpose()).transpose();
+        RealMatrix result = data.multiply(svdv.transpose());
         
         // If the SVD image is to be shown, create a new image with
         // result.getRowDimension() frames and the original number of 
         // x, y, z dimensions
-        if (showSVD) {            
-            ImagePlus SVD_image = RealMatrix2IJ(result, dim, this.ip, 
+        if (showSVD) {       
+            // Have to transpose the result matrix as the rows and columns
+            // need to be in the opposite orientation.
+            ImagePlus SVD_image = RealMatrix2IJ(result.transpose(), dim, 
+                                                this.ip, 
                                                 skip_noisy, "SVD image");
             SVD_image.show();
         }
@@ -84,7 +87,7 @@ public class SVD extends ClusteringTechnique {
         // resulting images would contain the contribution of that component
         // in all voxels, but for segmentation purposes this approach is
         // chosen.
-        int column_index = 0;
+        int column_index = 0;        
         for (Voxel v : ip) {
             
             if (skip_noisy && isNoise(v)) continue;
