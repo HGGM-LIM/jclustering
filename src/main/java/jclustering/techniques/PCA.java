@@ -63,9 +63,8 @@ public class PCA extends ClusteringTechnique {
         
         // Force memory collection
         cov = null;
-        System.gc();
-        
-        RealMatrix svdu = svd.getU();
+        System.gc();        
+                
         RealMatrix svdv = svd.getV(); // The additional info provided.
         
         // Force memory collection
@@ -73,11 +72,8 @@ public class PCA extends ClusteringTechnique {
         System.gc();
         
         IJ.showStatus("PCA: computing projected vectors and segmentation...");
-        RealMatrix result = svdu.multiply(normalized_data_matrix.transpose());
-        
-        // Force memory collection
-        svdu = null;
-        System.gc();
+        RealMatrix result = normalized_data_matrix.multiply(svdv.transpose());
+        result = result.transpose();
 
         // If the PCA image is to be shown, create a new image with
         // result.getRowDimension() frames and the original number of 
