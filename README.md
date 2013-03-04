@@ -35,6 +35,10 @@ file `commons-math3-3.0-bin.zip`, open it with any unzip program and copy the
 file `commons-math3-3.0/commons-math3-3.0.jar` to the `plugins/jars` folder of
 your ImageJ installation.
 
+The fastICA library is also needed, and also needs to be place in the `plugins/jars` directory. 
+It can be downloaded [from its main page](http://sourceforge.net/projects/fastica/).
+
+
 The minimum ImageJ version needed for jClustering to run is 1.46r. Minimum
 Java version is JRE 6. This plugin does not work yet with ImageJ2, though
 it might be adapted to work with it once it exits beta stage.
