@@ -1,3 +1,10 @@
+v1.2.0 - 03/04/2013
+-------------------
+
+- ClusteringTechniques can now return a formatted string array that will be saved as additional information.
+- Added ICA implementation thanks to the fastICA library by Michael Lambertz.  
+- Added SVD implementation.
+
 v1.1.9 - 02/27/2013
 -------------------
 
