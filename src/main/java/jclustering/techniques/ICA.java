@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.fastica.FastICA;
 import org.fastica.FastICAException;
 
@@ -89,10 +90,12 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         // Get projections on each dimension
         double [][] vectors = fi.getICVectors();
         
-        // Get independent signals (to be offered as additional information)       
-        double [][] sep = fi.getSeparatingMatrix();   
+        // Get independent signals (to be offered as additional information)
+        // It is transposed to print the columns.
+        double [][] sep = fi.getSeparatingMatrix();
+        RealMatrix sources = new Array2DRowRealMatrix(sep);
+        sources = sources.transpose();
         
-        Array2DRowRealMatrix sources = new Array2DRowRealMatrix(sep);
         Array2DRowRealMatrix result = new Array2DRowRealMatrix(vectors);        
         
         // If the ICA image is to be shown, create a new image with
