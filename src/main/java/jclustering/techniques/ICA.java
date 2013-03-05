@@ -82,7 +82,7 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         FastICA fi = null;
         
         try {
-            fi = new FastICA(image_data, 5);
+            fi = new FastICA(image_data, ican);
         } catch (FastICAException e) {            
             System.out.println(e.getLocalizedMessage());
         }
@@ -179,12 +179,12 @@ public class ICA extends ClusteringTechnique implements FocusListener {
     public void focusLost(FocusEvent arg0) {
         
         Component c = arg0.getComponent();
-        String source = c.getName();
+        String source = c.getName();        
         
-        if (source == "jtc_ican") {
+        if (source == "jtf_ican") {
             JTextField jtf = (JTextField) c;
-            try {
-                ican = Integer.parseInt(jtf.getText());
+            try {                
+                ican = Integer.parseInt(jtf.getText());                
             } catch (NumberFormatException e) {
                 ican = DEF_ICAN;
                 jtf.setText(Integer.toString(ican));
