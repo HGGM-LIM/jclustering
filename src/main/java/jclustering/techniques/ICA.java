@@ -49,6 +49,8 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         // Get image dimensions, store ICA dimensions (number of frames).
         int[] dim = ip.getDimensions();
         dimensions = dim[4];
+        
+        IJ.showStatus("ICA: reformatting data matrix...");
 
         // Compute number of real voxels to be used voxels
         int n = 0;
