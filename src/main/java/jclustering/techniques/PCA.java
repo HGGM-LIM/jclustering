@@ -273,6 +273,7 @@ public class PCA extends ClusteringTechnique {
             JCheckBox jcb = (JCheckBox) c;
             showPCA = jcb.isSelected();
         } else if (s.equals("jcb_matrix")) {
+            // Check the type of PCA selected
             JComboBox jcb = (JComboBox) c;
             transform = (String) jcb.getSelectedItem();        
         }
