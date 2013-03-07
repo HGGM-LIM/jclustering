@@ -21,6 +21,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import jclustering.Voxel;
 import static jclustering.MathUtils.getMaxIndex;
+import static jclustering.Utils.RealMatrix2IJ;
 import static jclustering.GUIUtils.createChoices;
 
 /**
@@ -98,51 +99,11 @@ public class PCA extends ClusteringTechnique {
         // If the PCA image is to be shown, create a new image with
         // result.getRowDimension() frames and the original number of 
         // x, y, z dimensions
-        if (showPCA) {            
-            // Get number of components
-            int components = result.getRowDimension();
-            
-            // Create dynamic image
-            ImagePlus PCA_image = IJ.createImage("PCA image", "16-bit", 
-                                                 dim[0], dim[1],
-                                                 dim[3] * components);
-            PCA_image.setDimensions(1, dim[3], components);
-            PCA_image.setOpenAsHyperStack(true);
-            
-            // Get stack for easy access
-            ImageStack is = PCA_image.getStack();
-            
-            int column_index = 0;
-            
-            // Assign voxels to values. It is important to iterate the image
-            // in the correct order (first x, then y, then slices), because
-            // that is the way the images are normally processed when using
-            // the ImagePlusHypIterator object.
-            for(int z = 0; z < dim[3]; z++) {
-                for(int y = 0; y < dim[1]; y++) {
-                    for(int x = 0; x < dim[0]; x++) {
-                        
-                        // Test it the TAC is noise. If it is noise, 
-                        // jump to the next one
-                        double [] tac = ip.getTAC(x, y, z + 1);
-                        if (skip_noisy && isNoise(tac)) continue;
-                        
-                        // Not noise: get the next column
-                        double [] comp = result.getColumn(column_index++);
-                        
-                        // Iterate through the component and set the values.
-                        // Each row of the component is in one frame.
-                        for (int t = 0; t < components; t++) {
-                            // Get internal slice number
-                            int sn = PCA_image.getStackIndex(1, z + 1, t + 1);
-                            is.setVoxel(x, y, sn, comp[t]);                            
-                        }                        
-                    }
-                }
-            }
-            
+        if (showPCA) {     
+            ImagePlus PCA_image = RealMatrix2IJ(result, dim, this.ip, 
+                    skip_noisy, "PCA image");
             PCA_image.show();
-        } // End PCA image show.
+        }
         
         // Please note: this is somehow incorrect. As the clustering model
         // that we are following needs one voxel -> one cluster, this step
