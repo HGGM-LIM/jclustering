@@ -323,7 +323,7 @@ public class Utils {
         int components = rm.getRowDimension();
         
         // Create dynamic image
-        ImagePlus image = IJ.createImage(name, "16-bit", 
+        ImagePlus image = IJ.createImage(name, "32-bit", 
                                              dim[0], dim[1],
                                              dim[3] * components);
         image.setDimensions(1, dim[3], components);
