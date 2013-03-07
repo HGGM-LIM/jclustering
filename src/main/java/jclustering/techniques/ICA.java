@@ -73,7 +73,8 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         }
         
         // Transpose the data matrix
-        Array2DRowRealMatrix temp = new Array2DRowRealMatrix(image_data);
+        Array2DRowRealMatrix temp = new Array2DRowRealMatrix(image_data, 
+                                                             false);
         image_data = temp.transpose().getData();
         temp = null;
         System.gc();        
@@ -98,7 +99,7 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         RealMatrix sources = new Array2DRowRealMatrix(sep);
         sources = sources.transpose();
         
-        Array2DRowRealMatrix result = new Array2DRowRealMatrix(vectors);        
+        Array2DRowRealMatrix result = new Array2DRowRealMatrix(vectors, false);        
         
         // If the ICA image is to be shown, create a new image with
         // result.getRowDimension() frames and the original number of 
