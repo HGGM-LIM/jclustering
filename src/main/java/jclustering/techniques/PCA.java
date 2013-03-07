@@ -233,7 +233,7 @@ public class PCA extends ClusteringTechnique {
     }
 
     /*
-     * Generates covariance matrix with mean removed 
+     * Generates removes mean from every variable (column)
      */
     private void _normalizeData(double [] mean) {
         
@@ -243,7 +243,7 @@ public class PCA extends ClusteringTechnique {
             // Skip noisy
             if (skip_noisy && isNoise(v)) continue;
             
-            // Subtract the mean and add to the StorelessCovariance object
+            // Subtract the mean
             double [] norm = _subtractMean(v.tac, mean);
             // Fill in normalized_data, initialized in the _getMean() method.
             normalized_data[i++] = norm;
