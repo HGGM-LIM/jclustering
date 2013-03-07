@@ -1,23 +1,27 @@
 package jclustering.techniques;
 
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
-import org.apache.commons.math3.stat.correlation.StorelessCovariance;
+import org.apache.commons.math3.stat.correlation.Covariance;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import jclustering.Voxel;
 import static jclustering.MathUtils.getMaxIndex;
+import static jclustering.GUIUtils.createChoices;
 
 /**
  * <p>Implements a PCA clustering according to 
@@ -38,6 +42,8 @@ public class PCA extends ClusteringTechnique {
     
     private double[][] normalized_data;
     
+    private String transform = "Covariance";
+    
     @Override
     public void process() {
     
@@ -48,21 +54,35 @@ public class PCA extends ClusteringTechnique {
         // Get mean for each dimension
         IJ.showStatus("PCA: computing mean...");
         double [] mean = _getMean();
+        _normalizeData(mean);
         
-        // Obtain covariance matrix
-        IJ.showStatus("PCA: computing covariance matrix...");
-        RealMatrix cov = _generateCovariance(mean);
+        // Created the normalized data, but don't copy the actual values,
+        // just reference the double [][] containing it.
         RealMatrix normalized_data_matrix = new 
-                Array2DRowRealMatrix(normalized_data);
+                Array2DRowRealMatrix(normalized_data, false);
+        
+        // Obtain covariance or correlation matrix
+        RealMatrix c = null;
+        
+        if (transform.equals("Covariance")) {
+            IJ.showStatus("PCA: computing covariance matrix...");
+            c = (new Covariance(normalized_data_matrix)).
+                              getCovarianceMatrix();
+            IJ.showStatus("PCA: computing covariance matrix SVD...");
+        } else if (transform.equals("Correlation")) {
+            IJ.showStatus("PCA: computing correlation matrix...");
+            c = (new PearsonsCorrelation(normalized_data_matrix)).
+                    getCorrelationMatrix();
+            IJ.showStatus("PCA: computing correlation matrix SVD...");
+        }
         
         // Use SVD on the covariance matrix instead of obtaining the 
         // eigenvectors. Should return the same result, but this way is
-        // conceptually better.
-        IJ.showStatus("PCA: computing covariance matrix SVD...");
-        SingularValueDecomposition svd = new SingularValueDecomposition(cov);
+        // conceptually better.        
+        SingularValueDecomposition svd = new SingularValueDecomposition(c);
         
         // Force memory collection
-        cov = null;
+        c = null;
         System.gc();        
                 
         RealMatrix svdv = svd.getV(); // The additional info provided.
@@ -162,13 +182,22 @@ public class PCA extends ClusteringTechnique {
     }
     
     public JPanel makeConfig() {
-        JPanel jp = new JPanel(new GridLayout(1, 2, 5, 5));
+        JPanel jp = new JPanel(new GridLayout(2, 2, 5, 5));
         
+        // Show PCA image?
         jp.add(new JLabel("Show PCA image:"));
         JCheckBox jcb_showPCA = new JCheckBox();
+        jcb_showPCA.setName("jcb_showPCA");
         jcb_showPCA.setSelected(showPCA);
         jcb_showPCA.addItemListener(this);
         jp.add(jcb_showPCA);
+        
+        // Use covariance or correlation matrix for PCA?
+        jp.add(new JLabel("Use covariance or correlation:"));
+        String [] t = new String[]{"Covariance", "Correlation"};
+        JComboBox jcb_matrix = createChoices("jcb_matrix", t, this);
+        jcb_matrix.setSelectedIndex(0);
+        jp.add(jcb_matrix);
         
         return jp;        
     }
@@ -206,9 +235,7 @@ public class PCA extends ClusteringTechnique {
     /*
      * Generates covariance matrix with mean removed 
      */
-    private RealMatrix _generateCovariance(double [] mean) {
-        
-        StorelessCovariance sc = new StorelessCovariance(dimensions);
+    private void _normalizeData(double [] mean) {
         
         int i = 0;
         
@@ -220,11 +247,7 @@ public class PCA extends ClusteringTechnique {
             double [] norm = _subtractMean(v.tac, mean);
             // Fill in normalized_data, initialized in the _getMean() method.
             normalized_data[i++] = norm;
-            sc.increment(norm);
         }
-        
-        return sc.getCovarianceMatrix();
-        
     }
     
     /*
@@ -242,9 +265,17 @@ public class PCA extends ClusteringTechnique {
 
     public void itemStateChanged(ItemEvent arg0) {
         
-        // Check the checkbox for the showPCA variable
-        JCheckBox jcb = (JCheckBox)arg0.getSource();
-        showPCA = jcb.isSelected();
+        Component c = (Component) arg0.getSource();
+        String s = c.getName();
+        
+        if (s.equals("jcb_showPCA")) {
+            // Check the checkbox for the showPCA variable
+            JCheckBox jcb = (JCheckBox) c;
+            showPCA = jcb.isSelected();
+        } else if (s.equals("jcb_matrix")) {
+            JComboBox jcb = (JComboBox) c;
+            transform = (String) jcb.getSelectedItem();        
+        }
         
     }    
 }
