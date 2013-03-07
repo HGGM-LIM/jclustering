@@ -18,7 +18,6 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
 import jclustering.Voxel;
 import static jclustering.MathUtils.getMaxIndex;
 import static jclustering.Utils.RealMatrix2IJ;
