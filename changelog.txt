@@ -1,47 +1,53 @@
-v1.2.1 - 03/05/2013
+v1.2.2 - 2013-03-07
+-------------------
+
+- PCA can now be computed on the correlation matrix instead of the covariance.
+- Additional images from PCA, ICA and SVD use a floating point format.
+
+v1.2.1 - 2013-03-05
 -------------------
 
 - Fixed bug: number of components was ignored in ICA.
 
-v1.2.0 - 03/04/2013
+v1.2.0 - 2013-03-04
 -------------------
 
 - ClusteringTechniques can now return a formatted string array that will be saved as additional information.
 - Added ICA implementation thanks to the fastICA library by Michael Lambertz.  
 - Added SVD implementation.
 
-v1.1.9 - 02/27/2013
+v1.1.9 - 2013-02-27
 -------------------
 
 - Added an option for displaying the PCA image in the PCA technique.
 - PCA computation now uses SVD on the covariance matrix instead of obtaining
   the eigenvectors manually.
 
-v1.1.8 - 10/22/2012
+v1.1.8 - 2012-10-22
 -------------------
 
 - Fixed yet another major bug in LeaderFollower implementation.
 - cluster image now has correct voxel size information.
 
-v1.1.7 - 09/28/2012
+v1.1.7 - 2012-09-28
 -------------------
 
 - Fixed major bug in LeaderFollower implementation.
 
-v1.1.6 - 09/27/2012
+v1.1.6 - 2012-09-27
 -------------------
 
 - Added kmeans++ initialization.
 - It is now redistributable as a .jar file thanks to Johannes Schindelin.
 
-v1.1.5 - 09/24/2012
+v1.1.5 - 2012-09-24
 -------------------
 
 - Uses calibration data from the image to return calibrated TACs.
 - Use SSE to compute when K-Means should stop.
 - Minor bug fixes and improvements.
 
-v1.1.4 - 09/10/2012
+v1.1.4 - 2012-09-10
 -------------------
 
 - Fixed a null pointer problem when saving data from an empty cluster.
@@ -49,26 +55,26 @@ v1.1.4 - 09/10/2012
 - Fixed cluster behavior and updated documentation.
 
 
-v1.1.3 - 09/06/2012
+v1.1.3 - 2012-09-06
 -------------------
 
 - Added PCA technique.
 
 
-v1.1.2 - 09/06/2012
+v1.1.2 - 2012-09-06
 -------------------
 
 - ImagePlusHyp now implements Iterable<Vector> and is much easier to go
   through all the voxels in an image.
 
 
-v1.0.2 - 08/31/2012
+v1.0.2 - 2012-08-31
 -------------------
 
 - Mahalanobis distance implemented.
 
 
-v1.0.1 - 08/31/2012
+v1.0.1 - 2012-08-31
 -------------------
 
 - Leader-follower can now discard the smallest cluster (according to
@@ -77,7 +83,7 @@ v1.0.1 - 08/31/2012
 - New javadoc.
 
 
-v1.0.0 - 08/31/2012
+v1.0.0 - 2012-08-31
 -------------------
 
 - First released version. Implements K-Means and Leader-follower clustering
