@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Toolkit;
@@ -62,7 +63,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
 
     private ImagePlusHyp iph;
     private ClusteringTechnique technique;
-    private JPanel main_panel, tech_panel, met_panel;
+    private JPanel main_panel, tech_panel, met_panel, about_panel;
     private JFrame f;
     private boolean skip_noisy = true;
     private String file_saving_format = null;
@@ -90,6 +91,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         tech_panel = createJPanel("tech_panel", this);
         // Panel for the chosen metric (if any)
         met_panel = createJPanel("met_panel", this);
+        // Panel for the "About" information
+        about_panel = createJPanel("about_panel", this);
         // Panel for the bottom buttons
         JPanel button_panel = createJPanel("button_panel", this);
 
@@ -112,7 +115,8 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         main_panel.add(new JLabel("File saving format:"));
         String [] file_saving_choices = new String[] {"CSV", "PMOD",
                 "tab-separated"};
-        JComboBox c_file = createChoices("file_saving", file_saving_choices, this);
+        JComboBox c_file = createChoices("file_saving", file_saving_choices, 
+                                         this);
         file_saving_format = (String)c_file.getItemAt(0);
         main_panel.add(c_file);
         
@@ -148,9 +152,23 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         jcb_discard.setName("jcb_discard");
         jcb_discard.addItemListener(this);
         main_panel.add(jcb_discard);
+        
+        // Add "About" information
+        String about1 = "jClustering " + VERSION;
+        String about2 = "<html>Download the source code at " +
+                        "<a href=\"https://github.com/HGGM-LIM/jclustering\">"+
+                        "https://github.com/HGGM-LIM/jclustering</a></html>";
+        String about3 = "<html>Please send your comments, bug reports and" +
+                        "suggestions to <a href=\"mailto:jmmateos@hggm.es\">"+
+                        "jmmateos@hggm.es</a></html>";
+        about_panel.setLayout(new GridLayout(3, 1, 5, 5));
+        about_panel.add(new JLabel(about1));
+        about_panel.add(new JLabel(about2));   
+        about_panel.add(new JLabel(about3));
 
         // Set the current technique to the first one shown
-        technique = getClusteringTechnique((String)c.getItemAt(0), iph, skip_noisy);
+        technique = getClusteringTechnique((String)c.getItemAt(0), iph, 
+                                           skip_noisy);
 
         // Initialize panels contents
         _initializePanels();
@@ -159,6 +177,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         container.add(main_panel, "Main");
         container.add(tech_panel, "Technique");
         container.add(met_panel, "Metric");
+        container.add(about_panel, "About");
         f.add(container, BorderLayout.PAGE_START);
 
         // Create buttons panel and make window visible
