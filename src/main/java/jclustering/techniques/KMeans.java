@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.math3.stat.StatUtils;
+
 import jclustering.Cluster;
 import jclustering.Voxel;
 
@@ -255,6 +257,12 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             _fillKMeansPlusPlus(initial_points);
             return;
         }
+        
+        // Deterministic K-means++
+        if (initial_centroids.equals("det++")) {
+            _fillKMeansDetPlusPlus(initial_points);
+            return;
+        }
 
         String[] point_triplets = initial_centroids.split(";");
         for (int i = 0; i < point_triplets.length; i++) {
@@ -287,7 +295,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
      */
     private void _fillKMeansPlusPlus(int[][] initial_points) {
         
-        IJ.showStatus("KMeans++ initialization...");
+        IJ.showStatus("K-means++ initialization...");
 
         Random r = new Random(System.currentTimeMillis());
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
@@ -340,6 +348,59 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         return;
     }
     
+    private void _fillKMeansDetPlusPlus(int [][] initial_points) {
+        
+        IJ.showStatus("Deterministic k-means++ initialization...");
+        
+        int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
+        
+        // First point is voxel with biggest amplitude
+        double maxamp = 0.0;
+        for (Voxel v : ip) {
+            double m = StatUtils.max(v.tac);
+            if (m > maxamp) {
+                initial_points[0][0] = v.x;
+                initial_points[0][1] = v.y;
+                initial_points[0][2] = v.slice;
+            }
+        }
+        
+        // Other points are chosen by distance to the rest of the centroids
+        // Every other point depends on the distance to each centroid
+        for (int i = 1; i < initial_points.length; i++) {
+            
+            double distance = 0.0;            
+            Voxel chosen = null;
+            
+            // Get current centroids
+            double [][] current_centroids = new double[i][dim[4]];
+            for (int j = 0; j < i; j++) {
+                current_centroids[j] = Arrays.copyOf(
+                        ip.getTAC(initial_points[j][0], initial_points[j][1], 
+                                initial_points[j][2]), dim[4]);
+            }
+            
+            for (Voxel v : ip) {
+                
+                if (isNoise(v) && skip_noisy) continue;
+                
+                // Each new center is chosen depending on its distance
+                // Note that the distance is already squared in the auxiliar
+                // function.
+                double d = _KMeansPlusPlusDistance(current_centroids, v);
+                if (d > distance) {
+                    distance = d;
+                    chosen = v;    
+                }
+            }            
+            
+            // Set the chosen voxel
+            initial_points[i][0] = chosen.x;
+            initial_points[i][1] = chosen.y;
+            initial_points[i][2] = chosen.slice;            
+        }
+    }
+    
     /*
      * Computes the distance between the given voxel and all the previous
      * centroids.
@@ -348,10 +409,8 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                                            Voxel v) {
         double distance = 0.0;
        
-        for (int j = 0; j < current_centroids.length; j++) {
-            double [] centroid = current_centroids[j];
-            double [] tac = v.tac;
-            distance += metric.distance(centroid, tac);            
+        for (int j = 0; j < current_centroids.length; j++) {                   
+            distance += metric.distance(current_centroids[j], v.tac);            
         }
         
         return distance * distance;
@@ -391,9 +450,10 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         boolean correct = false;
         
-        // If k-means++, return true automatically
-        if (initial_centroids.equals("++")) return correct;
-
+        // If k-means++ (or deterministic k-means++), return true automatically
+        if (initial_centroids.equals("++") ||
+            initial_centroids.equals("det++")) return correct;
+        
         // Trim initial_centroids
         initial_centroids = initial_centroids.trim();        
 
