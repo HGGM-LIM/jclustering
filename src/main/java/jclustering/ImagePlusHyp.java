@@ -3,6 +3,7 @@ package jclustering;
 import java.util.Iterator;
 
 import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.util.FastMath;
 
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -89,7 +90,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
      * approach, but works in most cases.
      */
     public boolean isNoise(double[] data) {
-        if (StrictMath.abs(StatUtils.min(data)) >= StatUtils.max(data)) 
+        if (FastMath.abs(StatUtils.min(data)) >= StatUtils.max(data)) 
             return true;
         return false;
     }
