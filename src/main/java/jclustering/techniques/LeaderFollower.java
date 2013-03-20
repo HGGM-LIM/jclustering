@@ -55,7 +55,6 @@ public class LeaderFollower extends ClusteringTechnique
     
     // Constants
     private final int CLUSTER_NOT_FOUND = -1;
-    private final int CLUSTER_NOT_AMP = -2;
     
     // Maximum number of clusters to compute
     private int max_clusters = DEF_MAX_CLUSTERS;
@@ -264,14 +263,16 @@ public class LeaderFollower extends ClusteringTechnique
         
         // No cluster found
         if (i == -1) return CLUSTER_NOT_FOUND;
-        // Cluster found
+        
+        // Cluster found, check amplitude
         Cluster c = clusters.get(i);
         double peak = StatUtils.max(tac);
-        double meanpeak = c.getPeakMean();        
-        if (peak > meanpeak) return i;
-        // No good amplitude
-        return CLUSTER_NOT_AMP;
-
+        double threspeak = c.getPeakMean() - c.getPeakStdev();
+        // Peak amplitude above threshold
+        if (peak >= threspeak) return i;
+        
+        // Not enough amplitude: not found
+        return CLUSTER_NOT_FOUND;
     }
     
     /*
