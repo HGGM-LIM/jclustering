@@ -1,5 +1,10 @@
 package jclustering;
 
+import java.lang.reflect.Array;
+
+import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.util.FastMath;
+
 /**
  * Math helper class.
  * 
@@ -42,9 +47,42 @@ public class MathUtils {
             res[i] = res[i-2]*kernel[0] + res[i-1]*kernel[1] + res[i]*kernel[2]
                     + res[i+1]*kernel[3] + res[i+2]*kernel[4];
         }
+        
+        return res;        
+        
+    }
+    
+    /**
+     * Computes the root-mean-square deviation for the given TACs
+     * @param x1 TAC 1
+     * @param x2 TAC 2
+     * @return RMSD for the given TACs
+     */
+    public static double rmsd(double [] x1, double [] x2) {
+        
+        double res = 0.0;
+        
+        for (int i = 0; i < x1.length; i++)
+            res += FastMath.pow(x1[i] - x2[i], 2);
+        
+        res = FastMath.sqrt(res / x1.length);
+        
         return res;
+    }
+    
+    /**
+     * Computes the normalized RMSD for the given TACs
+     * @param x1 TAC 1
+     * @param x2 TAC 2
+     * @return NRMSD for the given TACs
+     */
+    public static double nrmsd(double [] x1, double [] x2) {
         
+        double rmsd = rmsd(x1, x2);
+        double min = StatUtils.min(x1);
+        double max = StatUtils.max(x1);
         
+        return rmsd / (max - min);
     }
 
 }
