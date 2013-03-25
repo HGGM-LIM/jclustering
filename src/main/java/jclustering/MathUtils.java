@@ -1,7 +1,5 @@
 package jclustering;
 
-import java.lang.reflect.Array;
-
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
 
