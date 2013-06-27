@@ -5,10 +5,11 @@ develop a new clustering technique or metric for the jClustering framework
 using simple examples and code snippets. Several working examples will be
 attached to this document annex for full reference.
 
-## Contact
+# Contact
 
-If you wish to contact the author for questions, corrections or just casual
-comments, you can do so at [this e-mail address](mailto:jmmateos@mce.hggm.es).
+If you wish to develop your own techniques/metrics for jClustering and need
+help, or you wish to contribute your own code to this project, please do not
+hesitate to contact me at jmmateos@mce.hggm.es.
 
 # What is jClustering?
 
@@ -248,12 +249,6 @@ public void itemStateChanged(ItemEvent arg0) {
     super.itemStateChanged(arg0);
 }
 ```
-
-# Contact
-
-If you wish to develop your own techniques/metrics for jClustering and need
-help, or you wish to contribute your own code to this project, please do not
-hesitate to contact me at jmmateos@mce.hggm.es.
 
 # Annex: full sample classes
 
