@@ -45,65 +45,8 @@ Java version is JRE 6. This plugin does not work yet with ImageJ2, though
 it might be adapted to work with it once it exits beta stage.
 
 # How to use jClustering
-Once jClustering has been installed, you can access it via the `Plugins ->
-jclustering -> JClustering` menu on ImageJ. If no images are open and it is
-executed, the following window appears:
 
-![Error window] (https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_error.jpg)
-
-jClustering needs a HyperStack (a 4D image in ImageJ terminology) to work with.
-It will not open the file for the user, as every format is different and
-getting a structured HyperStack depends on every type of image.
-
-Once the HyperStack has been correctly opened, jClustering will show the
-following screen (or one very similar, depending on the exact version) upon
-execution:
-
-![Main window](https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_main_window.jpg)
-
-In this screen you can select which clustering technique you wish to use, and
-then configure it (second tab) and the metric the technique uses, if any (third
-tab). By convention, labels that have a "\*" symbol at the end have a helper
-tooltip text that appears when the user places the mouse cursor over them; this
-text is used to clarify the label text when some extended explanation is
-needed.
-
-After the clustering modality has been configured, the user can press the “OK”
-button and, after the necessary processing time, the resulting image will
-appear on screen.
-
-![Results window](https://raw.github.com/HGGM-LIM/jclustering/gh-pages/images/doc_results.jpg)
-
-The resulting image is another HyperStack that contains the results structured
-the following way:
-
-* The last _frame_ (not a real frame as it does not represent temporal data) is
-  a 3D image in which every voxel contains the value of the cluster that voxel
-  belongs to. For instance, a voxel with a grey value of 1 belongs to the first
-  cluster, and so on.
-
-* All the other frames, starting from the first one, represent the contents of
-  each cluster.
-
-If you wish to select a file for saving the TACs for each cluster, just select
-a path by clicking on the provided button and the results will be saved using
-the selected format. If you have vector time data, please specify it using the
-appropriate button. This data contains the length of each image frame, in
-seconds, in a two-column text file separated by spaces, as in the following
-sample:
-
-<pre>
-1.0 2.0
-2.0 3.0
-3.0 4.0	
-...
-</pre>
-
-The first column contains the starting time and the second column the ending
-time; each row is a frame. This time vector will be used when saving the
-kinetic data to file. If no time vector is provided, time data will be omitted
-or automatically generated (n frames of 1.0 seconds length each), depending on
-the format selected.
+Please refer to the [user manual](https://github.com/HGGM-LIM/jclustering/blob/master/doc/user_manual.pdf?raw=true).
 
 # Developing for jClustering
 
