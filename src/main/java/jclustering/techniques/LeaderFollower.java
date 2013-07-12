@@ -95,13 +95,15 @@ public class LeaderFollower extends ClusteringTechnique
          * Process all TACs               
          */
         int slice = 0;
+        int tslices = ip.getNSlices();
         
         for (Voxel v : ip) {
 
             if (slice != v.slice) {
                 // Show status message for every slice
-                String status = String.format("Leader-follower. Slice %d, " +
-            		"%d/%d clusters", v.slice, clusters.size(), max_clusters);
+                String status = String.format("Leader-follower. Slice %d/%d, " +
+            		"%d/%d clusters", v.slice, tslices, clusters.size(), 
+            		max_clusters);
                 IJ.showStatus(status);
                 // Update slice pointer
                 slice = v.slice;
