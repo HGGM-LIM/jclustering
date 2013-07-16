@@ -1,3 +1,11 @@
+v1.2.3 - 2013-07-16
+-------------------
+
+- Added "About" panel.
+- Included deterministic k-means++ initialization.
+- Fixed Leader-Follower bug.
+- Added RMSD metric.
+
 v1.2.2 - 2013-03-07
 -------------------
 
