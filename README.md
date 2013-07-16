@@ -24,24 +24,26 @@ gives it all the advantages of using an open-source imaging analysis platform.
 # Installation
 
 The installation of  jClustering within ImageJ is straightforward: download the
-latest `.jar` file available at the [download
-page](http://image.hggm.es/users/jmmateos/jclustering/?C=M;O=D), **rename it as
-`jClustering_.jar`** and copy it to the `plugins/` folder of your ImageJ
-installation. Another (easier) option is just to download the latest release from
-[the github releases page](https://github.com/HGGM-LIM/jclustering/releases).
+latest `jClustering_.jar` release from 
+[the github releases page](https://github.com/HGGM-LIM/jclustering/releases) and
+copy it to your `plugins/` folder in your ImageJ installation.
+
+## Third party libraries
 
 jClustering uses Apache Commons Math version 3.1 for some mathematical
 operations, so this library also needs to be installed. The process is simple:
 go to [Apache Commons Math
 webpage](http://commons.apache.org/math/download_math.cgi) and download the
-latest `commons-math3-3.X-bin.zip` file, where X is the version number, open it
-with any unzip program and copy the file
+latest `commons-math3-3.X-bin.zip` file, where X is the most currentversion
+number, open it with any unzip program and copy the file
 `commons-math3-3.X/commons-math3-3.X.jar` to the `plugins/jars` folder of your
 ImageJ installation.
 
 The fastICA library is also needed, and also needs to be placed in the
 `plugins/jars` directory.  It can be downloaded [from its main
 page](http://sourceforge.net/projects/fastica/).
+
+## ImageJ required version
 
 The minimum ImageJ version needed for jClustering to run is 1.46r. Minimum
 Java version is JRE 6. This plugin does not work yet with ImageJ2, though
