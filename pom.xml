@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
-			<version>1.47t</version>
+			<version>1.46r</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
