@@ -1,6 +1,7 @@
 package jclustering;
 
 import java.util.Iterator;
+import static jclustering.MathUtils.isMasked;
 
 /**
  * Provides an {@link Iterator} for an {@link ImagePlusHyp} object.
@@ -53,7 +54,7 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
         
         // If the voxel belongs to a region that has been masked, return
         // the next one (until we reach one that has actual contents).
-        if (_isMasked(v)) return next();
+        if (isMasked(v)) return next();
         else              return v;
         
     }
@@ -83,17 +84,6 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
                 y = 0;
                 slice++;
             }
-        }
-        
+        }        
     }
-    
-    /*
-     * Checks if a given voxel is zero (has been masked)
-     */
-    private boolean _isMasked(Voxel v) {
-        for (int i = 0; i < v.tac.length; i++)
-            if (v.tac[i] != 0.0) return false;
-        return true;
-    }
-
 }
