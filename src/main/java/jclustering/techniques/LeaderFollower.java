@@ -47,7 +47,7 @@ public class LeaderFollower extends ClusteringTechnique
     implements FocusListener {
 
     // Default values
-    private final int DEF_MAX_CLUSTERS = 1000;
+    private final int DEF_MAX_CLUSTERS = 50;
     private final boolean DEF_DISCARD_SMALLEST = false;
     private final int DEF_KEEP_CLUSTERS = 50;
     private final double DEF_THRESHOLD = 0.3;
