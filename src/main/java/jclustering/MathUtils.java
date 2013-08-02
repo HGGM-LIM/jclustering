@@ -82,5 +82,25 @@ public class MathUtils {
         
         return rmsd / (max - min);
     }
+    
+    /**
+     * Checks if a given voxel is zero (has been masked).
+     * @param v Voxel to check
+     * @return @code{true} if the voxel is always 0.0. @code{false} otherwise.
+     */
+    public static boolean isMasked(Voxel v) {
+        return isMasked(v.tac);
+    }
+    
+    /**
+     * Checks if a given voxel is zero (has been masked).
+     * @param tac Time-activity curve to check
+     * @return @code{true} if the voxel is always 0.0. @code{false} otherwise.
+     */
+    public static boolean isMasked(double [] tac) {
+        for (int i = 0; i < tac.length; i++)
+            if (tac[i] != 0.0) return false;
+        return true;
+    }
 
 }
