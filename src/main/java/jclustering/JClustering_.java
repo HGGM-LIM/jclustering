@@ -64,7 +64,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     private ClusteringTechnique technique;
     private JPanel main_panel, tech_panel, met_panel, about_panel;
     private JFrame f;
-    private boolean skip_noisy = true;
+    private boolean skip_noisy = false;
     private String file_saving_format = null;
     private String file_saving_path = null;
     private String file_reading_path = null;
