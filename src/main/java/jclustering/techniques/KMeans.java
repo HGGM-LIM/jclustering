@@ -1,6 +1,7 @@
 package jclustering.techniques;
 
 import static jclustering.GUIUtils.*;
+import static jclustering.MathUtils.isMasked;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -299,6 +300,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         Random r = new Random(System.currentTimeMillis());
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
+        double [] tac;
         
         // First point is random, but don't pick up noise regardless
         // of the skip_noisy variable
@@ -306,8 +308,9 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             initial_points[0][0] = r.nextInt(dim[0]);
             initial_points[0][1] = r.nextInt(dim[1]);
             initial_points[0][2] = r.nextInt(dim[3]) + 1;
-        } while (isNoise(ip.getTAC(initial_points[0][0], 
-                         initial_points[0][1], initial_points[0][2])));
+            tac = ip.getTAC(initial_points[0][0], 
+                    initial_points[0][1], initial_points[0][2]);
+        } while (isNoise(tac) || isMasked(tac));
         
         // Every other point depends on the distance to each centroid
         for (int i = 1; i < initial_points.length; i++) {
@@ -428,14 +431,16 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         Random r = new Random(System.currentTimeMillis());
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
+        double [] tac;
 
         for (int i = start; i < n_clusters; i++) {
             do {
                 initial_points[i][0] = r.nextInt(dim[0]);
                 initial_points[i][1] = r.nextInt(dim[1]);
                 initial_points[i][2] = r.nextInt(dim[3]) + 1;
-            } while (isNoise(ip.getTAC(initial_points[i][0],
-                            initial_points[i][1], initial_points[i][2])));
+                tac = ip.getTAC(initial_points[i][0],
+                        initial_points[i][1], initial_points[i][2]);
+            } while (isNoise(tac) || isMasked(tac));
         }
     }
 
