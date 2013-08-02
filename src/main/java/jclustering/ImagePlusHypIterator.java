@@ -50,7 +50,11 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
         
         Voxel v = new Voxel(x, y, slice, ip.getTAC(x, y, slice));
         _updatePointers();
-        return v;
+        
+        // If the voxel belongs to a region that has been masked, return
+        // the next one (until we reach one that has actual contents).
+        if (_isMasked(v)) return next();
+        else              return v;
         
     }
 
@@ -81,6 +85,15 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
             }
         }
         
+    }
+    
+    /*
+     * Checks if a given voxel is zero (has been masked)
+     */
+    private boolean _isMasked(Voxel v) {
+        for (int i = 0; i < v.tac.length; i++)
+            if (v.tac[i] != 0.0) return false;
+        return true;
     }
 
 }
