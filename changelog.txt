@@ -7,7 +7,7 @@ v1.2.4 - 2013-08-05
 - Skip noisy voxels is not set to 0 (might be deprecated in the future).
 - LeaderFollower number of clusters is 50 by default (from 1000).
 - ImagePlusHyp is now just a wrapper for ImagePlus, but does not extend it.
-  This duplicating the memory used by the analyzed image.
+  This avoids duplicating the memory used by the analyzed image.
 
 v1.2.3 - 2013-07-16
 -------------------
