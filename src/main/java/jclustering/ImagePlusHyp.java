@@ -16,14 +16,15 @@ import ij.measure.Calibration;
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  * 
  */
-public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
+public class ImagePlusHyp implements Iterable<Voxel>{
 
     /*
      * dim[0] -> width (x) dim[1] -> height (y) dim[2] -> nChannels (1-based)
      * dim[3] -> nSlices (1-based) dim[4] -> nFrames (1-based)
      */
     private int[] dim;
-    private ImageStack is;    
+    private ImagePlus imp;
+    private ImageStack is;
     private Calibration cal;
 
     /**
@@ -33,16 +34,10 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
      */
     public ImagePlusHyp(ImagePlus ip) {
 
-        super(ip.getTitle(), ip.getStack());
+        imp = ip;
         this.is = ip.getStack();
-        this.setProcessor(ip.getProcessor());
-        this.setImage(ip);
-        this.dim = ip.getDimensions();        
-
-        // Set the current calibration
-        Calibration cal = ip.getCalibration();
-        this.setCalibration(cal);
-        this.cal = cal;        
+        this.dim = ip.getDimensions();   
+        this.cal = ip.getCalibration();
         
     }
 
@@ -72,7 +67,7 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
 
         // Set the desired slice and iterate through the frames
         for (int frame = 1; frame <= dim[4]; frame++) {
-            int stack_number = this.getStackIndex(dim[2], slice, frame);            
+            int stack_number = imp.getStackIndex(dim[2], slice, frame);            
             // Use calibration to return true value
             result[frame - 1] = cal.getCValue(
                                     is.getVoxel(x, y, stack_number - 1));
@@ -80,6 +75,29 @@ public class ImagePlusHyp extends ImagePlus implements Iterable<Voxel>{
 
         return result;
 
+    }
+    
+    /**
+     * @return The dimensions of the {@link ImagePlus} used to create 
+     * this object.
+     */
+    public int [] getDimensions() {
+        return dim;
+    }
+    
+    /**
+     * @return The local {@link Calibration} object extracted from the original
+     * {@link ImagePlus}.
+     */
+    public Calibration getCalibration() {
+        return cal;
+    }
+    
+    /**
+     * @return The internal reference to the {@link ImagePlus} object.
+     */
+    public ImagePlus getImagePlus() {
+        return imp;
     }
 
     /**

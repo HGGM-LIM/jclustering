@@ -79,7 +79,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
 
         // Main window
         f = new JFrame("JClustering " + VERSION + ", image " + 
-                iph.getTitle());
+                iph.getImagePlus().getTitle());
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Main panel, with tabs
@@ -246,7 +246,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         long start = System.currentTimeMillis();
         
         String tname = technique.getName();
-        String iname = iph.getTitle();
+        String iname = iph.getImagePlus().getTitle();
     
         IJ.log("----- Process started: " + tname + "-----");
         // Actual clustering operations

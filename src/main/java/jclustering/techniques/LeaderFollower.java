@@ -95,7 +95,7 @@ public class LeaderFollower extends ClusteringTechnique
          * Process all TACs               
          */
         int slice = 0;
-        int tslices = ip.getNSlices();
+        int tslices = ip.getImagePlus().getNSlices();
         
         for (Voxel v : ip) {
 
