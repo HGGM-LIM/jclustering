@@ -303,41 +303,6 @@ public abstract class ClusteringTechnique implements ItemListener {
         
     }
 
-
-    /**
-     * Finds the cluster with a centroid as close as possible to the given TAC.
-     * 
-     * @param tac The TAC to be tested.
-     * @return The index of the cluster with the closest centroid, or -1 if none
-     *         is found.
-     */
-    public int getCloserClusterIndex(double[] tac) {
-
-        int res = -1;
-        double distance = Double.MAX_VALUE;
-
-        // Iterate through the array and find the index for the
-        // cluster which centroid is closer to the tac.
-        int length = clusters.size();
-        for (int i = 0; i < length; i++) {
-
-            // If the cluster is empty, get the next one
-            Cluster c = clusters.get(i);
-            if (c.isEmpty())
-                continue;
-
-            // Compute the distance and update res accordingly
-            double aux_distance = metric.distance(c.getCentroid(), tac);
-            if (aux_distance < distance) {
-                distance = aux_distance;
-                res = i;
-            }
-        }
-
-        return res;
-
-    }
-
     /**
      * Creates a new cluster with the {@code double [] tac} as the centroid,
      * adds it to the cluster ArrayList and returns it.
