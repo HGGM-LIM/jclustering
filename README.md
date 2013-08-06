@@ -1,9 +1,9 @@
 # Introduction
 
-This documentation explains what jClustering is, how to use it and how to
-develop a new clustering technique or metric for the jClustering framework
-using simple examples and code snippets. Several working examples will be
-attached to this document annex for full reference.
+jClustering is a dynamic imaging clustering framework for ImageJ. It is not
+only a development API for automatic segmentation algorithms, but also a 
+platform aimed at centralizing different implementations that as today
+are not available in either source code or binary download.
 
 # Contact
 
@@ -21,37 +21,11 @@ simple API interface that will allow the implementation of new clustering
 algorithms in a short time. The fact that it is implemented on top of ImageJ
 gives it all the advantages of using an open-source imaging analysis platform.
 
-# Installation
+# Using jClustering
 
-The installation of  jClustering within ImageJ is straightforward: download the
-latest `jClustering_.jar` release from 
-[the github releases page](https://github.com/HGGM-LIM/jclustering/releases) and
-copy it to your `plugins/` folder in your ImageJ installation.
-
-## Third party libraries
-
-jClustering uses Apache Commons Math version 3.1 for some mathematical
-operations, so this library also needs to be installed. The process is simple:
-go to [Apache Commons Math
-webpage](http://commons.apache.org/math/download_math.cgi) and download the
-latest `commons-math3-3.X-bin.zip` file, where X is the most currentversion
-number, open it with any unzip program and copy the file
-`commons-math3-3.X/commons-math3-3.X.jar` to the `plugins/jars` folder of your
-ImageJ installation.
-
-The fastICA library is also needed, and also needs to be placed in the
-`plugins/jars` directory.  It can be downloaded [from its main
-page](http://sourceforge.net/projects/fastica/).
-
-## ImageJ required version
-
-The minimum ImageJ version needed for jClustering to run is 1.46r. Minimum
-Java version is JRE 6. This plugin does not work yet with ImageJ2, though
-it might be adapted to work with it once it exits beta stage.
-
-# How to use jClustering
-
-Please refer to the [user manual](https://github.com/HGGM-LIM/jclustering/blob/master/doc/user_manual.pdf?raw=true).
+Please refer to the [user
+manual](https://github.com/HGGM-LIM/jclustering/blob/master/doc/user_manual.pdf?raw=true)
+for download, installation and use instructions.
 
 # Developing for jClustering
 
