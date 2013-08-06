@@ -31,7 +31,7 @@ for download, installation and usage instructions.
 
 If you want to use jClustering as the platform to implement your own clustering
 algorithms, please refer to the [developer
-manual](https://github.com/HGGM-LIM/jclustering/blob/master/doc/developer.pdf?raw=true)
+manual](https://github.com/HGGM-LIM/jclustering/blob/master/doc/developer_manual.pdf?raw=true)
 for a brief development guide. If you have any questions, please do not
 hesitate to ask.
 
