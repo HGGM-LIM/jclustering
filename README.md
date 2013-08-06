@@ -25,7 +25,7 @@ gives it all the advantages of using an open-source imaging analysis platform.
 
 Please refer to the [user
 manual](https://github.com/HGGM-LIM/jclustering/blob/master/doc/user_manual.pdf?raw=true)
-for download, installation and use instructions.
+for download, installation and usage instructions.
 
 # Developing for jClustering
 
