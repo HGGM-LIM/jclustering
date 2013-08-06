@@ -16,4 +16,9 @@ plugins/
 macros/
 *.ucls
 changelog_temp.txt
-doc/
+doc/*.aux
+doc/*.log
+doc/*.out
+doc/*.gz
+doc/*.toc
+
