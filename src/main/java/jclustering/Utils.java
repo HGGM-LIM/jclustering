@@ -20,6 +20,8 @@ import org.apache.commons.math3.linear.RealMatrix;
 import jclustering.metrics.ClusteringMetric;
 import jclustering.techniques.ClusteringTechnique;
 
+import static jclustering.MathUtils.isMasked;
+
 /**
  * Auxiliary class with misc static methods
  * 
@@ -345,7 +347,11 @@ public class Utils {
                     // Test it the TAC is noise. If it is noise, 
                     // jump to the next one
                     double [] tac = ip.getTAC(x, y, z + 1);
+                    
+                    // Check for masked or noisy voxels
                     if (skip_noisy && ip.isNoise(tac)) continue;
+                    if (isMasked(tac, ip.CALZERO))
+                        continue;
                     
                     // Not noise: get the next column
                     double [] comp = rm.getColumn(column_index++);
