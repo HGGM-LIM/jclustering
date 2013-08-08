@@ -310,7 +310,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             initial_points[0][2] = r.nextInt(dim[3]) + 1;
             tac = ip.getTAC(initial_points[0][0], 
                     initial_points[0][1], initial_points[0][2]);
-        } while (isNoise(tac) || isMasked(tac));
+        } while (isNoise(tac) || isMasked(tac, ip.CALZERO));
         
         // Every other point depends on the distance to each centroid
         for (int i = 1; i < initial_points.length; i++) {
@@ -440,7 +440,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 initial_points[i][2] = r.nextInt(dim[3]) + 1;
                 tac = ip.getTAC(initial_points[i][0],
                         initial_points[i][1], initial_points[i][2]);
-            } while (isNoise(tac) || isMasked(tac));
+            } while (isNoise(tac) || isMasked(tac, ip.CALZERO));
         }
     }
 
