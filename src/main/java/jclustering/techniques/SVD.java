@@ -37,22 +37,19 @@ public class SVD extends ClusteringTechnique {
         int [] dim = ip.getDimensions();        
         dimensions = dim[4];
         
-        // Compute number of real voxels to be used voxels
+        // Compute number of real voxels to be used 
         int n = 0;
-        if(!skip_noisy) n = dim[0] * dim[1] * dim[3]; // No noise check: use all
-        else {
-            for(Voxel v: ip) {
-                if(isNoise(v)) continue;
-                n++;
-            }
-        }
+        for (Voxel v : ip) {
+            if (skip_noisy && isNoise(v)) continue;
+            n++;
+        }    
         
         // Create new array and fill it with the image data
         double [][] image_data = new double[n][dimensions];
         
         int i = 0;
         for(Voxel v : ip) {
-            if(isNoise(v)) continue;
+            if(skip_noisy && isNoise(v)) continue;
             image_data[i++] = v.tac;
         }
         
