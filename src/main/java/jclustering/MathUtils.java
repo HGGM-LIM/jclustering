@@ -86,20 +86,22 @@ public class MathUtils {
     /**
      * Checks if a given voxel is zero (has been masked).
      * @param v Voxel to check
+     * @param zero Calibrated value for zero.
      * @return @code{true} if the voxel is always 0.0. @code{false} otherwise.
      */
-    public static boolean isMasked(Voxel v) {
-        return isMasked(v.tac);
+    public static boolean isMasked(Voxel v, double zero) {
+        return isMasked(v.tac, zero);
     }
     
     /**
      * Checks if a given voxel is zero (has been masked).
      * @param tac Time-activity curve to check
+     * @param zero Calibrated value for zero.
      * @return @code{true} if the voxel is always 0.0. @code{false} otherwise.
      */
-    public static boolean isMasked(double [] tac) {
+    public static boolean isMasked(double [] tac, double zero) {
         for (int i = 0; i < tac.length; i++)
-            if (tac[i] != 0.0) return false;
+            if (tac[i] != zero) return false;        
         return true;
     }
 
