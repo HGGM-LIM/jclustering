@@ -1,3 +1,10 @@
+v1.2.5 - 2013-08-08
+-------------------
+
+- SVD did not work if the soon-to-be-deprecated (hopefully) skip_noisy was not set to true.
+- The logic for not returning masked voxels did not work as expected. Fixed.
+- ImagePlusHypIterator rewritten (nasty bug showed up when correct pixel masking was implemented).
+
 v1.2.4 - 2013-08-05
 -------------------
 
