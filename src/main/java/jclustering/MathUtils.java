@@ -101,7 +101,7 @@ public class MathUtils {
      */
     public static boolean isMasked(double [] tac, double zero) {
         for (int i = 0; i < tac.length; i++)
-            if (tac[i] != zero) return false;        
+            if (tac[i] != zero && tac[i] != 0.0) return false;        
         return true;
     }
 
