@@ -52,16 +52,12 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         
         IJ.showStatus("ICA: reformatting data matrix...");
 
-        // Compute number of real voxels to be used voxels
-        int n = 0;
-        if (!skip_noisy)
-            n = dim[0] * dim[1] * dim[3]; // No noise check: use all
-        else {
-            for (Voxel v : ip) {
-                if (isNoise(v)) continue;
-                n++;
-            }
-        }
+        // Compute number of real voxels to be used
+        int n = 0;        
+        for (Voxel v : ip) {
+            if (skip_noisy && isNoise(v)) continue;
+            n++;
+        }        
 
         // Create new array and fill it with the image data
         double[][] image_data = new double[n][dimensions];
@@ -89,6 +85,8 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         } catch (FastICAException e) {            
             System.out.println(e.getLocalizedMessage());
         }
+        
+        IJ.showStatus("ICA computed, reformatting results...");
         
         // Get projections on each dimension
         double [][] vectors = fi.getICVectors();
