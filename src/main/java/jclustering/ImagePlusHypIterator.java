@@ -1,6 +1,7 @@
 package jclustering;
 
 import java.util.Iterator;
+
 import static jclustering.MathUtils.isMasked;
 
 /**
@@ -20,6 +21,9 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
     // Limits
     private int x_max, y_max, slice_max;
     
+    // The voxel to return
+    private Voxel v = null;
+    
     /**
      * Public constructor.
      * @param ip The {@link ImagePlusHyp} object to be iterated.
@@ -32,30 +36,46 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
         int [] dim = ip.getDimensions();
         x_max = dim[0];
         y_max = dim[1];
-        slice_max = dim[3] + 1; // 1-based
+        slice_max = dim[3];
         
         // Init first pointer
         x = 0;
         y = 0;
         slice = 1;
         
+        // Init first voxel reference
+        _setNextVoxel();
+        
     }
 
     @Override
     public boolean hasNext() {
-        return x < x_max && y < y_max && slice < slice_max;
+        return (_withinLimits());
+    }
+    
+    private boolean _withinLimits() {
+        return (x < x_max) && (y < y_max) && (slice <= slice_max);
     }
 
     @Override
     public Voxel next() {
+                
+        Voxel res = new Voxel(v.x, v.y, v.slice, v.tac);
+        _setNextVoxel();
+        return res;        
         
-        Voxel v = new Voxel(x, y, slice, ip.getTAC(x, y, slice));
-        _updatePointers();
+    }
+    
+    private void _setNextVoxel() {
         
-        // If the voxel belongs to a region that has been masked, return
-        // the next one (until we reach one that has actual contents).
-        if (isMasked(v)) return next();
-        else              return v;
+        boolean found = false;
+        
+        while(_withinLimits() && !found) {
+            v = new Voxel(x, y, slice, ip.getTAC(x, y, slice));
+            _updatePointers();
+            if (!isMasked(v, ip.CALZERO)) 
+                found = true;                
+        }
         
     }
 
