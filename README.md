@@ -35,3 +35,10 @@ manual](https://github.com/HGGM-LIM/jclustering/blob/master/doc/developer_manual
 for a brief development guide. If you have any questions, please do not
 hesitate to ask.
 
+# External tools
+
+As an independent project that intends to add more advanced dynamic imaging capabilities
+to ImageJ, you might want to try the [LIM Tools plugin](https://github.com/HGGM-LIM/limtools).
+It adds several tools to mask dynamic studies, create average images and explore the 
+time-activity curves, for example.
+
