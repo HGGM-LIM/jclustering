@@ -26,6 +26,11 @@ public class ImagePlusHyp implements Iterable<Voxel>{
     private ImagePlus imp;
     private ImageStack is;
     private Calibration cal;
+    
+    /**
+     * The calibrated 0.0 value (which may not be equal to 0.0)
+     */
+    public final double CALZERO;
 
     /**
      * Creates a new ImagePlusHyp using a general ImagePlus.
@@ -38,6 +43,7 @@ public class ImagePlusHyp implements Iterable<Voxel>{
         this.is = ip.getStack();
         this.dim = ip.getDimensions();   
         this.cal = ip.getCalibration();
+        CALZERO = cal.getCValue(0.0);
         
     }
 
@@ -59,6 +65,8 @@ public class ImagePlusHyp implements Iterable<Voxel>{
         // Dimension check
         if (x >= dim[0] || x < 0 || y >= dim[1] || y < 0 || slice > dim[3]
                 || slice < 1) {
+            System.out.println("x = " + x + ", y = " + y + ", slice = " + slice);
+            System.out.println("Should not be here");
             return null;
         }
 
