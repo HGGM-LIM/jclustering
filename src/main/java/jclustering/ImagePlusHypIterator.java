@@ -5,7 +5,11 @@ import java.util.Iterator;
 import static jclustering.MathUtils.isMasked;
 
 /**
- * Provides an {@link Iterator} for an {@link ImagePlusHyp} object.
+ * Provides an {@link Iterator} for an {@link ImagePlusHyp} object. This is
+ * the recommended way to iterate through all the voxels in a given image, as
+ * this does not require the user to know its dimensions and will not return
+ * voxels that have been masked previously, therefore diminishing the size of
+ * the clustering problem to solve. 
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  *

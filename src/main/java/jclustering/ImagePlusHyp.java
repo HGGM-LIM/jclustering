@@ -54,6 +54,21 @@ public class ImagePlusHyp implements Iterable<Voxel>{
      * the raw values. Please refer to ImageJ's {@link Calibration} object
      * documentation for more information regarding this. 
      * 
+     * It is <strong>strongly discouraged</strong> to use this method directly.
+     * Use the {@link Iterator} provided by this object instead. Example:
+     *  
+     * <pre> 
+     * for (Voxel v: ip) { // ip is a reference to a ImagePlusHyp object.
+     *  ... // your actual code goes in here
+     * } 
+     * </pre>
+     * 
+     * This has certain advantages. For instance, you do not need to know
+     * the dimensions of your image for it to work, and the {@link Iterator},
+     * provided by {@link ImagePlusHypIterator}, will not return voxels that
+     * have been masked previously, therefore diminishing the size of the
+     * clustering problem to be solved. 
+     * 
      * @param x The x coordinate of the desired dixel.
      * @param y The y coordinate of the desired dixel.
      * @param slice Slice (1-based) of the desired dixel.
