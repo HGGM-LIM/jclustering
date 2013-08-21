@@ -405,19 +405,20 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     }
     
     /*
-     * Computes the distance between the given voxel and all the previous
-     * centroids.
+     * Computes the distance between the given voxel and the closest centroid.
      */
     private double _KMeansPlusPlusDistance(double [][] current_centroids, 
                                            Voxel v) {
-        double distance = 0.0;
+        double distance = Double.MAX_VALUE;
        
         for (int j = 0; j < current_centroids.length; j++) {                   
-            distance += Math.pow(metric.distance(current_centroids[j], v.tac), 
-                                 2);            
+            double d = metric.distance(current_centroids[j], v.tac);
+            if (d < distance)
+                distance = d;
+                                    
         }
         
-        return distance;
+        return distance * distance;
     }
 
     /**
