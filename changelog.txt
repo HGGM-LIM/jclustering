@@ -1,3 +1,8 @@
+v1.2.6 - 2013-08-21
+-------------------
+
+- Fixed a bug in k-means++ initialization distance computation.
+
 v1.2.5 - 2013-08-08
 -------------------
 
