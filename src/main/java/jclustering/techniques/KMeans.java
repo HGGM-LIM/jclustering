@@ -413,10 +413,11 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         double distance = 0.0;
        
         for (int j = 0; j < current_centroids.length; j++) {                   
-            distance += metric.distance(current_centroids[j], v.tac);            
+            distance += Math.pow(metric.distance(current_centroids[j], v.tac), 
+                                 2);            
         }
         
-        return distance * distance;
+        return distance;
     }
 
     /**
