@@ -1,3 +1,8 @@
+v1.3.0 - 2013-08-22
+-------------------
+
+- Removed all methods and variables related to noisy TAC skipping.
+
 v1.2.6 - 2013-08-21
 -------------------
 
