@@ -15,7 +15,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -63,8 +62,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     private ImagePlusHyp iph;
     private ClusteringTechnique technique;
     private JPanel main_panel, tech_panel, met_panel, about_panel;
-    private JFrame f;
-    private boolean skip_noisy = false;
+    private JFrame f;    
     private String file_saving_format = null;
     private String file_saving_path = null;
     private String file_reading_path = null;
@@ -104,7 +102,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         // Config main panel.
         // Add metrics
         JComboBox c = createChoices("techniques", getAllTechniques(), this);
-        main_panel.setLayout(new GridLayout(5, 2, 5, 5));
+        main_panel.setLayout(new GridLayout(0, 2, 5, 5));
         
         main_panel.add(createJLabel("Select a technique: ",
                 "<html>HTML helper text</html>"));
@@ -137,20 +135,6 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         JButton jb_tvread = createJButton("Click here to choose a file",
                 "jb_tvread", this);
         main_panel.add(jb_tvread);       
-
-        // Add discard noisy voxels checkbox
-        String dnv_help = "<html>When this box is checked, all the noisy"
-                + " voxels in the image will be skipped. That improves both"
-                + " the speed of the algorithm and the accuracy of the final"
-                + " result.<p>Please note that this funcionatlity"
-                + " will only work if the selected technique has implemented"
-                + " it.</html>";
-        main_panel.add(createJLabel("Skip noisy voxels:*", dnv_help));
-        JCheckBox jcb_discard = new JCheckBox();
-        jcb_discard.setSelected(skip_noisy);
-        jcb_discard.setName("jcb_discard");
-        jcb_discard.addItemListener(this);
-        main_panel.add(jcb_discard);
         
         // Add "About" information
         String about1 = "jClustering " + VERSION;
@@ -166,8 +150,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         about_panel.add(new JLabel(about3));
 
         // Set the current technique to the first one shown
-        technique = getClusteringTechnique((String)c.getItemAt(0), iph, 
-                                           skip_noisy);
+        technique = getClusteringTechnique((String)c.getItemAt(0), iph);
 
         // Initialize panels contents
         _initializePanels();
@@ -370,15 +353,11 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         if (source.equals("techniques")) {
             // Technique selector. Set the technique selected
             String t = (String) ((JComboBox) c).getSelectedItem();
-            technique = getClusteringTechnique(t, iph, skip_noisy);
+            technique = getClusteringTechnique(t, iph);
 
             // Re-init panels
             _initializePanels();
 
-        } else if (source.equals("jcb_discard")) {
-            // Discard noisy voxels checkbox.
-            skip_noisy = ((JCheckBox) c).isSelected();
-            technique.skipNoisy(skip_noisy);
         } else if (source.equals("file_saving")) {
             // File saving JComboBox object
             file_saving_format = (String)((JComboBox)c).getSelectedItem();

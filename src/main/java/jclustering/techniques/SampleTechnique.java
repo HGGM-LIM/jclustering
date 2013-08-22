@@ -14,20 +14,12 @@ public class SampleTechnique extends ClusteringTechnique {
 
     @Override
     public void process() {
-
-        for (Voxel v : ip) {                    
-
-                    // If is noise, skip
-                    if (skip_noisy && isNoise(v))
-                        continue;
-
-                    // Else, set the corresponding result
-                    int n = getMaxIndex(v.tac) + 1; // +1, min_cluster = 1.
-
-                    // Set temporal result
-                    addTACtoCluster(v, n);
-        }
-         
+        for (Voxel v : ip) {
+            // Set the corresponding result
+            int n = getMaxIndex(v.tac) + 1; // +1, min_cluster = 1.
+            // Set temporal result
+            addTACtoCluster(v, n);
+        }         
     }
 
     @Override

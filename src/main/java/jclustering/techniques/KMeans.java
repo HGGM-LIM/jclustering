@@ -310,7 +310,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             initial_points[0][2] = r.nextInt(dim[3]) + 1;
             tac = ip.getTAC(initial_points[0][0], 
                     initial_points[0][1], initial_points[0][2]);
-        } while (isNoise(tac) || isMasked(tac, ip.CALZERO));
+        } while (isMasked(tac, ip.CALZERO));
         
         // Every other point depends on the distance to each centroid
         for (int i = 1; i < initial_points.length; i++) {
@@ -327,10 +327,8 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                                 initial_points[j][2]), dim[4]);
             }
             
-            for (Voxel v : ip) {
-                
-                if (isNoise(v) && skip_noisy) continue;
-                
+            for (Voxel v : ip) {                
+               
                 // Each new center is chosen with p proportional to distance^2
                 // Note that the distance is already squared in the auxiliar
                 // function.
@@ -384,8 +382,6 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             }
             
             for (Voxel v : ip) {
-                
-                if (isNoise(v) && skip_noisy) continue;
                 
                 // Each new center is chosen depending on its distance
                 // Note that the distance is already squared in the auxiliar
@@ -442,7 +438,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 initial_points[i][2] = r.nextInt(dim[3]) + 1;
                 tac = ip.getTAC(initial_points[i][0],
                         initial_points[i][1], initial_points[i][2]);
-            } while (isNoise(tac) || isMasked(tac, ip.CALZERO));
+            } while (isMasked(tac, ip.CALZERO));
         }
     }
 
@@ -523,9 +519,6 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         // Get each TAC, compare and add it to the closest cluster
         for (Voxel v : ip) {
-
-            // If is noise, skip
-            if (skip_noisy && isNoise(v)) continue;
 
             int cluster_index = _getClosestCluster(v, res);
             

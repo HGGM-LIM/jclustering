@@ -11,7 +11,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.StorelessCovariance;
 
 /**
- * Implements a Mahanalnobis distance. See 
+ * Implements a Mahalanobis distance. See 
  * <a href="http://en.wikipedia.org/wiki/Mahalanobis_distance">the
  * Mahalanobis distance</a> page on Wikipedia for more information.
  * 
@@ -61,11 +61,8 @@ public class Mahalanobis extends ClusteringMetric {
         StorelessCovariance sc = new StorelessCovariance(dim[4]);
         
         // Feed the StorelessCovariance
-        for (Voxel v : ip) {
-            if (skip_noisy && isNoise(v)) continue;
-            
+        for (Voxel v : ip) 
             sc.increment(v.tac);
-        }
         
         // Set the covariance value
         RealMatrix temp = sc.getCovarianceMatrix();

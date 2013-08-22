@@ -108,9 +108,6 @@ public class LeaderFollower extends ClusteringTechnique
                 // Update slice pointer
                 slice = v.slice;
             }
-                
-            // If is noise, skip
-            if (skip_noisy && isNoise(v)) continue;
 
             int size = clusters.size();
 

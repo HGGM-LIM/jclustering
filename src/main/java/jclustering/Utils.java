@@ -122,19 +122,17 @@ public class Utils {
      * returns it.
      * 
      * @param name The name of the ClusteringTechnique to build.
-     * @param ip A reference to the working image.
-     * @param skip_noisy True if noisy voxels are to be skipped.
+     * @param ip A reference to the working image.   
      * @return A new instance of the said ClusteringTechnique.
      */
     public static ClusteringTechnique getClusteringTechnique(String name,
-            ImagePlusHyp ip, boolean skip_noisy) {
+            ImagePlusHyp ip) {
 
         Class<?> c = _getClassByName(name, "techniques");
         ClusteringTechnique ct = null;
         try {
             ct = (ClusteringTechnique) c.newInstance();
-            ct.setup(ip);
-            ct.skipNoisy(skip_noisy);
+            ct.setup(ip);            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -314,13 +312,12 @@ public class Utils {
      * Transforms a {@link RealMatrix} object into a ImageJ image.
      * @param rm The RealMatrix to be converted.
      * @param dim The desired dimensions for the final image
-     * @param ip A reference to the image object that generated this operation
-     * @param skip_noisy Should noisy voxels be skipped?
+     * @param ip A reference to the image object that generated this operation    
      * @param name The name for the new image.
      * @return The newly generated {@code ImagePlus} object.
      */
     public static ImagePlus RealMatrix2IJ(RealMatrix rm, int [] dim, 
-            ImagePlusHyp ip, boolean skip_noisy, String name) {
+            ImagePlusHyp ip, String name) {
      // Get number of components
         int components = rm.getRowDimension();
         
@@ -348,8 +345,7 @@ public class Utils {
                     // jump to the next one
                     double [] tac = ip.getTAC(x, y, z + 1);
                     
-                    // Check for masked or noisy voxels
-                    if (skip_noisy && ip.isNoise(tac)) continue;
+                    // Check for masked voxels                    
                     if (isMasked(tac, ip.CALZERO))
                         continue;
                     

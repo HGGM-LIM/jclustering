@@ -41,11 +41,6 @@ public abstract class ClusteringTechnique implements ItemListener {
     protected JPanel jp;
 
     /**
-     * Should this metric skip noisy voxels?
-     */
-    protected boolean skip_noisy;
-
-    /**
      * Will store the given clusters
      */
     protected ArrayList<Cluster> clusters;
@@ -119,10 +114,8 @@ public abstract class ClusteringTechnique implements ItemListener {
 
         init();
         
-        if (metric != null) {
-            metric.skip_noisy(skip_noisy);
-            metric.init();
-        }
+        if (metric != null)             
+            metric.init();        
 
         process();
 
@@ -208,42 +201,6 @@ public abstract class ClusteringTechnique implements ItemListener {
         jp.add(new JLabel("Select a metric: "));
         jp.add(c);
 
-    }
-
-    /**
-     * Changes this techniques's behavior with respect to noisy voxels.
-     * 
-     * @param skip_noisy Boolean parameter stating whether noisy voxels should
-     *            be discarded.
-     */
-    public void skipNoisy(boolean skip_noisy) {
-
-        this.skip_noisy = skip_noisy;        
-
-    }
-
-    /**
-     * Helper method. Just calls {@link ImagePlusHyp#isNoise(double[])} method.
-     * 
-     * @param data The TAC to be tested.
-     * @return true if the given TAC is noise with respect to this image.
-     */
-    public boolean isNoise(double[] data) {
-
-        return ip.isNoise(data);
-
-    }
-    
-    /**
-     * Helper method. Just calls {@link ImagePlusHyp#isNoise(double[])} method.
-     * 
-     * @param v The voxel to be tested
-     * @return true if the given TAC is noise with respect to this image.
-     */
-    public boolean isNoise(Voxel v) {
-        
-        return ip.isNoise(v.tac);
-        
     }
 
     /**

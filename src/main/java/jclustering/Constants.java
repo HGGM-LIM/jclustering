@@ -9,15 +9,28 @@ package jclustering;
  */
 public class Constants {
 
-    // Configuration constants
+    
+    /**
+     * Name of this package
+     */
     final public static String PACKAGE_NAME = "jclustering";
 
+    /**
+     * Default message when no metric is selected
+     */
     final public static String NO_METRIC = "No metric selected or no"
             + " configuration needed";
+    
+    /**
+     * Default message when no technique is selected or it does need any
+     * configuration parameters
+     */
     final public static String NO_TECHNIQUE = "No clustering technique"
             + " selected or no configuration needed";
     
-    // Version
-    final public static String VERSION = "v1.2.6";
+    /**
+     * Current version.
+     */
+    final public static String VERSION = "v1.3.0";
 
 }

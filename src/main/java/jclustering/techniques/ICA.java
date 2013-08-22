@@ -54,8 +54,7 @@ public class ICA extends ClusteringTechnique implements FocusListener {
 
         // Compute number of real voxels to be used
         int n = 0;        
-        for (Voxel v : ip) {
-            if (skip_noisy && isNoise(v)) continue;
+        for (@SuppressWarnings("unused") Voxel v : ip) {            
             n++;
         }        
 
@@ -63,8 +62,7 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         double[][] image_data = new double[n][dimensions];
 
         int i = 0;
-        for (Voxel v : ip) {
-            if (skip_noisy && isNoise(v)) continue;
+        for (Voxel v : ip) {            
             image_data[i++] = v.tac;
         }
         
@@ -104,7 +102,7 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         // x, y, z dimensions
         if (showICA) {            
             ImagePlus ICA_image = RealMatrix2IJ(result, dim, this.ip, 
-                    skip_noisy, "ICA image");            
+                    "ICA image");            
             ICA_image.show();
         }
         
@@ -117,8 +115,6 @@ public class ICA extends ClusteringTechnique implements FocusListener {
         // chosen.
         int column_index = 0;
         for (Voxel v : ip) {
-            
-            if (skip_noisy && isNoise(v)) continue;
             
             double [] projection = result.getColumn(column_index++);   
             

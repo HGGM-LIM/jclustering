@@ -100,7 +100,7 @@ public class PCA extends ClusteringTechnique {
         // x, y, z dimensions
         if (showPCA) {     
             ImagePlus PCA_image = RealMatrix2IJ(result, dim, this.ip, 
-                    skip_noisy, "PCA image");
+                    "PCA image");
             PCA_image.show();
         }
         
@@ -113,9 +113,7 @@ public class PCA extends ClusteringTechnique {
         // chosen.
         int column_index = 0;
         for (Voxel v : ip) {
-            
-            if (skip_noisy && isNoise(v)) continue;
-            
+                        
             double [] projection = result.getColumn(column_index++);   
             
             // Every Voxel belongs to the maximum index of its projected TAC
@@ -170,12 +168,8 @@ public class PCA extends ClusteringTechnique {
         double [] mean = new double[dimensions];   
         int total_voxels = 0;
         
-        for (Voxel v : ip) {            
-            // Skip noise
-            if (skip_noisy && isNoise(v)) continue;
-            
+        for (Voxel v : ip) {          
             total_voxels++;
-            
             for (int i = 0; i < dimensions; i++) {
                 mean[i] += v.tac[i];
             }
@@ -199,10 +193,7 @@ public class PCA extends ClusteringTechnique {
         
         int i = 0;
         
-        for (Voxel v : ip) {
-            // Skip noisy
-            if (skip_noisy && isNoise(v)) continue;
-            
+        for (Voxel v : ip) {            
             // Subtract the mean
             double [] norm = _subtractMean(v.tac, mean);
             // Fill in normalized_data, initialized in the _getMean() method.

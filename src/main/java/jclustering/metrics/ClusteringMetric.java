@@ -31,11 +31,6 @@ public abstract class ClusteringMetric implements ActionListener, ItemListener {
      * Reference to the full image, if needed.
      */
     protected ImagePlusHyp ip;
-    
-    /**
-     * Should we skip noisy voxels? Some metrics might need to know this.
-     */
-    protected boolean skip_noisy;
 
     /**
      * Computes the distance between to TACs according to this particular
@@ -111,24 +106,6 @@ public abstract class ClusteringMetric implements ActionListener, ItemListener {
         this.ip = ip;        
 
     }
-    
-    /**
-     * Ease of access for the {@link ImagePlusHyp#isNoise(double[])} method.
-     * @param tac The TAC to be tested.
-     * @return true if it noise.
-     */
-    public boolean isNoise(double [] tac) {
-        return ip.isNoise(tac);
-    }
-
-    /**
-     * Ease of access for the {@link ImagePlusHyp#isNoise(double[])} method.
-     * @param v The voxel to be tested.
-     * @return true if it noise.
-     */
-    public boolean isNoise(Voxel v) {
-        return ip.isNoise(v.tac);
-    }
 
     /**
      * If the metric needs some previous computations, it should override
@@ -137,14 +114,6 @@ public abstract class ClusteringMetric implements ActionListener, ItemListener {
      */
     public void init() {}
     
-    /**
-     * Sets the skip_noisy variable for this metric.
-     * @param skip_noisy Tells the init process whether to skip noisy voxels.
-     */
-    public void skip_noisy(boolean skip_noisy) {
-        this.skip_noisy = skip_noisy;
-    }
-
     // These two methods are overridden so that the extending classes don't
     // have to deal with them if they don't have to.
     public void actionPerformed(ActionEvent e) {

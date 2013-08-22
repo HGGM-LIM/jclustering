@@ -39,8 +39,7 @@ public class SVD extends ClusteringTechnique {
         
         // Compute number of real voxels to be used 
         int n = 0;
-        for (Voxel v : ip) {
-            if (skip_noisy && isNoise(v)) continue;
+        for (@SuppressWarnings("unused") Voxel v : ip) {           
             n++;
         }    
         
@@ -48,8 +47,7 @@ public class SVD extends ClusteringTechnique {
         double [][] image_data = new double[n][dimensions];
         
         int i = 0;
-        for(Voxel v : ip) {
-            if(skip_noisy && isNoise(v)) continue;
+        for(Voxel v : ip) {            
             image_data[i++] = v.tac;
         }
         
@@ -73,7 +71,7 @@ public class SVD extends ClusteringTechnique {
             // need to be in the opposite orientation.
             ImagePlus SVD_image = RealMatrix2IJ(result.transpose(), dim, 
                                                 this.ip, 
-                                                skip_noisy, "SVD image");
+                                                "SVD image");
             SVD_image.show();
         }
         
@@ -86,9 +84,7 @@ public class SVD extends ClusteringTechnique {
         // chosen.
         int column_index = 0;        
         for (Voxel v : ip) {
-            
-            if (skip_noisy && isNoise(v)) continue;
-            
+                       
             double [] projection = result.getRow(column_index++);   
             
             // Every Voxel belongs to the maximum index of its projected TAC

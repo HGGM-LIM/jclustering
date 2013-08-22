@@ -1,10 +1,6 @@
 package jclustering;
 
 import java.util.Iterator;
-
-import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.util.FastMath;
-
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
@@ -121,19 +117,6 @@ public class ImagePlusHyp implements Iterable<Voxel>{
      */
     public ImagePlus getImagePlus() {
         return imp;
-    }
-
-    /**
-     * @param data The TAC to be tested
-     * @return true if the given TAC is noise with respect to this image. A
-     * TAC is considered noise if the absolute value of its minimum value is
-     * greater or equal than its maximum value. This is a very simplistic
-     * approach, but works in most cases.
-     */
-    public boolean isNoise(double[] data) {
-        if (FastMath.abs(StatUtils.min(data)) >= StatUtils.max(data)) 
-            return true;
-        return false;
     }
 
     @Override
