@@ -25,8 +25,7 @@ jClustering is an ImageJ plugin for dynamic (3D + time or 2D + time) segmentatio
 image voxels by similarity of their temporal behavior. This is a brief user manual that explains
 how to use jClustering within a working ImageJ installation.
 
-For further information regarding jClustering, please refer to 
-\emph{jClustering, an open framework for the development of 4D clustering algorithms}, PLOS ONE, 2013.
+For further information regarding jClustering, please refer to the published paper (see section \ref{sec:reference}).
 
 This manual refers to jClustering v1.3.0 and beyond. It will not be edited just to update this version number. Unless
 there are significative changes in a new version, do not expect this number to match the latest release.
@@ -297,5 +296,10 @@ The format for this file must be chosen by the user through the {\em File saving
 a time file vector with the frame starting and end times has been specified. If this has been the case, the first two columns
 are taken from that vector file. In the case of the PMOD format, as the frame information is mandatory, if no time vector file
 has been provided, hard-coded frame information (each frame lasting 1 second) will be used. This is hardly optimal and will yield incorrect kinetic parameters if used in this form, but that is what that specific format requires. The user must correct these values before using is an input for any posterior analysis.
+
+\section{Reference}
+\label{sec:reference}
+
+{\em jClustering, an Open Framework for the Development of 4D Clustering Algorithms}. Mateos-Pérez JM, García-Villalba C, Pascau J, Desco M, Vaquero JJ (2013) jClustering, an Open Framework for the Development of 4D Clustering Algorithms. PLoS ONE 8(8): e70797. doi:10.1371/journal.pone.0070797 
 
 \end{document}
