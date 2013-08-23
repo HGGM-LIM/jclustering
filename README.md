@@ -9,7 +9,7 @@ are not available in either source code or binary download.
 
 Mateos-Pérez JM, García-Villalba C, Pascau J, Desco M, Vaquero JJ (2013)
 jClustering, an Open Framework for the Development of 4D Clustering Algorithms.
-PLoS ONE 8(8): e70797. doi:10.1371/journal.pone.0070797 
+PLoS ONE 8(8): e70797. doi:10.1371/journal.pone.0070797. [Link](http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0070797). 
 
 # Contact
 
