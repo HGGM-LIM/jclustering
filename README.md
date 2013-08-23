@@ -5,6 +5,12 @@ only a development API for automatic segmentation algorithms, but also a
 platform aimed at centralizing different implementations that as today
 are not available in either source code or binary download.
 
+## Reference
+
+Mateos-Pérez JM, García-Villalba C, Pascau J, Desco M, Vaquero JJ (2013)
+jClustering, an Open Framework for the Development of 4D Clustering Algorithms.
+PLoS ONE 8(8): e70797. doi:10.1371/journal.pone.0070797 
+
 # Contact
 
 If you wish to develop your own techniques/metrics for jClustering and need
