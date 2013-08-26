@@ -142,7 +142,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
                         "<a href=\"https://github.com/HGGM-LIM/jclustering\">"+
                         "https://github.com/HGGM-LIM/jclustering</a></html>";
         String about3 = "<html>Please send your comments, bug reports and" +
-                        "suggestions to <a href=\"mailto:jmmateos@hggm.es\">"+
+                        " suggestions to <a href=\"mailto:jmmateos@hggm.es\">"+
                         "jmmateos@hggm.es</a></html>";
         about_panel.setLayout(new GridLayout(3, 1, 5, 5));
         about_panel.add(new JLabel(about1));
