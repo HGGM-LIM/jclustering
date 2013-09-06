@@ -23,10 +23,7 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
     private int x, y, slice;
     
     // Limits
-    private int x_max, y_max, slice_max;
-    
-    // The voxel to return
-    private Voxel v = null;
+    private int x_max, y_max, slice_max;    
     
     /**
      * Public constructor.
@@ -45,8 +42,7 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
         // Init first pointer
         x = 0;
         y = 0;
-        slice = 1;        
-        v = new Voxel(x, y, slice, ip.getTAC(x, y, slice));
+        slice = 1;
         
     }
 
@@ -62,15 +58,8 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
     @Override
     public Voxel next() {
                 
-        Voxel res = new Voxel(v.x, v.y, v.slice, v.tac);
-        _setNextVoxel();
-        return res;        
-        
-    }
-    
-    private void _setNextVoxel() {
-        
         boolean found = false;
+        Voxel v = null;
         
         while(_withinLimits() && !found) {
             v = new Voxel(x, y, slice, ip.getTAC(x, y, slice));
@@ -78,6 +67,8 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
             if (!isMasked(v, ip.CALZERO)) 
                 found = true;                
         }
+        
+        return v;        
         
     }
 
