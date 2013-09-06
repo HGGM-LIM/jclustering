@@ -346,22 +346,21 @@ public class Utils {
                     double [] tac = ip.getTAC(x, y, z + 1);
                     
                     // Check for masked voxels                    
-                    if (isMasked(tac, ip.CALZERO))
-                        continue;
-                    
-                    // Not noise: get the next column
-                    double [] comp = rm.getColumn(column_index++);
-                    
-                    // Iterate through the component and set the values.
-                    // Each row of the component is in one frame.
-                    for (int t = 0; t < components; t++) {
-                        // Get internal slice number
-                        int sn = image.getStackIndex(1, z + 1, t + 1);
-                        is.setVoxel(x, y, sn, comp[t]);                            
-                    }                        
+                    if (!isMasked(tac, ip.CALZERO)) {
+                        // Not masked: get the next column
+                        double [] comp = rm.getColumn(column_index++);
+                        
+                        // Iterate through the component and set the values.
+                        // Each row of the component is in one frame.
+                        for (int t = 0; t < components; t++) {
+                            // Get internal slice number
+                            int sn = image.getStackIndex(1, z + 1, t + 1);
+                            is.setVoxel(x, y, sn, comp[t]);                            
+                        }       
+                    }                   
                 }
             }
-        }
+        }        
         
         return image;
         
