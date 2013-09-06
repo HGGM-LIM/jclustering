@@ -1,3 +1,9 @@
+v1.3.2 - 2013-09-06
+-------------------
+
+- A new bug was introduced in the last update -- first voxel was always returned
+  by the image iterator. Fixed.
+
 v1.3.1 - 2013-09-06
 -------------------
 

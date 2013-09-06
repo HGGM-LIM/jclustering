@@ -31,6 +31,6 @@ public class Constants {
     /**
      * Current version.
      */
-    final public static String VERSION = "v1.3.1";
+    final public static String VERSION = "v1.3.2";
 
 }
