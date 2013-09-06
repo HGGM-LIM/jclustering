@@ -1,3 +1,10 @@
+v1.3.1 - 2013-09-06
+-------------------
+
+- Implements PlugIn interface instead of PlugInFilter.
+- Solved bug in iterator (not returning first voxel) that caused PCA / SVD /ICA
+  to crash on unmasked images.
+
 v1.3.0 - 2013-08-22
 -------------------
 
