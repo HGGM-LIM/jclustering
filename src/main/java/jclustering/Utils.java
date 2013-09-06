@@ -355,7 +355,7 @@ public class Utils {
                         for (int t = 0; t < components; t++) {
                             // Get internal slice number
                             int sn = image.getStackIndex(1, z + 1, t + 1);
-                            is.setVoxel(x, y, sn, comp[t]);                            
+                            is.setVoxel(x, y, sn - 1, comp[t]);                            
                         }       
                     }                   
                 }
