@@ -45,10 +45,8 @@ public class ImagePlusHypIterator implements Iterator<Voxel> {
         // Init first pointer
         x = 0;
         y = 0;
-        slice = 1;
-        
-        // Init first voxel reference
-        _setNextVoxel();
+        slice = 1;        
+        v = new Voxel(x, y, slice, ip.getTAC(x, y, slice));
         
     }
 
