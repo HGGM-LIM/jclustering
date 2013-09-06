@@ -31,7 +31,6 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
 
 import static jclustering.GUIUtils.*;
 import static jclustering.Utils.*;
