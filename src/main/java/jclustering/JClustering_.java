@@ -30,7 +30,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.plugin.filter.PlugInFilter;
+import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 
 import static jclustering.GUIUtils.*;
@@ -56,9 +56,10 @@ import static jclustering.Constants.NO_TECHNIQUE;
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  * 
  */
-public class JClustering_ implements PlugInFilter, ActionListener,
+public class JClustering_ implements PlugIn, ActionListener,
         ItemListener, ComponentListener {
 
+    private ImagePlus imp;
     private ImagePlusHyp iph;
     private ClusteringTechnique technique;
     private JPanel main_panel, tech_panel, met_panel, about_panel;
@@ -68,7 +69,25 @@ public class JClustering_ implements PlugInFilter, ActionListener,
     private String file_reading_path = null;
 
     @Override
-    public void run(ImageProcessor ip) {
+    public void run(String arg0) {
+
+        imp = IJ.getImage();
+        
+        // Version number check        
+        if (IJ.versionLessThan("1.46r")) {
+            IJ.error("Need an ImageJ version equal or newer than 1.46r");
+            return;
+        }
+                
+        // Check if we have a HyperStack        
+        if (imp.getNFrames() <= 1) {
+            // Input image not hyperstack
+            IJ.error("jClustering works on dynamic images.");
+            return;
+        }
+        
+        // Everything is fine, go ahead
+        this.iph = new ImagePlusHyp(imp);        
 
         // The "run" method builds the interface and shows the clustering
         // techniques and the metrics that are implemented. It does not
@@ -180,33 +199,6 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         ToolTipManager.sharedInstance().setInitialDelay(200);
         ToolTipManager.sharedInstance().setDismissDelay(60000);
 
-    }
-
-    @Override
-    public int setup(String arg, ImagePlus imp) {
-
-        // Version number check.
-        boolean not_required_version = IJ.versionLessThan("1.46r");
-        if (not_required_version) {
-            return DONE;
-        }
-        
-        // Check if we have an image
-        if (imp == null) {
-            IJ.error("Open a dynamic image first.");
-            return DONE;
-        }
-        
-        // Check if we have a HyperStack        
-        if (imp.getNFrames() <= 1) {
-            // No input image or input image not hyperstack
-            IJ.error("jClustering works on dynamic images.");
-            return DONE;
-        }
-        
-        // Go ahead
-        this.iph = new ImagePlusHyp(imp);
-        return DOES_ALL;        
     }
 
     /**
@@ -433,8 +425,7 @@ public class JClustering_ implements PlugInFilter, ActionListener,
         ij.ImagePlus imp = ij.IJ.openImage(
                 "http://imagej.net/images/Spindly-GFP.zip");
         imp.show();
-        JClustering_ plugin = new JClustering_();
-        plugin.setup("", imp);
-        plugin.run(imp.getProcessor());
+        JClustering_ plugin = new JClustering_();        
+        plugin.run("");
     }
 }
