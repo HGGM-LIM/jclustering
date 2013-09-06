@@ -1,3 +1,9 @@
+v1.3.3 - 2013-09-06
+-------------------
+
+- Fixed the iterator. Again. once and for all.
+- Fixed a bug in the RealMatrix2IJ method that caused it to shift slices.
+
 v1.3.2 - 2013-09-06
 -------------------
 
