@@ -75,9 +75,7 @@ public class ImagePlusHyp implements Iterable<Voxel>{
 
         // Dimension check
         if (x >= dim[0] || x < 0 || y >= dim[1] || y < 0 || slice > dim[3]
-                || slice < 1) {
-            System.out.println("x = " + x + ", y = " + y + ", slice = " + slice);
-            System.out.println("Should not be here");
+                || slice < 1) {            
             return null;
         }
 
