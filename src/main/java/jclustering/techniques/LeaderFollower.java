@@ -238,12 +238,12 @@ public class LeaderFollower extends ClusteringTechnique
      * A number i >= 0 if good correlation and amplitude are found
      */
     private int _getClosestCluster(double [] tac) {
-        
-        int i = -1;
+                
         double max_score = this.threshold;
         int size = clusters.size();
         
-        // Find the cluster with the highest correlation with this TAC        
+        // Find clusters with a correlation above the threshold
+        ArrayList<Integer> selected = new ArrayList<Integer>();
         for (int j = 0; j < size; j++) {            
             Cluster c = clusters.get(j);            
             // Smooth the TAC only for correlation computing purposes, do
@@ -255,20 +255,26 @@ public class LeaderFollower extends ClusteringTechnique
             else score = pc.correlation(smooth_tac, centroid);
 
             if (score > max_score && score > corr_limits.get(c)) {
-                i = j;
+                selected.add(j);
                 max_score = score;
             }
         }
         
         // No cluster found
-        if (i == -1) return CLUSTER_NOT_FOUND;
+        if (selected.size() == 0) return CLUSTER_NOT_FOUND;
         
-        // Cluster found, check amplitude
-        Cluster c = clusters.get(i);
-        double peak = StatUtils.max(tac);
-        double threspeak = c.getPeakMean() - c.getPeakStdev();
-        // Peak amplitude above threshold
-        if (peak >= threspeak) return i;
+        // Clusters found, check amplitude
+        // Sort first, we want the maximum amplitued with the most
+        // similar voxels
+        Collections.sort(selected);
+        Collections.reverse(selected); // Highest correlation first
+        for (int s : selected) {
+            Cluster c = clusters.get(s);
+            double peak = StatUtils.max(tac);
+            double threspeak = c.getPeakMean() - 1.96 * c.getPeakStdev();
+            // Peak amplitude above threshold
+            if (peak >= threspeak) return s;
+        }        
         
         // Not enough amplitude: not found
         return CLUSTER_NOT_FOUND;
