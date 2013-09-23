@@ -264,7 +264,7 @@ public class LeaderFollower extends ClusteringTechnique
         if (selected.size() == 0) return CLUSTER_NOT_FOUND;
         
         // Clusters found, check amplitude
-        // Sort first, we want the maximum amplitued with the most
+        // Sort first, we want the maximum amplitude with the most
         // similar voxels
         Collections.sort(selected);
         Collections.reverse(selected); // Highest correlation first
