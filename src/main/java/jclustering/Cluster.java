@@ -215,9 +215,7 @@ public class Cluster {
      */
     public double getPeakMean() {
         
-        double m = peak_stats.getMean();
-        if (m == Double.NaN) return 0;
-        else return m;
+        return peak_stats.getMean();        
         
     }
 
@@ -226,9 +224,9 @@ public class Cluster {
      */
     public double getPeakStdev() {
         
-        double sd = peak_stats.getStandardDeviation();
-        if (sd == Double.NaN) return 0;
-        else return sd;                
+        long n = peak_stats.getN();
+        if (n == 1) return getPeakMean();
+        else        return peak_stats.getStandardDeviation();                        
         
     }
     
