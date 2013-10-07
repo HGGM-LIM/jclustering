@@ -1,5 +1,7 @@
 package jclustering.metrics;
 
+import org.apache.commons.math3.util.FastMath;
+
 /**
  * Computes the cosine between two given TACs (data type
  * {@code double[]}). The distance is then returned as {@code 1 - cos}, where
@@ -24,6 +26,9 @@ public class Cosine extends ClusteringMetric {
             normdata += data[i] * data[i];
             normcentroid += centroid[i] * centroid[i];
         }
+        
+        normdata = FastMath.sqrt(normdata);
+        normcentroid = FastMath.sqrt(normcentroid);
         
         cos = dotprod / (normdata * normcentroid);
         
