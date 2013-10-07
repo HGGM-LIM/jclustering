@@ -17,6 +17,9 @@ public class Cluster {
 
     // Centroid
     private double[] centroid;
+    
+    // Spatial centroid (centroid mean coordinates)
+    private double[] centroid_spatial;
 
     // Mean TAC of voxels attached to this cluster
     private double[] cluster_tac;
@@ -43,6 +46,7 @@ public class Cluster {
         peak_stats = new SummaryStatistics();
         coordinates = new ArrayList<Integer []>();
         modify_centroid = true;
+        centroid_spatial = new double[3];
         
     }
 
@@ -84,8 +88,13 @@ public class Cluster {
         peak_stats.addValue(max);
         size++;
         
-        // And add the coordinates
+        // Add the coordinates
         coordinates.add(new Integer[] {x, y, slice});
+        
+        // Spatial centroid
+        centroid_spatial[0] = x;
+        centroid_spatial[1] = y;
+        centroid_spatial[2] = slice;
         
     }
     
@@ -167,7 +176,6 @@ public class Cluster {
 
             // Re-normalize the centroid: multiply it by the number of clusters
             // before this addition and then divide by one plus that amount.
-
             double[] d = modify_centroid ? centroid : cluster_tac;
 
             for (int i = 0; i < data.length; i++) {
@@ -189,6 +197,14 @@ public class Cluster {
         peak_stats.addValue(StatUtils.max(data));
         size++;
         coordinates.add(new Integer[] {x, y, slice});
+        
+        // Also update the spatial centroid
+        double old_x = centroid_spatial[0] * size;
+        centroid_spatial[0] = (old_x + x) / (size + 1);
+        double old_y = centroid_spatial[1] * size;
+        centroid_spatial[1] = (old_y + y) / (size + 1);
+        double old_slice = centroid_spatial[2] * size;
+        centroid_spatial[2] = (old_slice + slice) / (size + 1);
 
     }
     
@@ -237,6 +253,15 @@ public class Cluster {
 
         return size == 0;
 
+    }
+    
+    /**
+     * @return The spatial centroid.
+     */
+    public double[] getSpatialCentroid() {
+        
+        return centroid_spatial;
+        
     }
 
 }
