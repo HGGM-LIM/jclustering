@@ -56,7 +56,12 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         // Initialize points
         int[][] initial_points = new int[n_clusters][3];
+        long init_start = System.currentTimeMillis();
         _fillInitialPoints(initial_points);
+        long init_end = System.currentTimeMillis();
+        String init_time = String.format("Initialization time: %3.3f seconds",
+                                         ((init_end - init_start)/1000.0));
+        IJ.log(init_time);
         
         // Keep track of number of iterations
         int it = 0;
@@ -249,18 +254,21 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         if (initial_centroids == null || initial_centroids.equals("")
                 || _notValidInitialPoints()) {
+            IJ.log("Random initialization");
             _fillRandomPoints(initial_points, 0);
             return;
         }
         
         // K-means++ uses its own initialization method.
         if (initial_centroids.equals("++")) { 
+            IJ.log("K-means++ initialization");
             _fillKMeansPlusPlus(initial_points);
             return;
         }
         
         // Deterministic K-means++
         if (initial_centroids.equals("det++")) {
+            IJ.log("Deterministic k-means++ initialization");
             _fillKMeansDetPlusPlus(initial_points);
             return;
         }
@@ -315,7 +323,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         // Every other point depends on the distance to each centroid
         for (int i = 1; i < initial_points.length; i++) {
             
-            double [] distance;
+            double distance;
             double p = 0.0;
             Voxel chosen = null;
             
@@ -331,8 +339,14 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 // Each new center is chosen with p proportional to distance^2
                 // Note that the distance is already squared in the auxiliar
                 // function.
-                distance = _KMeansPlusPlusDistance(current_centroids, v);
-                double p1 = r.nextDouble() * distance[0] / distance[1];
+                // This value should be normalized by sum(D^2(x)), the sum
+                // of the squared distances between every voxel and the
+                // closest cluster. As this value is a constant when
+                // computing this initialization for every new centroid,
+                // this value will not be computed. It does not affect the
+                // final result and makes the process faster.
+                distance = _shortestDistance(current_centroids, v);
+                double p1 = r.nextDouble() * distance;
                 if (p1 > p) {
                     p = p1;
                     chosen = v;
@@ -341,8 +355,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             
             initial_points[i][0] = chosen.x;
             initial_points[i][1] = chosen.y;
-            initial_points[i][2] = chosen.slice;
-            
+            initial_points[i][2] = chosen.slice;            
         }
     }
     
@@ -379,15 +392,16 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                                 initial_points[j][2]), dim[4]);
             }
             
-            for (Voxel v : ip) {
-                
-                // Each new center is chosen depending on its distance
+            for (Voxel v : ip) {                
+                // Each new center is chosen depending on its distance, not
+                // on the probability weighted by the distance. This makes
+                // this method deterministic: every time the initialization
+                // is the same.
                 // Note that the distance is already squared in the auxiliar
                 // function.
-                double [] d = _KMeansPlusPlusDistance(current_centroids, v);
-                double ratio = d[0] / d[1];
-                if (ratio > distance) {
-                    distance = ratio;
+                double d = _shortestDistance(current_centroids, v);
+                if (d > distance) {
+                    distance = d;
                     chosen = v;    
                 }
             }            
@@ -400,26 +414,20 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     }
     
     /*
-     * Computes the distance between the given voxel and the closest centroid.
-     * Returns a double[] with two positions:
-     * 0 -> the shortest distance, squared.
-     * 1 -> the sum of the squared distances.
+     * Computes the squared distance between the given voxel and its 
+     * closest centroid.
      */
-    private double[] _KMeansPlusPlusDistance(double [][] current_centroids, 
-                                           Voxel v) {
-        double distance = Double.MAX_VALUE;
-        double [] ans = new double[2]; // 0 -> distance squared; 
-                                       // 1 -> sum of distances squared;
+    private double _shortestDistance(double [][] current_centroids, 
+                                     Voxel v) {
+        double distance = Double.MAX_VALUE;        
        
         for (int j = 0; j < current_centroids.length; j++) {                   
             double d = metric.distance(current_centroids[j], v.tac);
-            ans[1] += d * d;
             if (d < distance)
                 distance = d;       
         }
         
-        ans[0] = distance * distance;
-        return ans;
+        return distance * distance;
     }
 
     /**
