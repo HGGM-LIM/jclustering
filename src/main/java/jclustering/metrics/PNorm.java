@@ -8,6 +8,8 @@ import java.util.Arrays;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.math3.util.FastMath;
+
 /**
  * This {@link ClusteringMetric} implements a <a
  * href="http://en.wikipedia.org/wiki/Norm_(mathematics)#p-norm">p-norm</a>
@@ -38,10 +40,10 @@ public class PNorm extends ClusteringMetric implements FocusListener {
         double result = 0.0;
 
         for (int i = 0; i < data.length; i++) {
-            result += Math.pow(Math.abs(centroid[i] - data[i]), p);
+            result += FastMath.pow(Math.abs(centroid[i] - data[i]), p);
         }
 
-        return Math.pow(result, 1.0 / p);
+        return FastMath.pow(result, 1.0 / p);
     }
 
     @Override
