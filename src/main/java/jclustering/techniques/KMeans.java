@@ -266,8 +266,9 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             return;
         }
         
-        // Deterministic K-means++
-        if (initial_centroids.equals("det++")) {
+        // Deterministic K-means++. Allow the user to provide an initial
+        // point (in the form of "det++;x,y,z").
+        if (initial_centroids.startsWith("det++")) {
             IJ.log("Deterministic k-means++ initialization");
             _fillKMeansDetPlusPlus(initial_points);
             return;
@@ -365,16 +366,36 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z; 4 -> t
         
-        // First point is voxel with biggest amplitude
-        double maxamp = 0.0;
-        for (Voxel v : ip) {
-            double m = StatUtils.max(v.tac);
-            if (m > maxamp) {
-                initial_points[0][0] = v.x;
-                initial_points[0][1] = v.y;
-                initial_points[0][2] = v.slice;
-                maxamp = m;
-            }
+        // First point is voxel with biggest amplitude or use the one
+        // provided by the user. In any case, this should be a deterministic
+        // initialization.
+        boolean provided_first = false;
+        
+        if (initial_centroids.startsWith("det++;")) {
+            provided_first = true;
+            initial_centroids = initial_centroids.substring(6);
+        }
+        
+        if (!provided_first || _notValidInitialPoints() ||
+            initial_centroids.indexOf(';') != -1) {
+            // User has not provided a valid initial point, let's get the
+            // one with the biggest amplitude
+            System.out.println("Here");
+            double maxamp = 0.0;
+            for (Voxel v : ip) {
+                double m = StatUtils.max(v.tac);
+                if (m > maxamp) {
+                    initial_points[0][0] = v.x;
+                    initial_points[0][1] = v.y;
+                    initial_points[0][2] = v.slice;
+                    maxamp = m;
+                }
+            }            
+        } else {
+            String[] coordinates = initial_centroids.split(",");
+            initial_points[0][0] = Integer.parseInt(coordinates[0]);
+            initial_points[0][1] = Integer.parseInt(coordinates[1]);
+            initial_points[0][2] = Integer.parseInt(coordinates[2]);            
         }
         
         // Other points are chosen by distance to the rest of the centroids
@@ -468,7 +489,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         
         // If k-means++ (or deterministic k-means++), return true automatically
         if (initial_centroids.equals("++") ||
-            initial_centroids.equals("det++")) return correct;
+            initial_centroids.startsWith("det++")) return correct;
         
         // Trim initial_centroids
         initial_centroids = initial_centroids.trim();        
