@@ -6,7 +6,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -16,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import jclustering.Cluster;
@@ -28,15 +26,16 @@ import ij.IJ;
 
 /**
  * Implements a leader-follower clustering method using only correlation
- * as its main metric. Also uses the mean peak value of all the TACs inside
- * a Cluster to decide whether a certain TAC belongs or not to a voxel
- * with similar dynamic shape. 
+ * as its main metric. It first sorts the image voxels to start analyzing
+ * first those with earliest and highest peak values.  
  * <p>
  * Leader-follower works in an inverse way as K-means does. The number of
  * clusters is unknown, and a threshold is set so that clusters are formed
  * with TACs with a distance (correlation, in this case) that evaluates
  * above said threshold. An optional increment value can be set so that
- * every time a voxel is added to a cluster this becomes more restrictive.
+ * every time a voxel is added to a cluster this becomes more restrictive. This
+ * option must be used with care, as our tests have shown it to be quite
+ * unstable.
  * <p>
  * Also, peak amplitude is taken into account when adding new TACs to an 
  * existing cluster.
@@ -47,10 +46,10 @@ public class LeaderFollower extends ClusteringTechnique
     implements FocusListener {
 
     // Default values
-    private final int DEF_MAX_CLUSTERS = 50;
+    private final int DEF_MAX_CLUSTERS = 1000;
     private final boolean DEF_DISCARD_SMALLEST = false;
     private final int DEF_KEEP_CLUSTERS = 50;
-    private final double DEF_THRESHOLD = 0.3;
+    private final double DEF_THRESHOLD = 0.4;
     private final double DEF_T_INC = 1.0;
     
     // Constants
@@ -80,10 +79,8 @@ public class LeaderFollower extends ClusteringTechnique
     
     @Override
     public void process() {
-        
-        /*
-         * Initial object creation.
-         */                        
+                
+        //Initial object creation.                                
         pc = new PearsonsCorrelation();                
         corr_limits = new Hashtable<Cluster, Double>();        
         comp = new LeaderFollowerClusterComparator();
@@ -91,23 +88,38 @@ public class LeaderFollower extends ClusteringTechnique
         IJ.log(String.format("Correlation limit: %f; increment: %f.",
         		threshold, t_inc));
         
-        /*
-         * Process all TACs               
-         */
-        int slice = 0;
-        int tslices = ip.getImagePlus().getNSlices();
-        
+        // Add all voxels to an array to order them by amplitude in the 
+        // next step.
+        IJ.showStatus("Leader-Follower. Building voxel array...");
+        ArrayList<int []> ordered_voxels = new ArrayList<int []>();
         for (Voxel v : ip) {
-
-            if (slice != v.slice) {
-                // Show status message for every slice
-                String status = String.format("Leader-follower. Slice %d/%d, " +
-            		"%d/%d clusters", v.slice, tslices, clusters.size(), 
-            		max_clusters);
-                IJ.showStatus(status);
-                // Update slice pointer
-                slice = v.slice;
+            int [] coord = new int[] {v.x, v.y, v.slice};
+            ordered_voxels.add(coord);
+        }
+        
+        // Order voxels by peak amplitude.
+        IJ.showStatus("Leader-Follower. Ordering voxels...");         
+        Collections.sort(ordered_voxels, new AmplitudeComparator());        
+                
+        // Process all TACs.                       
+        int vsize = ordered_voxels.size();
+        int vprocessed = 0;
+        IJ.showStatus("Leader-Follower. Building clusters...");
+        
+        for (int [] coord : ordered_voxels) {
+            
+            // Info update
+            vprocessed++;      
+            if((vprocessed % 5000) == 0) {
+                String s = String.format("Leader-Follower. Processed " +
+                                         "%d of %d voxels. %d clusters created", 
+                                         vprocessed, vsize, clusters.size());
+                IJ.showStatus(s);
             }
+            
+            
+            Voxel v = new Voxel(coord[0], coord[1], coord[2], 
+                                ip.getTAC(coord[0], coord[1], coord[2]));
 
             int size = clusters.size();
 
@@ -136,8 +148,10 @@ public class LeaderFollower extends ClusteringTechnique
                     // them, if allowed by the settings.
                     if (size == max_clusters && discard_smallest) {
                         _discardSmallest();
-                    }                    
-                    if (size < max_clusters) {
+                        Cluster c = new Cluster(v);
+                        clusters.add(c);
+                        _incrementCorrLimit(c);
+                    } else if (size < max_clusters) {
                         Cluster c = new Cluster(v);
                         clusters.add(c);
                         _incrementCorrLimit(c);
@@ -175,10 +189,7 @@ public class LeaderFollower extends ClusteringTechnique
         // Change reference
         clusters = good_clusters;
         
-        /*
-         * Log result and return 
-         */
-        
+        // Log result and return        
         int nsize = clusters.size();
         IJ.log(String.format("Leader-follower finished. %d clusters " +
         		"created, %d kept.", size, nsize));
@@ -232,52 +243,29 @@ public class LeaderFollower extends ClusteringTechnique
     
     /*
      * Get closest cluster to provided TAC. Returns:
-     * -1 if no cluster with enough correlation has been found
-     * -2 if a cluster with enough correlation has been found, but it doesn't
-     *    have enough amplitude
-     * A number i >= 0 if good correlation and amplitude are found
+     * * CLUSTER_NOT_FOUND if no cluster with enough correlation has been found.
+     * * The cluster index if one is found.     
      */
     private int _getClosestCluster(double [] tac) {
-                
+        
+        int i = CLUSTER_NOT_FOUND;
         double max_score = this.threshold;
         int size = clusters.size();
         
-        // Find clusters with a correlation above the threshold
-        ArrayList<Integer> selected = new ArrayList<Integer>();
+        // Find the cluster with the highest correlation with this TAC        
         for (int j = 0; j < size; j++) {            
             Cluster c = clusters.get(j);            
             // Smooth the TAC only for correlation computing purposes, do
             // not use it afterwards.
-            double [] smooth_tac = MathUtils.smooth(tac);
-            double [] centroid = c.getCentroid();
-            double score = 0.0;            
-            if (Arrays.equals(smooth_tac, centroid)) score = 1.0;
-            else score = pc.correlation(smooth_tac, centroid);
-
+            double score = pc.correlation(MathUtils.smooth(tac), 
+                                          MathUtils.smooth(c.getCentroid()));
             if (score > max_score && score > corr_limits.get(c)) {
-                selected.add(j);
+                i = j;
                 max_score = score;
             }
         }
-        
-        // No cluster found
-        if (selected.size() == 0) return CLUSTER_NOT_FOUND;
-        
-        // Clusters found, check amplitude
-        // Sort first, we want the maximum amplitude with the most
-        // similar voxels
-        Collections.sort(selected);
-        Collections.reverse(selected); // Highest correlation first
-        for (int s : selected) {
-            Cluster c = clusters.get(s);
-            double peak = StatUtils.max(tac);
-            double threspeak = c.getPeakMean() - 1.96 * c.getPeakStdev();
-            // Peak amplitude above threshold
-            if (peak >= threspeak) return s;
-        }        
-        
-        // Not enough amplitude: not found
-        return CLUSTER_NOT_FOUND;
+
+        return i;        
     }
     
     /*
@@ -367,21 +355,61 @@ public class LeaderFollower extends ClusteringTechnique
     }
     
     /*
-     * Use this comparator class to compare Clusters between them. The
-     * indicator used is the peak amplitude times the voxel number.
+     * Comparator used to order clusters by size.
      */
     private class LeaderFollowerClusterComparator 
         implements Comparator<Cluster> {
 
         @Override
         public int compare(Cluster arg0, Cluster arg1) {
-            double score0 = arg0.getPeakMean() * arg0.size();
-            double score1 = arg1.getPeakMean() * arg1.size();
+            double score0 = arg0.size();
+            double score1 = arg1.size();
             if (score0 < score1) return -1;
             else if (score0 > score1) return 1;
             else return 0;
         }
+    }
+    
+    private class AmplitudeComparator implements Comparator<int[]> {
+
+        @Override
+        public int compare(int[] arg0, int[] arg1) {
+            // Get TACs
+            double [] tac0 = ip.getTAC(arg0[0], arg0[1], arg0[2]);
+            double [] tac1 = ip.getTAC(arg1[0], arg1[1], arg1[2]);
+            // Get peak values
+            double [] info0 = _getMaxInfo(tac0);
+            double [] info1 = _getMaxInfo(tac1);
+            // Return value according to the peak time
+            if (info0[0] < info1[0])          return -1;
+            else if (info0[0] > info1[0])     return 1;
+            else { // Same peak time, test for amplitude
+                if (info0[1] < info1[1])      return -1;
+                else if (info0[1] > info1[1]) return 1;                
+            }            
+            return 0;            
+        }
         
+        /**
+         * Returns the index for the maximum value ([0]) and the
+         * maximum value ([1]) in a 2 position array.
+         * @param data The TAC to inspect.
+         * @return A double[] with 2 positions.
+         */
+        private double [] _getMaxInfo(double [] data) {
+            int max_index = 0;
+            double max = -Double.MAX_VALUE;
+            double [] res = new double[2];
+            for (int i = 0; i < data.length; i++) {
+                if (data[i] > max) {
+                    max = data[i];
+                    max_index = i;
+                }
+            }
+            res[0] = max_index;
+            res[1] = max;
+            return res;            
+        }        
     }
 
 }
