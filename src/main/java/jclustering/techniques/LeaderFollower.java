@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.util.FastMath;
 
 import jclustering.Cluster;
 import jclustering.MathUtils;
@@ -247,9 +248,8 @@ public class LeaderFollower extends ClusteringTechnique
      * * The cluster index if one is found.     
      */
     private int _getClosestCluster(double [] tac) {
-        
-        int i = CLUSTER_NOT_FOUND;
-        double max_score = this.threshold;
+                
+        ArrayList<Integer> selected = new ArrayList<Integer>();        
         int size = clusters.size();
         
         // Find the cluster with the highest correlation with this TAC        
@@ -258,14 +258,43 @@ public class LeaderFollower extends ClusteringTechnique
             // Smooth the TAC only for correlation computing purposes, do
             // not use it afterwards.
             double score = pc.correlation(MathUtils.smooth(tac), 
-                                          MathUtils.smooth(c.getCentroid()));
-            if (score > max_score && score > corr_limits.get(c)) {
-                i = j;
-                max_score = score;
+                                          MathUtils.smooth(c.getCentroid()));            
+            if (score > corr_limits.get(c)) {
+                selected.add(j);                
             }
         }
-
-        return i;        
+        
+        // No cluster has been selected
+        if (selected.isEmpty())
+            return CLUSTER_NOT_FOUND;
+        // Only one cluster has been selected
+        else if (selected.size() == 1)
+            return selected.get(0);
+        // Several clusters have been selected. Get the closest one according
+        // to the Euclidean distance.
+        else { 
+            double min_dist = Double.MAX_VALUE;
+            int i = 0;
+            for (int j : selected) {
+                Cluster c = clusters.get(j);
+                double euc = _euclidean(tac, c.getCentroid());
+                if (euc < min_dist) {
+                    min_dist = euc;
+                    i = j;
+                }
+            }
+            return i;            
+        }        
+    }
+    
+    /*
+     * Computes the Euclidean distance between two given TACs.
+     */
+    private double _euclidean(double [] tac1, double [] tac2) {
+        double distance = 0.0;
+        for (int i = 0; i < tac1.length; i++) 
+            distance += FastMath.pow(tac1[i] - tac2[i], 2);
+        return FastMath.sqrt(distance);
     }
     
     /*
@@ -384,8 +413,8 @@ public class LeaderFollower extends ClusteringTechnique
             if (info0[0] < info1[0])          return -1;
             else if (info0[0] > info1[0])     return 1;
             else { // Same peak time, test for amplitude
-                if (info0[1] < info1[1])      return -1;
-                else if (info0[1] > info1[1]) return 1;                
+                if (info0[1] < info1[1])      return 1;
+                else if (info0[1] > info1[1]) return -1;                
             }            
             return 0;            
         }
