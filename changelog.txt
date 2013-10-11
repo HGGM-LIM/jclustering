@@ -1,3 +1,14 @@
+v1.3.5 - 2013-10-11
+-------------------
+
+- Added cosine metric.
+- The cluster object now stores the mean spatial centroid.
+- The deterministic k-means++ initialization allows the user to set the
+  first centroid.
+- Modified Leader-Follower. It now sorts the voxels by peak time and
+  amplitude before inspecting them. Also, returns the voxel with the
+  smallest Euclidean distance to the centroid.
+
 v1.3.4 - 2013-09-23
 -------------------
 
