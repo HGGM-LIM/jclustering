@@ -4,7 +4,7 @@ import java.util.Arrays;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
- * Classical correlation score between two given TACs (data type
+ * Pearsons correlation score between two given TACs (data type
  * {@code double[]}).
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
