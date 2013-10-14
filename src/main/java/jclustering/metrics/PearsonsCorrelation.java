@@ -1,7 +1,6 @@
 package jclustering.metrics;
 
 import java.util.Arrays;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
  * Pearsons correlation score between two given TACs (data type
@@ -9,9 +8,9 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  */
-public class Correlation extends ClusteringMetric {
+public class PearsonsCorrelation extends ClusteringMetric {
 
-    private PearsonsCorrelation pc;
+    private org.apache.commons.math3.stat.correlation.PearsonsCorrelation pc;
 
     @Override
     public double distance(double[] centroid, double[] data) {
@@ -35,7 +34,7 @@ public class Correlation extends ClusteringMetric {
     
     @Override
     public void init() {
-        pc = new PearsonsCorrelation();
+        pc = new org.apache.commons.math3.stat.correlation.PearsonsCorrelation();
     }
 
 }
