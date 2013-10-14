@@ -4,24 +4,22 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 
-import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.FastMath;
 
 import jclustering.Cluster;
 import jclustering.MathUtils;
 import jclustering.Voxel;
 import static jclustering.GUIUtils.*;
+import static jclustering.Utils.getClusteringMetric;
 
 import ij.IJ;
 
@@ -48,10 +46,8 @@ public class LeaderFollower extends ClusteringTechnique
 
     // Default values
     private final int DEF_MAX_CLUSTERS = 1000;
-    private final boolean DEF_DISCARD_SMALLEST = false;
     private final int DEF_KEEP_CLUSTERS = 50;
     private final double DEF_THRESHOLD = 0.4;
-    private final double DEF_T_INC = 1.0;
     
     // Constants
     private final int CLUSTER_NOT_FOUND = -1;
@@ -59,35 +55,17 @@ public class LeaderFollower extends ClusteringTechnique
     // Maximum number of clusters to compute
     private int max_clusters = DEF_MAX_CLUSTERS;
     
-    // Discard smallest cluster when max_clusters is reached
-    private boolean discard_smallest = DEF_DISCARD_SMALLEST;
-    
     // Maximum number of clusters to keep
     private int keep_clusters = DEF_KEEP_CLUSTERS;
     
     // Threshold for cluster addition
-    private double threshold = DEF_THRESHOLD;
-    
-    // Threshold increment
-    private double t_inc = DEF_T_INC;
-    private Hashtable<Cluster, Double> corr_limits;
-
-    // Pearson Correlation object
-    private PearsonsCorrelation pc;     
-    
-    // Cluster comparator
-    private Comparator<Cluster> comp;
+    private double threshold = DEF_THRESHOLD;  
     
     @Override
     public void process() {
-                
-        //Initial object creation.                                
-        pc = new PearsonsCorrelation();                
-        corr_limits = new Hashtable<Cluster, Double>();        
-        comp = new LeaderFollowerClusterComparator();
         
-        IJ.log(String.format("Correlation limit: %f; increment: %f.",
-        		threshold, t_inc));
+        IJ.log(String.format("Correlation limit: %f. Metric: %s.", 
+                threshold, metric.getName()));
         
         // Add all voxels to an array to order them by amplitude in the 
         // next step.
@@ -99,7 +77,7 @@ public class LeaderFollower extends ClusteringTechnique
         }
         
         // Order voxels by peak amplitude.
-        IJ.showStatus("Leader-Follower. Ordering voxels...");         
+        IJ.showStatus("Leader-Follower. Sorting voxels...");         
         Collections.sort(ordered_voxels, new AmplitudeComparator());        
                 
         // Process all TACs.                       
@@ -118,7 +96,6 @@ public class LeaderFollower extends ClusteringTechnique
                 IJ.showStatus(s);
             }
             
-            
             Voxel v = new Voxel(coord[0], coord[1], coord[2], 
                                 ip.getTAC(coord[0], coord[1], coord[2]));
 
@@ -129,7 +106,6 @@ public class LeaderFollower extends ClusteringTechnique
             if (clusters.isEmpty()) {
                 Cluster c = new Cluster(v);
                 clusters.add(c);
-                _incrementCorrLimit(c);
             }
             // Else, let's include new voxels into their corresponding clusters
             // or create new ones if there still space
@@ -142,32 +118,18 @@ public class LeaderFollower extends ClusteringTechnique
                     Cluster c = clusters.get(cindex);
                     // Add TAC modifying centroid
                     c.add(v);
-                    _incrementCorrLimit(c);
                 } else if (cindex == CLUSTER_NOT_FOUND) { 
-                    // Need to create a new voxel, if there is room for it
-                    // If too many clusters, throw away the smallest of
-                    // them, if allowed by the settings.
-                    if (size == max_clusters && discard_smallest) {
-                        _discardSmallest();
+                    // Create a new cluster if there is room for it.
+                    if (size < max_clusters) {
                         Cluster c = new Cluster(v);
                         clusters.add(c);
-                        _incrementCorrLimit(c);
-                    } else if (size < max_clusters) {
-                        Cluster c = new Cluster(v);
-                        clusters.add(c);
-                        _incrementCorrLimit(c);
                     }
                 }
             }
         }
-                
-        
-        /*
-         * Get rid of the smallest clusters
-         */
-        
+
         // Sort clusters
-        Collections.sort(clusters, comp);
+        Collections.sort(clusters, new LeaderFollowerClusterComparator());
         
         // Build new list for inserting the selected clusters
         ArrayList<Cluster> good_clusters = new ArrayList<Cluster>();
@@ -198,25 +160,25 @@ public class LeaderFollower extends ClusteringTechnique
     
     public JPanel makeConfig() {
         
-        JPanel jp = new JPanel(new GridLayout(5, 2, 5, 5));
+        JPanel jp = new JPanel(new GridLayout(4, 2, 5, 5));
+        
+        // Available metrics for this technique: 
+        // * PearsonsCorrelation
+        // * SpearmansCorrelation
+        // * Cosine
+        jp.add(new JLabel("Metric to use:"));
+        String [] available_metrics = new String[]{"Cosine", 
+                                                   "PearsonsCorrelation",
+                                                   "SpearmansCorrelation"};
+        JComboBox metrics = createChoices("metrics", available_metrics, this);
+        this.setMetric(getClusteringMetric((String)metrics.getItemAt(0), ip));
+        jp.add(metrics);
         
         // Maximum number of clusters
         jp.add(new JLabel("Maximum clusters to form:"));
         JTextField jt_maxclust = createJTextField("jt_maxclust", max_clusters, 
                                  this);
         jp.add(jt_maxclust);
-        
-        // Discard smallest cluster
-        String discard_help = "<html>If a new cluster needs to be created<br>" +
-        		"but the maximum permitted number has been reached,<br>" +
-        		"discard the smallest one (the one containing less voxels<br>" +
-        		"with lowest amplitudes).</html>";
-        jp.add(createJLabel("Discard smallest cluster:*", discard_help));
-        JCheckBox jcb_discard = new JCheckBox();
-        jcb_discard.setSelected(discard_smallest);
-        jcb_discard.setName("jcb_discard");
-        jcb_discard.addItemListener(this);
-        jp.add(jcb_discard);
         
         // Number of clusters to keep
         String keep_clusters_help = "<html>If more than these clusters<br>" +
@@ -228,16 +190,11 @@ public class LeaderFollower extends ClusteringTechnique
                                   keep_clusters, this);
         jp.add(jt_keepclust);
         
-        // Initial correlation threshold
-        jp.add(new JLabel("Initial correlation threshold:"));
+        // Initial threshold (not only correlation).
+        jp.add(new JLabel("Initial threshold:"));
         JTextField jt_thres = createJTextField("jt_thres", threshold, this);
         jp.add(jt_thres);
-        
-        // Correlation increment
-        jp.add(new JLabel("Correlation increment:"));
-        JTextField jt_inc = createJTextField("jt_inc", t_inc, this);
-        jp.add(jt_inc);
-        
+
         return jp;
         
     }
@@ -257,9 +214,13 @@ public class LeaderFollower extends ClusteringTechnique
             Cluster c = clusters.get(j);            
             // Smooth the TAC only for correlation computing purposes, do
             // not use it afterwards.
-            double score = pc.correlation(MathUtils.smooth(tac), 
+            // As the metrics that this technique may use return the
+            // correlation / cosine values as a metric (1 - x), that
+            // change needs to be undone because the actual value is needed
+            // here. That explains the 1 - metric.distance() in the next line.
+            double score = 1 - metric.distance(MathUtils.smooth(tac), 
                                           MathUtils.smooth(c.getCentroid()));            
-            if (score > corr_limits.get(c)) {
+            if (score > threshold) {
                 selected.add(j);                
             }
         }
@@ -296,28 +257,6 @@ public class LeaderFollower extends ClusteringTechnique
             distance += FastMath.pow(tac1[i] - tac2[i], 2);
         return FastMath.sqrt(distance);
     }
-    
-    /*
-     * Increments correlation limit for the given voxel
-     */
-    private void _incrementCorrLimit(Cluster c) {
-                
-        Double cor = corr_limits.get(c);
-        double score = (cor != null) ? cor * t_inc : threshold;
-        corr_limits.put(c, score);
-        
-    }
-    
-    /*
-     * Discard smallest cluster. Uses the private Comparator.
-     */    
-    private void _discardSmallest() {
-
-        Cluster min = Collections.min(clusters, comp);       
-        clusters.remove(min);
-        corr_limits.remove(min);
-        
-    }
 
     @Override
     public void focusGained(FocusEvent arg0) {
@@ -327,7 +266,7 @@ public class LeaderFollower extends ClusteringTechnique
         
         // Just select all the text in the JTextField, for usability.
         if (s.equals("jt_maxclust") || s.equals("jt_keepclust")
-                || s.equals("jt_thres") || s.equals("jt_inc")) {
+                || s.equals("jt_thres")) {
             ((JTextField)c).selectAll();
         }
         
@@ -362,25 +301,8 @@ public class LeaderFollower extends ClusteringTechnique
             } catch (NumberFormatException e) {
                 threshold = DEF_THRESHOLD;                
             }
-            ((JTextField)c).setText(Double.toString(threshold));
-            
-        } else if (s.equals("jt_inc")) {
-            try {                
-                t_inc = Double.parseDouble(((JTextField)c).getText());
-            } catch (NumberFormatException e) {
-                t_inc = DEF_T_INC;                
-            }
-            ((JTextField)c).setText(Double.toString(t_inc));
+            ((JTextField)c).setText(Double.toString(threshold));            
         }        
-    }
-    
-    
-    public void itemStateChanged(ItemEvent arg0) {
-                        
-        // Check the checkbox for discard_smallest
-        JCheckBox jcb = (JCheckBox)arg0.getSource();
-        discard_smallest = jcb.isSelected();
-        
     }
     
     /*
