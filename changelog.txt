@@ -1,3 +1,11 @@
+v1.4.0 - 2013-10-14
+-------------------
+
+* Correlation has been changed to PearsonsCorrelation.
+* SpearmansCorrelation added as metric.
+* LeaderFollower may use the following metrics: Cosine, PearsonsCorrelation and
+  SpearmansCorrelation. Its usage has been simplified.
+
 v1.3.5 - 2013-10-11
 -------------------
 
