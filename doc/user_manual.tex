@@ -11,7 +11,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\title{jClustering v1.3.0 user manual}
+\title{jClustering v1.4.0 user manual}
 \author{José María Mateos \\ \texttt{jmmateos@mce.hggm.es}}
 
 \begin{document}
@@ -27,7 +27,7 @@ how to use jClustering within a working ImageJ installation.
 
 For further information regarding jClustering, please refer to the published paper (see section \ref{sec:reference}).
 
-This manual refers to jClustering v1.3.0 and beyond. It will not be edited just to update this version number. Unless
+This manual refers to jClustering v1.4.0 and beyond. It will not be edited just to update this version number. Unless
 there are significative changes in a new version, do not expect this number to match the latest release.
 
 \section{Download and installation}
@@ -158,18 +158,16 @@ The leader-follower technique tab is shown in figure \ref{fig:leader-follower_wi
 The different options are:
 
 \begin{itemize}
-\item {\em Maximum clusters to form:} the maximum number of clusters the algorithm will create.
-\item {\em Discard smallest cluster:} if the maximum number of clusters is reached and a new one needs to be created,
-the smallest one (the one with fewer voxels and lower mean amplitude) is discarded and a new one is created when this
-box is checked. When unchecked, voxels that need to create a new cluster are discarded.
+\item {\em Metric to use:} this technique allows to use several metrics ({\tt Cosine}, {\tt PearsonsCorrelation} and 
+{\tt SpearmansCorrelation}). As these techniques return a value in the form of a distance ($[0, 2]$), the value returned
+by their {\tt distance()} method is changed back to the actual value ($[-1, 1]$). Have this in mind when you set the threshold
+value.
+\item {\em Maximum clusters to form:} the maximum number of clusters the algorithm will create. Bear in mind that this
+algorithm may create many voxels. Change this limit to a lower value if you run out of memory.
 \item {\em Clusters to keep:} the number of clusters that will be shown on screen when the algorithm finishes. As it normally
 creates a great number of clusters, it is better to keep this number low. Clusters are shown on screen ordered by the number
 of voxels they contain, with the biggest ones first.
-\item {\em Initial correlation threshold:} the initial correlation threshold use to create new clusters.
-\item {\em Correlation increment:} a multiplicative variable that increments the correlation threshold of a given cluster. When
-set to a value greater than $1.0$, the correlation threshold for a given cluster is incremented every time a new voxel is added.
-No increment is set by default.
- 
+\item {\em Initial threshold:} the initial threshold use to create new clusters.
 \end{itemize}
 
 \subsection{Principal Component Analysis (PCA)}
@@ -212,8 +210,10 @@ This clustering technique also writes to file the values of the eigenvectors fou
 \section{Implemented metrics (distances)}
 \label{sec:metrics}
 
-The different metrics are currently used only the the k-means clustering technique. For more information on the 
-particular metrics implemented, please refer to the original jClustering paper on PLOS ONE.
+The different metrics are currently used in the k-means clustering technique and some of them in the Leader-Follower. 
+The metrics that return a value between $[-1, 1]$ ({\tt Cosine}, {\tt PearsonsCorrelation} and 
+{\tt SpearmansCorrelation}) have been changed to return $1 - distance$, so their value is included in the range $[0, 2]$ and
+can be considered a distance.
 
 \section{Results presentation and interpretation}
 \label{sec:results}
