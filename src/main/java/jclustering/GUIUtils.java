@@ -269,7 +269,7 @@ public class GUIUtils {
     }
 
     /**
-     * Private helper method for the reset*Panel methods.
+     * Private helper method for the resetPanel methods.
      * 
      * @param p The panel to be reset.
      * @param s The message to be set in the label.
