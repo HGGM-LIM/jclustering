@@ -128,8 +128,9 @@ public class LeaderFollower extends ClusteringTechnique
             }
         }
 
-        // Sort clusters
-        Collections.sort(clusters, new LeaderFollowerClusterComparator());
+        // Sort clusters (reverse the natural order)
+        Collections.sort(clusters, 
+                Collections.reverseOrder(new LeaderFollowerClusterComparator()));
         
         // Build new list for inserting the selected clusters
         ArrayList<Cluster> good_clusters = new ArrayList<Cluster>();
@@ -139,12 +140,10 @@ public class LeaderFollower extends ClusteringTechnique
         int size = clusters.size();
         
         // Can't keep more clusters that the ones that have been created
-        int kc;
-        if (keep_clusters > size) kc = size;
-        else kc = keep_clusters;
+        int kc = (keep_clusters > size) ? size : keep_clusters;        
         
-        // Go backwards: biggest cluster is #1
-        for (int i = size - 1; i >= size - kc; i--) {            
+        // Fill in the desired clusters
+        for (int i = 0; i < kc; i++) {            
             Cluster c = clusters.get(i);
             good_clusters.add(c);
         }
@@ -232,13 +231,13 @@ public class LeaderFollower extends ClusteringTechnique
         else if (selected.size() == 1)
             return selected.get(0);
         // Several clusters have been selected. Get the closest one according
-        // to the Euclidean distance.
+        // to the squared norm (squared Euclidean distance).
         else { 
             double min_dist = Double.MAX_VALUE;
             int i = 0;
             for (int j : selected) {
                 Cluster c = clusters.get(j);
-                double euc = _euclidean(tac, c.getCentroid());
+                double euc = _sqnorm(tac, c.getCentroid());
                 if (euc < min_dist) {
                     min_dist = euc;
                     i = j;
@@ -249,13 +248,13 @@ public class LeaderFollower extends ClusteringTechnique
     }
     
     /*
-     * Computes the Euclidean distance between two given TACs.
+     * Computes the squared norm between two given TACs.
      */
-    private double _euclidean(double [] tac1, double [] tac2) {
+    private double _sqnorm(double [] tac1, double [] tac2) {
         double distance = 0.0;
         for (int i = 0; i < tac1.length; i++) 
             distance += FastMath.pow(tac1[i] - tac2[i], 2);
-        return FastMath.sqrt(distance);
+        return distance;
     }
 
     @Override
