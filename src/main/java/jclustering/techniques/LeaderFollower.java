@@ -252,8 +252,11 @@ public class LeaderFollower extends ClusteringTechnique
      */
     private double _sqnorm(double [] tac1, double [] tac2) {
         double distance = 0.0;
-        for (int i = 0; i < tac1.length; i++) 
-            distance += FastMath.pow(tac1[i] - tac2[i], 2);
+        for (int i = 0; i < tac1.length; i++) {
+            double diff = tac1[i]- tac2[i];            
+            distance += diff * diff;            
+        }
+            
         return distance;
     }
 
