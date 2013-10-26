@@ -13,8 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.commons.math3.util.FastMath;
-
 import jclustering.Cluster;
 import jclustering.MathUtils;
 import jclustering.Voxel;
@@ -24,20 +22,14 @@ import static jclustering.Utils.getClusteringMetric;
 import ij.IJ;
 
 /**
- * Implements a leader-follower clustering method using only correlation
- * as its main metric. It first sorts the image voxels to start analyzing
- * first those with earliest and highest peak values.  
+ * Implements a leader-follower clustering method that creates new clusters when
+ * needed. It first sorts the image voxels to start analyzing first those with
+ * earliest and highest peak values.
  * <p>
  * Leader-follower works in an inverse way as K-means does. The number of
- * clusters is unknown, and a threshold is set so that clusters are formed
- * with TACs with a distance (correlation, in this case) that evaluates
- * above said threshold. An optional increment value can be set so that
- * every time a voxel is added to a cluster this becomes more restrictive. This
- * option must be used with care, as our tests have shown it to be quite
- * unstable.
+ * clusters is unknown, and a threshold is set so that clusters are formed with
+ * TACs with a distance that evaluates above said threshold.
  * <p>
- * Also, peak amplitude is taken into account when adding new TACs to an 
- * existing cluster.
  * 
  * @author <a href="mailto:jmmateos@mce.hggm.es">José María Mateos</a>.
  */
@@ -64,7 +56,7 @@ public class LeaderFollower extends ClusteringTechnique
     @Override
     public void process() {
         
-        IJ.log(String.format("Correlation limit: %f. Metric: %s.", 
+        IJ.log(String.format("Threshold: %.2f. Metric: %s.", 
                 threshold, metric.getName()));
         
         // Add all voxels to an array to order them by amplitude in the 
@@ -111,7 +103,7 @@ public class LeaderFollower extends ClusteringTechnique
             // or create new ones if there still space
             else {
                 // Get closest cluster
-                int cindex = _getClosestCluster(v.tac);
+                int cindex = _getClosestCluster(v);
 
                 if (cindex >= 0) { // There is a cluster that can 
                                    // include this voxel                    
@@ -203,11 +195,12 @@ public class LeaderFollower extends ClusteringTechnique
      * * CLUSTER_NOT_FOUND if no cluster with enough correlation has been found.
      * * The cluster index if one is found.     
      */
-    private int _getClosestCluster(double [] tac) {
+    private int _getClosestCluster(Voxel v) {
                 
         ArrayList<Integer> selected = new ArrayList<Integer>();        
         int size = clusters.size();
         
+        double [] tac1 = MathUtils.smooth(v.tac);        
         // Find the cluster with the highest correlation with this TAC        
         for (int j = 0; j < size; j++) {            
             Cluster c = clusters.get(j);            
@@ -217,7 +210,7 @@ public class LeaderFollower extends ClusteringTechnique
             // correlation / cosine values as a metric (1 - x), that
             // change needs to be undone because the actual value is needed
             // here. That explains the 1 - metric.distance() in the next line.
-            double score = 1 - metric.distance(MathUtils.smooth(tac), 
+            double score = 1 - metric.distance(tac1, 
                                           MathUtils.smooth(c.getCentroid()));            
             if (score > threshold) {
                 selected.add(j);                
@@ -237,7 +230,7 @@ public class LeaderFollower extends ClusteringTechnique
             int i = 0;
             for (int j : selected) {
                 Cluster c = clusters.get(j);
-                double euc = _sqnorm(tac, c.getCentroid());
+                double euc = _sqnorm(v.tac, c.getCentroid());
                 if (euc < min_dist) {
                     min_dist = euc;
                     i = j;
