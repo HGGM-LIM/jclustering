@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import jclustering.Cluster;
-import jclustering.MathUtils;
 import jclustering.Voxel;
 import static jclustering.GUIUtils.*;
 import static jclustering.Utils.getClusteringMetric;
@@ -37,8 +36,8 @@ public class LeaderFollower extends ClusteringTechnique
     implements FocusListener {
 
     // Default values
-    private final int DEF_MAX_CLUSTERS = 1000;
-    private final int DEF_KEEP_CLUSTERS = 50;
+    private final int DEF_MAX_CLUSTERS = 10000;
+    private final int DEF_KEEP_CLUSTERS = 100;
     private final double DEF_THRESHOLD = 0.4;
     
     // Constants
@@ -199,19 +198,15 @@ public class LeaderFollower extends ClusteringTechnique
                 
         ArrayList<Integer> selected = new ArrayList<Integer>();        
         int size = clusters.size();
-        
-        double [] tac1 = MathUtils.smooth(v.tac);        
+            
         // Find the cluster with the highest correlation with this TAC        
         for (int j = 0; j < size; j++) {            
             Cluster c = clusters.get(j);            
-            // Smooth the TAC only for correlation computing purposes, do
-            // not use it afterwards.
             // As the metrics that this technique may use return the
             // correlation / cosine values as a metric (1 - x), that
             // change needs to be undone because the actual value is needed
             // here. That explains the 1 - metric.distance() in the next line.
-            double score = 1 - metric.distance(tac1, 
-                                          MathUtils.smooth(c.getCentroid()));            
+            double score = 1 - metric.distance(v.tac, c.getCentroid());            
             if (score > threshold) {
                 selected.add(j);                
             }
@@ -324,37 +319,26 @@ public class LeaderFollower extends ClusteringTechnique
             double [] tac0 = ip.getTAC(arg0[0], arg0[1], arg0[2]);
             double [] tac1 = ip.getTAC(arg1[0], arg1[1], arg1[2]);
             // Get peak values
-            double [] info0 = _getMaxInfo(tac0);
-            double [] info1 = _getMaxInfo(tac1);
+            double max0 = _getMax(tac0);
+            double max1 = _getMax(tac1);
             // Return value according to the peak time
-            if (info0[0] < info1[0])          return -1;
-            else if (info0[0] > info1[0])     return 1;
-            else { // Same peak time, test for amplitude
-                if (info0[1] < info1[1])      return 1;
-                else if (info0[1] > info1[1]) return -1;                
-            }            
-            return 0;            
+            if (max0 < max1)          return 1;
+            else if (max0 > max1)     return -1;
+            else return 0;            
         }
         
         /**
-         * Returns the index for the maximum value ([0]) and the
-         * maximum value ([1]) in a 2 position array.
+         * Returns the maximum value for the given TAC.
          * @param data The TAC to inspect.
          * @return A double[] with 2 positions.
          */
-        private double [] _getMaxInfo(double [] data) {
-            int max_index = 0;
-            double max = -Double.MAX_VALUE;
-            double [] res = new double[2];
+        private double _getMax(double [] data) {
+            double max = -Double.MAX_VALUE;            
             for (int i = 0; i < data.length; i++) {
-                if (data[i] > max) {
+                if (data[i] > max) 
                     max = data[i];
-                    max_index = i;
-                }
-            }
-            res[0] = max_index;
-            res[1] = max;
-            return res;            
+            }            
+            return max;            
         }        
     }
 
