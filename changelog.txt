@@ -1,3 +1,14 @@
+v1.4.2 - 2013-11-05
+-------------------
+
+* The PNorm metric when p = 2.0 (Euclidean distance) is now much faster.
+
+v1.4.1 - 2013-11-05
+-------------------
+
+* LeaderFollower uses similarity weighing.
+* Changed 'det++' behavior.
+
 v1.4.0 - 2013-10-14
 -------------------
 
