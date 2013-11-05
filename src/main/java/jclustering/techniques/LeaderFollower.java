@@ -13,6 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.util.FastMath;
+
 import jclustering.Cluster;
 import jclustering.Voxel;
 import static jclustering.GUIUtils.*;
@@ -196,7 +199,8 @@ public class LeaderFollower extends ClusteringTechnique
      */
     private int _getClosestCluster(Voxel v) {
                 
-        ArrayList<Integer> selected = new ArrayList<Integer>();        
+        ArrayList<Integer> selected = new ArrayList<Integer>();   
+        ArrayList<Double> scores    = new ArrayList<Double>();
         int size = clusters.size();
             
         // Find the cluster with the highest correlation with this TAC        
@@ -206,9 +210,10 @@ public class LeaderFollower extends ClusteringTechnique
             // correlation / cosine values as a metric (1 - x), that
             // change needs to be undone because the actual value is needed
             // here. That explains the 1 - metric.distance() in the next line.
-            double score = 1 - metric.distance(v.tac, c.getCentroid());            
+            double score = 1 - metric.distance(v.tac, c.getCentroid()); 
             if (score > threshold) {
-                selected.add(j);                
+                selected.add(j);    
+                scores.add(score);
             }
         }
         
@@ -219,13 +224,18 @@ public class LeaderFollower extends ClusteringTechnique
         else if (selected.size() == 1)
             return selected.get(0);
         // Several clusters have been selected. Get the closest one according
-        // to the squared norm (squared Euclidean distance).
+        // to the Euclidean distance and a weighing factor based on the
+        // previously computed similarity score. This weight causes the 
+        // algorithm to create fewer clusters, as it will group them giving
+        // also importance to the overall TAC similarity.
         else { 
-            double min_dist = Double.MAX_VALUE;
+            double min_dist = Double.MAX_VALUE;            
             int i = 0;
-            for (int j : selected) {
+            int score_index = 0;
+            for (int j : selected) {                
                 Cluster c = clusters.get(j);
-                double euc = _sqnorm(v.tac, c.getCentroid());
+                double w = FastMath.exp(-scores.get(score_index++));                
+                double euc = _distance(v.tac, c.getCentroid()) * w;
                 if (euc < min_dist) {
                     min_dist = euc;
                     i = j;
@@ -236,16 +246,15 @@ public class LeaderFollower extends ClusteringTechnique
     }
     
     /*
-     * Computes the squared norm between two given TACs.
+     * Computes the Euclidean distance between two given TACs.
      */
-    private double _sqnorm(double [] tac1, double [] tac2) {
+    private double _distance(double [] tac1, double [] tac2) {
         double distance = 0.0;
         for (int i = 0; i < tac1.length; i++) {
-            double diff = tac1[i]- tac2[i];            
+            double diff = tac1[i] - tac2[i];            
             distance += diff * diff;            
-        }
-            
-        return distance;
+        }            
+        return FastMath.sqrt(distance);
     }
 
     @Override
@@ -319,27 +328,14 @@ public class LeaderFollower extends ClusteringTechnique
             double [] tac0 = ip.getTAC(arg0[0], arg0[1], arg0[2]);
             double [] tac1 = ip.getTAC(arg1[0], arg1[1], arg1[2]);
             // Get peak values
-            double max0 = _getMax(tac0);
-            double max1 = _getMax(tac1);
-            // Return value according to the peak time
+            double max0 = StatUtils.max(tac0);
+            double max1 = StatUtils.max(tac1);
+            // Return value according to the peak amplitude
             if (max0 < max1)          return 1;
             else if (max0 > max1)     return -1;
             else return 0;            
         }
-        
-        /**
-         * Returns the maximum value for the given TAC.
-         * @param data The TAC to inspect.
-         * @return A double[] with 2 positions.
-         */
-        private double _getMax(double [] data) {
-            double max = -Double.MAX_VALUE;            
-            for (int i = 0; i < data.length; i++) {
-                if (data[i] > max) 
-                    max = data[i];
-            }            
-            return max;            
-        }        
+       
     }
 
 }
