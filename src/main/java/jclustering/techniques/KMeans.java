@@ -487,7 +487,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
     private void _fillRandomPoints(int[][] initial_points, int start) {
 
         Random r = new Random(System.currentTimeMillis());
-        int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
+        int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> slices
         double [] tac;
 
         for (int i = start; i < n_clusters; i++) {
@@ -523,7 +523,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
         // it is not necessary.
         if (initial_centroids.endsWith(";")) {
             initial_centroids = initial_centroids.substring(0,
-                    initial_centroids.length() - 2);
+                    initial_centroids.length() - 1);
         }
 
         // If initial_centroids ends in a comma, end. Badly formed string
