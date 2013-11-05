@@ -547,7 +547,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
             try {
                 if (Integer.parseInt(coordinates[0]) >= dim[0]
                         || Integer.parseInt(coordinates[1]) >= dim[1]
-                        || Integer.parseInt(coordinates[2]) >= dim[3])
+                        || Integer.parseInt(coordinates[2]) > dim[3])
                     return !correct;
             } catch (NumberFormatException ex) {
                 // Some element is not a digit
