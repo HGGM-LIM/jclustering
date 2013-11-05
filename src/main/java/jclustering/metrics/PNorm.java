@@ -38,12 +38,24 @@ public class PNorm extends ClusteringMetric implements FocusListener {
             return 0.0;
 
         double result = 0.0;
-
-        for (int i = 0; i < data.length; i++) {
-            result += FastMath.pow(Math.abs(centroid[i] - data[i]), p);
+        
+        if (Double.compare(2.0, p) == 0) { // Euclidean distance
+            // Use faster code here. Most times this will be the selected
+            // value (p = 2), so it makes sense not to use FastMah.pow
+            // here when a simple multiplication will do.
+            for (int i = 0; i < data.length; i++) {
+                double d = centroid[i] - data[i];
+                result += d * d;                
+            }
+            return FastMath.sqrt(result);            
         }
 
-        return FastMath.pow(result, 1.0 / p);
+        else {
+            for (int i = 0; i < data.length; i++) {
+                result += FastMath.pow(Math.abs(centroid[i] - data[i]), p);
+            }
+            return FastMath.pow(result, 1.0 / p);            
+        }
     }
 
     @Override
