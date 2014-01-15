@@ -443,15 +443,12 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 if (!_alreadyChosen(initial_points, v, i)) {
                     double d = _biggestDistance(current_centroids, v);                
                     if (d > distance) {
-                        String s = String.format("%d,%d,%d: %f > %f", v.x,
-                                                 v.y, v.slice, d, distance);
-                        System.out.println(s);
                         distance = d;
                         chosen = v;    
                     }                    
                 }                
             }        
-            System.out.println("----------");
+
             // Set the chosen voxel
             initial_points[i][0] = chosen.x;
             initial_points[i][1] = chosen.y;
