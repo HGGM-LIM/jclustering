@@ -10,6 +10,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{times}
 
 \title{jClustering v1.4.0 user manual}
 \author{José María Mateos \\ \texttt{jmmateos@mce.hggm.es}}
@@ -133,7 +134,7 @@ information.
 \item {\em Number of clusters:} the initial number of clusters to create. Defaults to 5. The final result may yield fewer clusters, as
 some might be emptied during the iterative process.
 \item {\em Non-random initialization:} if you wish to select all or some initial centroids you can write the coordinates here
-with the following format: \texttt{x1,y1,z1;x2,y2,z2}, where x, y and z are the 3D coordinates of the centroid. If you define
+with the following format: \texttt{x1,y1,z1; x2,y2,z2}, where x, y and z are the 3D coordinates of the centroid. If you define
 fewer points than the configured number of clusters, the rest will be randomly chosen. If you write \texttt{++} here, a 
 k-means++ initialization algorithm will be used. Use \texttt{det++} for a \emph{deterministic} k-means initialization, in which 
 the first centroid corresponds to the time-activity curve with the highest maximum amplitude.
@@ -289,8 +290,11 @@ component is shown in a different frame.
 \label{subsec:results_text}
 
 More important than the visual representation of the formed clusters are the values of the time-activity curves of the different
-clusters. These values will be stored to a file if the {\em File saving path} option has been set in the main tab; the TAC for
-each cluster will be stored as a column in that file, every frame is a row.
+clusters. These values will be stored to a file if the {\em File saving path} option has been set in the main tab. 
+
+The TAC for each cluster will be stored as a column in that file,
+andd every frame is a row. This same structure also applies to the
+text files resulting from the PCA or ICA algorithms.
 
 The format for this file must be chosen by the user through the {\em File saving format} option and also depends on whether
 a time file vector with the frame starting and end times has been specified. If this has been the case, the first two columns
