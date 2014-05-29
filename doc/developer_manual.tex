@@ -54,7 +54,7 @@ If you want to implement a new clustering technique using jClustering, it is ver
 to implement a function that computes the distance between two given TACs and that can be reused between different {\tt ClusteringTechnique} objects, extend the {\tt ClusteringMetric} class instead.
 
 \section{Implementing a {\tt ClusteringTechnique}}
-\label{sec:clustmet}
+\label{sec:clusttech}
 
 The {\tt ClusteringTechnique} abstract class contains internal references to the following objects:
 
@@ -96,7 +96,7 @@ This string array is expected to be of even length. The $i$ positions contain th
 \section{Implementing a {\tt ClusteringMetric}}
 \label{sec:clustmet}
 
-A {\tt ClusteringMetric} is used inside a {\tt ClusteringTechnique} that calls internally the methods of its {\tt metric} object. It is a very simple object used to compute the distance between two given TACs while at the same time allow for future code reusing. Currently, only the k-means implementation allows to use different metrics.
+A {\tt ClusteringMetric} is used inside a {\tt ClusteringTechnique} that calls internally the methods of its {\tt metric} object. It is a very simple object used to compute the distance between two given TACs while at the same time allow for future code reusing. Currently, the k-means and the leader-follower implementations allow to use different metrics.
 
 The only method that {\bf must} be implemented is {\tt double distance(double [] a, double [] b)}, which returns the distance between TACs {\tt a} and {\tt b}. There is a {\tt void init()} method that can be used as a constructor to initialize the objects that will be used in each {\tt distance} call.
 
