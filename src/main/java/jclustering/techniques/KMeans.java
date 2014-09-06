@@ -54,15 +54,19 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
     @Override
     public void process() {
+        
+        // Initialize random seed
+        Random r = new Random(System.currentTimeMillis());
 
         // Initialize points
         int[][] initial_points = new int[n_clusters][3];
         long init_start = System.currentTimeMillis();
-        _fillInitialPoints(initial_points);
+        _fillInitialPoints(initial_points, r);
         long init_end = System.currentTimeMillis();
         String init_time = String.format("Initialization time: %3.3f seconds",
                                          ((init_end - init_start)/1000.0));
         IJ.log(init_time);
+
         
         // Keep track of number of iterations
         int it = 0;
@@ -251,19 +255,19 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
      * 
      * @param initial_points Array to be filled
      */
-    private void _fillInitialPoints(int[][] initial_points) {
+    private void _fillInitialPoints(int[][] initial_points, Random r) {
 
         if (initial_centroids == null || initial_centroids.equals("")
                 || _notValidInitialPoints()) {
             IJ.log("Random initialization");
-            _fillRandomPoints(initial_points, 0);
+            _fillRandomPoints(initial_points, 0, r);
             return;
         }
         
         // K-means++ uses its own initialization method.
         if (initial_centroids.equals("++")) { 
             IJ.log("K-means++ initialization");
-            _fillKMeansPlusPlus(initial_points);
+            _fillKMeansPlusPlus(initial_points, r);
             return;
         }
         
@@ -295,7 +299,7 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
 
         // If there is any point left to be filled, do so randomly
         if (point_triplets.length != n_clusters) {
-            _fillRandomPoints(initial_points, point_triplets.length);
+            _fillRandomPoints(initial_points, point_triplets.length, r);
         }
 
     }
@@ -304,11 +308,10 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
      * This method fills the initial centroids for the KMeans++ initialization
      * method.
      */
-    private void _fillKMeansPlusPlus(int[][] initial_points) {
+    private void _fillKMeansPlusPlus(int[][] initial_points, Random r) {
         
         IJ.showStatus("K-means++ initialization...");
 
-        Random r = new Random(System.currentTimeMillis());
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> z
         double [] tac;
         
@@ -514,9 +517,9 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
      * @param initial_points Array to be filled
      * @param start Initial offset
      */
-    private void _fillRandomPoints(int[][] initial_points, int start) {
+    private void _fillRandomPoints(int[][] initial_points, int start, 
+                                   Random r) {
 
-        Random r = new Random(System.currentTimeMillis());
         int[] dim = ip.getDimensions(); // 0 -> x; 1 -> y; 3 -> slices
         double [] tac;
 
