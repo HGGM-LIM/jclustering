@@ -1,3 +1,9 @@
+v1.4.4 - 2014-09-06
+-------------------
+
+* Fixed k-means random initialization error that caused it to drop some 
+  clusters after the first iteration.
+
 v1.4.3 - 2014-01-15
 -------------------
 
