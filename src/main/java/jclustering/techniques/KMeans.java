@@ -530,8 +530,26 @@ public class KMeans extends ClusteringTechnique implements FocusListener {
                 initial_points[i][2] = r.nextInt(dim[3]) + 1;
                 tac = ip.getTAC(initial_points[i][0],
                         initial_points[i][1], initial_points[i][2]);
-            } while (isMasked(tac, ip.CALZERO));
+            } while (isMasked(tac, ip.CALZERO) || 
+                     _alreadyChosen(initial_points, tac, i - 1));
         }
+    }
+
+    /*
+     * Checks whether the actual TAC has already been chosen in one of the
+     * initial_points array, up to the limit int.
+     */
+    private boolean _alreadyChosen(int[][] initial_points, double[] tac,
+            int limit) {
+        
+        for (int i = 0; i < limit; i++) {
+            double [] t = ip.getTAC(initial_points[i][0], 
+                                    initial_points[i][1],
+                                    initial_points[i][2]);
+            if (Arrays.equals(t, tac)) return true;
+        }
+        
+        return false;
     }
 
     /**
